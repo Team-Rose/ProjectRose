@@ -1,0 +1,21 @@
+[submodule "RoseRoot/vendor/Box2D"]
+	path = RoseRoot/vendor/Box2D
+	url = https://github.com/TheCherno/box2d
+[submodule "RoseRoot/vendor/glfw"]
+	path = RoseRoot/vendor/glfw
+	url = https://github.com/Team-Rose/glfw
+[submodule "RoseRoot/vendor/ImGuizmo"]
+	path = RoseRoot/vendor/ImGuizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo
+[submodule "RoseRoot/vendor/glm"]
+	path = RoseRoot/vendor/glm
+	url = https://github.com/g-truc/glm
+[submodule "RoseRoot/vendor/imgui"]
+	path = RoseRoot/vendor/imgui
+	url = https://github.com/TheCherno/imgui
+[submodule "RoseRoot/vendor/spdlog"]
+	path = RoseRoot/vendor/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "RoseRoot/vendor/yaml-cpp"]
+	path = RoseRoot/vendor/yaml-cpp
+	url = https://github.com/TheCherno/yaml-cpp
