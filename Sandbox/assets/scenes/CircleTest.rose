@@ -1,0 +1,15 @@
+Scene: Untitled
+Scene Settings:
+  Gravity2D: [0, -9.80000019]
+Entities:
+  - Entity: 13649876669838253033
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CircleRendererComponent:
+      Color: [1, 1, 1, 1]
+      Thickness: 1
+      Fade: 0.00499999989

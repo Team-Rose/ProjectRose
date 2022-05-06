@@ -1,0 +1,24 @@
+# Binaries
+**/bin/
+bin-int/
+
+# Rosefiles
+*.log
+
+# Visual Studio files and folder
+.vs/
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
+
+# Directories
+RoseRoot/vendor/VulkanSDK
+RoseStem/assets/cache
+scripts/__pycache__
+RoseStem/RoseProfile-Runtime.json
+RoseStem/RoseProfile-Shutdown.json
+RoseStem/RoseProfile-Startup.json
+Sandbox/RoseProfile-Shutdown.json
+Sandbox/RoseProfile-Runtime.json
+Sandbox/RoseProfile-Startup.json

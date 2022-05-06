@@ -1,0 +1,893 @@
+Scene: Untitled
+Scene Settings:
+  Gravity2D: [0, -9.80000019]
+Entities:
+  - Entity: 6975560136167847066
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-2, 9, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.239999995
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 1496537953731538774
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-32.2728844, 29.0982819, 7.62939453e-06]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0, 0, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.449999988
+      Friction: 0
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 6206739764637068587
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-32.2728844, 25.5982819, 7.62939453e-06]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0, 0, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.449999988
+      Friction: 0
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 800219763886270466
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-32.2728844, 23.5982819, 7.62939453e-06]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0, 0, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.449999988
+      Friction: 0
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 17403536483064618781
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-2, 8, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 10570280417543259096
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-2, 7, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 7610457695169404734
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-2, 6, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 8021243827987130568
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-2, 5, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 622295002621804526
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-2, 4, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 4736844410471703147
+    TagComponent:
+      Tag: Top
+    TransformComponent:
+      Translation: [-19.1224785, 7.32165051, 0]
+      Rotation: [0, 0, -0.645060182]
+      Scale: [18.8498898, 0.999999881, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 17540590961920208498
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [2, -1, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 9767933717215948371
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [2, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 7270013630985555444
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [2, 1, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 14505243751587145787
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [2, 2, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 1776649757593821951
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [2, 3, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 8192347985203139487
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [2, 4, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 16234011372815347987
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-2, 3, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 9708084107586171799
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-2, 2, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 8694997958557222620
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-2, 1, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 2119750850093218838
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-2, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 7937084984310383876
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-2, -1, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 3410235626428089064
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-2, -2, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 4031364352486084005
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-2.32830644e-10, 8, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.280000001
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 7096825170675234840
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [0, 7, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 2664868177383263757
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [0, 6, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 11607247235043839441
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [0, 1, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 10549166174721601637
+    TagComponent:
+      Tag: Cloud2
+    TransformComponent:
+      Translation: [-16.8413963, 8.60928822, -5]
+      Rotation: [0, 0, 0]
+      Scale: [4.10007143, 0.87953949, 1.00000024]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 3952859052458524292
+    TagComponent:
+      Tag: Cloud2
+    TransformComponent:
+      Translation: [-6.34139585, 5.60928822, -5]
+      Rotation: [0, 0, 0]
+      Scale: [3.68489289, 0.766802669, 1.00000024]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 14812740030432257953
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [0, 4, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 7302314227252965849
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [0, 3, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 10381085457484953736
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [0, 2, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 2973888000374499259
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [2, -2, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 17599755127384765266
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 12659084919737307414
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [0, -1, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 1091540875857430531
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [0, -2, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 12328675614770202790
+    TagComponent:
+      Tag: Top
+    TransformComponent:
+      Translation: [-7.57208967, 1.46268368, 0]
+      Rotation: [0, 0, 0.456999481]
+      Scale: [2.07254171, 0.999973536, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 13300408418413443819
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [-5.9000001, 3.0999999, 29.2999992]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.52359879
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 16811162370638935011
+    TagComponent:
+      Tag: Grass
+    TransformComponent:
+      Translation: [0, -5, 0]
+      Rotation: [0, 0, 0]
+      Scale: [300, 5, 1]
+    SpriteRendererComponent:
+      Color: [0.342964739, 0.725738406, 0.0826790407, 1]
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 5206894307176489370
+    TagComponent:
+      Tag: Sky
+    TransformComponent:
+      Translation: [0, 0, -100]
+      Rotation: [0, 0, 0]
+      Scale: [1000, 1000, 1]
+    SpriteRendererComponent:
+      Color: [0.00529037463, 0, 0.0421940684, 1]
+  - Entity: 6907680297702950069
+    TagComponent:
+      Tag: Cloud
+    TransformComponent:
+      Translation: [5.72287655, 5.85237741, -5]
+      Rotation: [0, 0, 0]
+      Scale: [3.27596736, 0.760344625, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 13793022800426573802
+    TagComponent:
+      Tag: Cloud2
+    TransformComponent:
+      Translation: [-8.58352757, 8.36700439, -5]
+      Rotation: [0, 0, 0]
+      Scale: [3.75921631, 0.775842607, 1.00000024]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 15327776994160925166
+    TagComponent:
+      Tag: Cloud3
+    TransformComponent:
+      Translation: [0.557086468, 4.12673378, -5]
+      Rotation: [0, 0, 0]
+      Scale: [3.18164635, 0.935399055, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 7675484583765405291
+    TagComponent:
+      Tag: Wall1
+    TransformComponent:
+      Translation: [-37.9207687, 1.99999952, 0.00999999978]
+      Rotation: [0, 0, 0]
+      Scale: [2.25, 48.3244247, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 11533892561136362159
+    TagComponent:
+      Tag: Wall2
+    TransformComponent:
+      Translation: [9.14246464, 2, 0.00999999978]
+      Rotation: [0, 0, 0]
+      Scale: [2, 40, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 5213764049893985927
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [-32.2728844, 31.5982819, 7.62939453e-06]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0, 0, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.449999988
+      Friction: 0
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
+  - Entity: 14686686304859997928
+    TagComponent:
+      Tag: Top
+    TransformComponent:
+      Translation: [-0.0330052376, 21.3930683, 0]
+      Rotation: [0, 0, 0]
+      Scale: [46.1249962, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 567908290468966689
+    TagComponent:
+      Tag: Top
+    TransformComponent:
+      Translation: [-29.3763561, 17.3379917, 0]
+      Rotation: [0, 0, -0.858732939]
+      Scale: [18.8498974, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 15018547820387145262
+    TagComponent:
+      Tag: Top
+    TransformComponent:
+      Translation: [-10.8039103, 1.39753354, 0]
+      Rotation: [0, 0, -0.322127193]
+      Scale: [2.07254219, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 8153344733616794862
+    TagComponent:
+      Tag: Top
+    TransformComponent:
+      Translation: [-8.97462368, 1.06499958, 0]
+      Rotation: [0, 0, -0.0170820206]
+      Scale: [2.07254219, 0.999973238, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 6118627577415079633
+    TagComponent:
+      Tag: Cold Stan
+    TransformComponent:
+      Translation: [0, 5, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.534084618, 0.687290072, 0.966244698, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 0.889999986
+      Friction: 0.0399999991
+      Restitution: 0.239999995
+      RestitutionThreshold: 0.5
