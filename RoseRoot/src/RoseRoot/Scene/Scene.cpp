@@ -4,11 +4,13 @@
 #include "Components.h"
 #include "ScriptableEntity.h"
 #include "RoseRoot/LUA/Lua.h"
+#include "RoseRoot/Renderer/Renderer.h"
 #include "RoseRoot/Renderer/Renderer2D.h"
 
 #include <glm/glm.hpp>
 
 #include "Entity.h"
+
 
 // Box 2D
 #include "Box2D/b2_world.h"
@@ -241,7 +243,7 @@ namespace Rose
 				}
 			}
 		}
-		// Render 2D
+		// Render
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 		{
@@ -261,7 +263,7 @@ namespace Rose
 
 		if (mainCamera)
 		{
-			Renderer2D::BeginScene(*mainCamera, cameraTransform);
+			Renderer::BeginScene(*mainCamera, cameraTransform);
 
 			// Draw sprites
 			{
@@ -292,7 +294,7 @@ namespace Rose
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
-		Renderer2D::BeginScene(camera);
+		Renderer::BeginScene(camera);
 
 		{
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
@@ -314,7 +316,7 @@ namespace Rose
 			}
 		}
 
-		Renderer2D::EndScene();
+		Renderer::EndScene();
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)

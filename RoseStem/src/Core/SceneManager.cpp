@@ -58,13 +58,13 @@ namespace Rose {
 		{
 			Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
 			if (camera) {
-				Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
+				Renderer::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
 			}
 
 		}
 		else
 		{
-			Renderer2D::BeginScene(m_EditorCamera);
+			Renderer::BeginScene(m_EditorCamera);
 		}
 
 		if (m_ShowPhysicsColliders)
@@ -72,11 +72,11 @@ namespace Rose {
 			if (m_SceneState == SceneState::Play)
 			{
 				Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
-				Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
+				Renderer::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
 			}
 			else
 			{
-				Renderer2D::BeginScene(m_EditorCamera);
+				Renderer::BeginScene(m_EditorCamera);
 			}
 
 			if (m_ShowPhysicsColliders)
@@ -117,7 +117,7 @@ namespace Rose {
 				}
 			}
 
-			Renderer2D::EndScene();
+			Renderer::EndScene();
 		}
 	}
 

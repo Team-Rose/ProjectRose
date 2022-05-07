@@ -6,6 +6,7 @@
 
 namespace Rose
  {
+	//NOT MANTAINED! DO NOT USE
 
 	class RendererVoxel
 	{
