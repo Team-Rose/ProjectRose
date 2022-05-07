@@ -40,19 +40,22 @@ namespace Rose {
 		m_LuaState.new_usertype<Vec3>("Vec3","x",&Vec3::x, "y",&Vec3::y, "z", &Vec3::z);
 		m_LuaState.new_usertype<Color>("Color","r",&Color::r, "g",&Color::g, "b",&Color::b, "a",&Color::a);
 
+		m_LuaState.new_usertype<LuaRigidBody2D>("RigidBody2D",
+			"SetLinearVelocity", &LuaRigidBody2D::SetLinearVelocity,
+			"GetLinearVelocity", &LuaRigidBody2D::GetLinearVelocity,
+			"SetAnglearVelocity", &LuaRigidBody2D::SetAnglearVelocity,
+			"GetAnglearVelocity", &LuaRigidBody2D::GetAnglearVelocity,
+			"SetGravityScale", &LuaRigidBody2D::SetGravityScale,
+			"GetGravityScale", &LuaRigidBody2D::GetGravityScale
+			);
+
 		m_LuaState.new_usertype<LuaEntity>( "Entity", 
 											"name",&LuaEntity::Name,
 											"position",&LuaEntity::position,
 											"rotation",&LuaEntity::rotation,
 											"size",&LuaEntity::size,
-											"SetLinearVelocity", &LuaEntity::SetLinearVelocity,
-											"GetLinearVelocity", &LuaEntity::GetLinearVelocity,
-											"SetAnglearVelocity", &LuaEntity::SetAnglearVelocity,
-											"GetAnglearVelocity", &LuaEntity::GetAnglearVelocity,
-											"SetGravityScale", &LuaEntity::SetGravityScale,
-											"GetGravityScale", &LuaEntity::GetGravityScale
+											"GetRigidBody2D",&LuaEntity::GetRigidBody2D
 										  );
-
 		//Register Util/Core Functions
 		m_LuaState.set_function("log", &BindRoseLog);
 

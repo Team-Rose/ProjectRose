@@ -4,7 +4,7 @@ rotspeed = 2
 vel = Vec2.new()
 ang = 0
 
-rself:SetGravityScale(0)
+rself:GetRigidBody2D():SetGravityScale(0)
 log(Key.left)
 
 function Update(ts)
@@ -27,8 +27,8 @@ function Update(ts)
 		ang = ang + (rotspeed*ts)
 	end
 
-	rself:SetLinearVelocity(vel)
-	rself:SetAnglearVelocity(0)
+	rself:GetRigidBody2D():SetLinearVelocity(vel)
+	rself:GetRigidBody2D():SetAnglearVelocity(0)
 	rself.rotation.z = ang
 	vel = Vec2.new()
 end

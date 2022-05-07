@@ -2,21 +2,23 @@
 #include "LuaTypes.h"
 #include <box2d/b2_body.h>
 
+
 namespace Rose {
-	void LuaEntity::SetLinearVelocity(Vec2 vel)
+	
+	void LuaRigidBody2D::SetLinearVelocity(Vec2 vel)
 	{
-		if (entity.HasComponent<Rigidbody2DComponent>()) {
-			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		if (entity->HasComponent<Rigidbody2DComponent>()) {
+			auto& rb2d = entity->GetComponent<Rigidbody2DComponent>();
 
 			b2Body* body = (b2Body*)rb2d.RuntimeBody;
 			body->SetLinearVelocity({ vel.x, vel.y });
 		}
 	}
 
-	Vec2 LuaEntity::GetLinearVelocity()
+	Vec2 LuaRigidBody2D::GetLinearVelocity()
 	{
-		if (entity.HasComponent<Rigidbody2DComponent>()) {
-			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		if (entity->HasComponent<Rigidbody2DComponent>()) {
+			auto& rb2d = entity->GetComponent<Rigidbody2DComponent>();
 
 			b2Body* body = (b2Body*)rb2d.RuntimeBody;
 			return Vec2(body->GetLinearVelocity().x, body->GetLinearVelocity().y);
@@ -24,37 +26,42 @@ namespace Rose {
 		return Vec2();
 	}
 
-	void LuaEntity::SetAnglearVelocity(float vel)
+	void LuaRigidBody2D::SetAnglearVelocity(float vel)
 	{
-		if (entity.HasComponent<Rigidbody2DComponent>()) {
-			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		if (entity->HasComponent<Rigidbody2DComponent>()) {
+			auto& rb2d = entity->GetComponent<Rigidbody2DComponent>();
 
 			b2Body* body = (b2Body*)rb2d.RuntimeBody;
 			body->SetAngularVelocity(vel);
 		}
 	}
-
-	float LuaEntity::GetAnglearVelocity()
+	float LuaRigidBody2D::GetAnglearVelocity()
 	{
-		if (entity.HasComponent<Rigidbody2DComponent>()) {
-			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		if (entity->HasComponent<Rigidbody2DComponent>()) {
+			auto& rb2d = entity->GetComponent<Rigidbody2DComponent>();
 
 			b2Body* body = (b2Body*)rb2d.RuntimeBody;
 			return body->GetAngularVelocity();
 		}
 	}
 
-	void LuaEntity::SetGravityScale(float scale)
+	void LuaRigidBody2D::SetGravityScale(float scale)
 	{
-		if (entity.HasComponent<Rigidbody2DComponent>()) {
-			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		if (entity->HasComponent<Rigidbody2DComponent>()) {
+			auto& rb2d = entity->GetComponent<Rigidbody2DComponent>();
 
 			b2Body* body = (b2Body*)rb2d.RuntimeBody;
 			body->SetGravityScale(scale);
 		}
 	}
-	float LuaEntity::GetGravityScale()
+	float LuaRigidBody2D::GetGravityScale()
 	{
+		if (entity->HasComponent<Rigidbody2DComponent>()) {
+			auto& rb2d = entity->GetComponent<Rigidbody2DComponent>();
+
+			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			return body->GetGravityScale();
+		}
 		return 0.0f;
 	}
 	void LuaEntity::SyncToLua() {

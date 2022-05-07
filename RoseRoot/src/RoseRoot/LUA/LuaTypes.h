@@ -28,6 +28,20 @@ namespace Rose {
 		~Color() {}
 	};
 
+	struct LuaRigidBody2D {
+		Entity* entity;
+
+		LuaRigidBody2D(Entity* ent) :entity(ent) { }
+
+		void SetLinearVelocity(Vec2 vel);
+		Vec2 GetLinearVelocity();
+		void SetAnglearVelocity(float vel);
+		float GetAnglearVelocity();
+
+		void SetGravityScale(float scale);
+		float GetGravityScale();
+	};
+
 	struct LuaEntity {
 		Entity entity;
 
@@ -37,15 +51,6 @@ namespace Rose {
 		Vec3 size;
 
 		LuaEntity(Entity ent) { entity = ent; SyncToRose(); }
-
-		void SetLinearVelocity(Vec2 vel);
-		Vec2 GetLinearVelocity();
-
-		void SetAnglearVelocity(float vel);
-		float GetAnglearVelocity();
-
-		void SetGravityScale(float scale);
-		float GetGravityScale();
 
 		void SyncToRose() {
 			{Name = entity.GetComponent<TagComponent>().Tag; }
@@ -63,7 +68,17 @@ namespace Rose {
 
 		}
 
+		LuaRigidBody2D GetRigidBody2D() {
+			if (entity.HasComponent<Rigidbody2DComponent>()) {
+				return LuaRigidBody2D(&entity);
+			}
+			else {
+				RR_ERROR("This entity does not hav a rigid body");
+			}
+		}
+
 		void SyncToLua();
 	};
+
 
 }
