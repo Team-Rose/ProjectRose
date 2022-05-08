@@ -2,7 +2,7 @@
 #include "Renderer.h"
 #include "Renderer2D.h"
 #include "UniformBuffer.h"
-
+#include "RoseRoot/Math/Math.h"
 namespace Rose
  {
 	struct CubeVertex
@@ -26,9 +26,19 @@ namespace Rose
 		struct CameraData
 		{
 			glm::mat4 ViewProjection;
+			glm::vec3 ViewPos;
 		};
 		CameraData CameraBuffer;
 		Ref<UniformBuffer> CameraUniformBuffer;
+
+		struct ObjectAndSceneData {
+			glm::mat4 Transform;
+			//TODO find a better way of doing this wasted memory allocation
+			//glm::vec3 PointLightsInRange[10];
+			int EntityID;
+		};
+		ObjectAndSceneData ObjectAndSceneDataBuffer;
+		Ref<UniformBuffer> ObjectAndSceneDataUniformBuffer;
 	};
 
 	static RendererData s_Data;
@@ -108,6 +118,7 @@ namespace Rose
 		s_Data.StandardShader = Shader::Create("Resources/DefaultShaders/Standard.glsl");
 
 		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
+		s_Data.ObjectAndSceneDataUniformBuffer = UniformBuffer::Create(sizeof(RendererData::ObjectAndSceneData), 1);
 	}
 
 	void Renderer::Shutdown()
@@ -124,6 +135,11 @@ namespace Rose
 	{
 		RR_PROFILE_FUNCTION();
 		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
+
+		glm::vec3 translation, rotation, scale;
+		Math::DecomposeTransform(transform, translation, rotation, scale);
+		s_Data.CameraBuffer.ViewPos = translation;
+
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 
 		Renderer2D::BeginScene(camera, transform);
@@ -134,6 +150,7 @@ namespace Rose
 	{
 		RR_PROFILE_FUNCTION();
 		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
+		s_Data.CameraBuffer.ViewPos = camera.GetPosition();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 
 		Renderer2D::BeginScene(camera);
@@ -159,7 +176,9 @@ namespace Rose
 	{
 		shader->Bind();
 		s_Data.WhiteTexture->Bind(0);
-		shader->SetMat4("u_Transform", transform);
+		s_Data.ObjectAndSceneDataBuffer.Transform = transform;
+		s_Data.ObjectAndSceneDataBuffer.EntityID = entityID;
+		s_Data.ObjectAndSceneDataUniformBuffer->SetData(&s_Data.ObjectAndSceneDataBuffer, sizeof(RendererData::ObjectAndSceneData));
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);

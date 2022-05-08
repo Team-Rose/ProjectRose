@@ -6,18 +6,18 @@
 
 #include "MainLayer.h"
 
-
+namespace Rose
  {
-	class RoseStem : public Application
+	class SandboxApp : public Application
 	{
 	public:
-		RoseStem(ApplicationCommandLineArgs args)
+		SandboxApp(ApplicationCommandLineArgs args)
 			: Application("Sandbox", args)
 		{
 			PushLayer(new Sandbox::MainLayer());
 		}
 
-		~RoseStem()
+		~SandboxApp()
 		{
 
 		}
@@ -25,6 +25,6 @@
 
 	Application* CreateApplication(ApplicationCommandLineArgs args)
 	{
-		return new RoseStem(args);
+		return new SandboxApp(args);
 	}
 }
