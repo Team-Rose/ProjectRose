@@ -11,7 +11,6 @@
 
 namespace Rose
  {
-
 	class Renderer2D
 	{
 	public:

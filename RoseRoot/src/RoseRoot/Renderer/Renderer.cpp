@@ -5,6 +5,45 @@
 #include "RoseRoot/Math/Math.h"
 namespace Rose
  {
+	struct DirLight {
+		glm::vec3 direction;
+		float pad;
+
+		glm::vec3 ambient;
+		float pad2;
+		glm::vec3 diffuse;
+		float pad3;
+		glm::vec3 specular;
+		float pad4;
+	};
+
+	struct PointLight {
+		glm::vec3 position;
+
+		float constant;
+		float linear;
+		float quadratic;
+
+		glm::vec3 ambient;
+		glm::vec3 diffuse;
+		glm::vec3 specular;
+	};
+
+	struct SpotLight {
+		glm::vec3 position;
+		glm::vec3 direction;
+		float cutOff;
+		float outerCutOff;
+
+		float constant;
+		float linear;
+		float quadratic;
+
+		glm::vec3 ambient;
+		glm::vec3 diffuse;
+		glm::vec3 specular;
+	};
+
 	struct CubeVertex
 	{
 		glm::vec3 Position;
@@ -27,14 +66,16 @@ namespace Rose
 		{
 			glm::mat4 ViewProjection;
 			glm::vec3 ViewPos;
+			float pad;
 		};
 		CameraData CameraBuffer;
 		Ref<UniformBuffer> CameraUniformBuffer;
 
 		struct ObjectAndSceneData {
 			glm::mat4 Transform;
-			//TODO find a better way of doing this wasted memory allocation
-			//glm::vec3 PointLightsInRange[10];
+			glm::vec4 Color;
+			
+			DirLight DirLight;
 			int EntityID;
 		};
 		ObjectAndSceneData ObjectAndSceneDataBuffer;
@@ -54,47 +95,47 @@ namespace Rose
 
 		float cubeVertices[] = {
 			//Position				  //Normal				 //Texcoord
-			-0.5f, -0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	 0.0f, 0.0f,
-			 0.5f, -0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	 0.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	 0.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	 0.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	 0.0f, 0.0f,
-			-0.5f, -0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	 0.0f, 0.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
 
-			-0.5f, -0.5f,  0.5f,	  0.0f,  0.0f,  1.0f,	 0.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,	  0.0f,  0.0f,  1.0f,	 0.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,	  0.0f,  0.0f,  1.0f,	 0.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,	  0.0f,  0.0f,  1.0f,	 0.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,	  0.0f,  0.0f,  1.0f,	 0.0f, 0.0f,
-			-0.5f, -0.5f,  0.5f,	  0.0f,  0.0f,  1.0f,	 0.0f, 0.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+			
+			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+			-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+			-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-			-0.5f,  0.5f,  0.5f,	 -1.0f,  0.0f,  0.0f,	 0.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,	 -1.0f,  0.0f,  0.0f,	 0.0f, 0.0f,
-			-0.5f, -0.5f, -0.5f,	 -1.0f,  0.0f,  0.0f,	 0.0f, 0.0f,
-			-0.5f, -0.5f, -0.5f,	 -1.0f,  0.0f,  0.0f,	 0.0f, 0.0f,
-			-0.5f, -0.5f,  0.5f,	 -1.0f,  0.0f,  0.0f,	 0.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,	 -1.0f,  0.0f,  0.0f,	 0.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-			 0.5f,  0.5f,  0.5f,	  1.0f,  0.0f,  0.0f,	 0.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,	  1.0f,  0.0f,  0.0f,	 0.0f, 0.0f,
-			 0.5f, -0.5f, -0.5f,	  1.0f,  0.0f,  0.0f,	 0.0f, 0.0f,
-			 0.5f, -0.5f, -0.5f,	  1.0f,  0.0f,  0.0f,	 0.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,	  1.0f,  0.0f,  0.0f,	 0.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,	  1.0f,  0.0f,  0.0f,	 0.0f, 0.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
 
-			-0.5f, -0.5f, -0.5f,	  0.0f, -1.0f,  0.0f,	 0.0f, 0.0f,
-			 0.5f, -0.5f, -0.5f,	  0.0f, -1.0f,  0.0f,	 0.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,	  0.0f, -1.0f,  0.0f,	 0.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,	  0.0f, -1.0f,  0.0f,	 0.0f, 0.0f,
-			-0.5f, -0.5f,  0.5f,	  0.0f, -1.0f,  0.0f,	 0.0f, 0.0f,
-			-0.5f, -0.5f, -0.5f,	  0.0f, -1.0f,  0.0f,	 0.0f, 0.0f,
-
-			-0.5f,  0.5f, -0.5f,	  0.0f,  1.0f,  0.0f,	 0.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,	  0.0f,  1.0f,  0.0f,	 0.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,	  0.0f,  1.0f,  0.0f,	 0.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,	  0.0f,  1.0f,  0.0f,	 0.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,	  0.0f,  1.0f,  0.0f,	 0.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,	  0.0f,  1.0f,  0.0f,	 0.0f, 0.0f
+			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 		};
 
 		Ref<VertexBuffer> cubeVertexBuffer;
@@ -159,26 +200,59 @@ namespace Rose
 
 	void Renderer::EndScene()
 	{
+		ClearLightData();
 		Renderer2D::EndScene();
 	}
 
-	void Renderer::DrawCube(const glm::mat4& transform)
+	void Renderer::ClearLightData()
 	{
-		DrawCube(s_Data.StandardShader, transform);
+		s_Data.ObjectAndSceneDataBuffer.DirLight.direction = {0.0f,0.0f,0.0f};
+		s_Data.ObjectAndSceneDataBuffer.DirLight.ambient = { 0.0f,0.0f,0.0f};
+		s_Data.ObjectAndSceneDataBuffer.DirLight.diffuse = { 0.0f,0.0f,0.0f };
+		s_Data.ObjectAndSceneDataBuffer.DirLight.specular = { 0.0f,0.0f,0.0f };
+	}
+
+	void Renderer::DrawDirLight(const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular)
+	{
+		s_Data.ObjectAndSceneDataBuffer.DirLight.direction = direction;
+		s_Data.ObjectAndSceneDataBuffer.DirLight.ambient = ambient;
+		s_Data.ObjectAndSceneDataBuffer.DirLight.diffuse = diffuse;
+		s_Data.ObjectAndSceneDataBuffer.DirLight.specular = specular;
+	}
+
+	void Renderer::DrawCube(const glm::mat4& transform, const glm::vec4& color)
+	{
+		Submit(s_Data.StandardShader, s_Data.CubeVertexArray, s_Data.WhiteTexture,transform, color);
+	}
+
+	void Renderer::DrawCube(const Ref<Texture2D>& texure, const glm::mat4& transform, const glm::vec4& color)
+	{
+		Submit(s_Data.StandardShader, s_Data.CubeVertexArray, texure, transform, color);
 	}
 
 	void Renderer::DrawCube(const Ref<Shader>& shader, const glm::mat4& transform)
 	{
-		Submit(shader, s_Data.CubeVertexArray, transform);
+		Submit(shader, s_Data.CubeVertexArray, s_Data.WhiteTexture,transform);
 	}
 
-	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform, const glm::vec4& color, int entityID)
+	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const Ref<Texture2D>& texure,const glm::mat4& transform ,const glm::vec4& color, int entityID)
 	{
 		shader->Bind();
-		s_Data.WhiteTexture->Bind(0);
+		texure->Bind(0);
+		s_Data.WhiteTexture->Bind(1);
+
 		s_Data.ObjectAndSceneDataBuffer.Transform = transform;
 		s_Data.ObjectAndSceneDataBuffer.EntityID = entityID;
+		s_Data.ObjectAndSceneDataBuffer.Color = color;
 		s_Data.ObjectAndSceneDataUniformBuffer->SetData(&s_Data.ObjectAndSceneDataBuffer, sizeof(RendererData::ObjectAndSceneData));
+
+		struct ShaderProps {
+			float shininess = 32.0f;
+		};
+		ShaderProps ShaderPropsBuffer;
+		Ref<UniformBuffer> ShaderPropsUniformBuffer;
+		ShaderPropsUniformBuffer = UniformBuffer::Create(sizeof(ShaderProps), 2);
+		ShaderPropsUniformBuffer->SetData(&ShaderPropsBuffer, sizeof(ShaderProps));
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);

@@ -16,6 +16,9 @@ namespace Sandbox {
 		//Rose::LuaScript m_Lua = Rose::LuaScript("assets/scripts/test.lua");
 		//Rose::LuaScript m_Lua2 = Rose::LuaScript("assets/scripts/test2.lua");
 
+
+		Rose::Ref<Rose::Texture2D> cursed;
+		Rose::Ref<Rose::Texture2D> frog;
 		Rose::EditorCamera m_EditorCamera;
 	};
 }

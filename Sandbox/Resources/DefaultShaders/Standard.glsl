@@ -1,6 +1,14 @@
 #type vertex
 #version 450 core
 
+struct DirLight {
+	vec3 direction;
+
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+};
+
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_TexCoord;
@@ -14,6 +22,9 @@ layout(std140, binding = 0) uniform Camera
 layout(std140, binding = 1) uniform ObjectAndSceneData
 {
 	mat4 u_Transform;
+	vec4 u_Color;
+	
+	DirLight u_DirLight;
 	int u_EntityID;
 };
 
@@ -48,8 +59,30 @@ void main()
 #type fragment
 #version 450 core
 
+struct DirLight {
+	vec3 direction;
+
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+};
+
 layout(location = 0) out vec4 color;
 layout(location = 1) out int color2;
+
+layout(std140, binding = 1) uniform ObjectAndSceneData
+{
+	mat4 u_Transform;
+	vec4 u_Color;
+	
+	DirLight u_DirLight;
+	int u_EntityID;
+};
+
+layout(std140, binding = 2) uniform ShaderProps
+{
+	float u_Shininess;
+};
 
 struct VertexOutput
 {
@@ -66,34 +99,35 @@ layout (location = 6) in flat int v_EntityID;
 
 layout (binding = 0) uniform sampler2D u_Textures[32];
 
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
+{
+    vec3 lightDir = normalize(-light.direction);
+    // diffuse shading
+    float diff = max(dot(normal, lightDir), 0.0);
+    // specular shading
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Shininess);
+    // combine results
+    vec3 ambient = light.ambient * vec3(texture(u_Textures[0], Input.TexCoord));
+    vec3 diffuse = light.diffuse * diff * vec3(texture(u_Textures[0], Input.TexCoord));
+    vec3 specular = light.specular * spec * vec3(texture(u_Textures[1], Input.TexCoord));
+    return (ambient + diffuse + specular);
+}
+
 void main()
 {
-	vec4 texColor = Input.Color;
-	texColor *= texture(u_Textures[0], Input.TexCoord * Input.TilingFactor);
-
-	if(texColor.a == 0.0)
-		discard;
-
-    vec3 lightColor = vec3(1.0, 1.0, 1.0);
-    vec3 lightPos = vec3(1.0, 2.0, 0.5);
-	
-	float ambientStrength = 0.2;
-    vec3 ambient = ambientStrength * lightColor;
-
 	vec3 norm = normalize(Input.Normal);
-	vec3 lightDir = normalize(lightPos - Input.FragPos);  
+    vec3 viewDir = normalize(Input.ViewPos - Input.FragPos);
 
-	float diff = max(dot(norm, lightDir), 0.0);
-	vec3 diffuse = diff * lightColor;
-
-	float specularStrength = 1.0;
-	vec3 viewDir = normalize(Input.ViewPos - Input.FragPos);
-	vec3 reflectDir = reflect(-lightDir, norm);  
-	float spec = pow(max(dot(viewDir, reflectDir), 1.0), 32);
-	vec3 specular = specularStrength * spec * lightColor;
+    vec3 result = CalcDirLight(u_DirLight, norm, viewDir);
 	
 
-	color = vec4((specular * ambient * diffuse),1.0) * texColor;
+	color = vec4(result,1.0);
 	
+
+
+
 	color2 = v_EntityID;
 }
+
+
