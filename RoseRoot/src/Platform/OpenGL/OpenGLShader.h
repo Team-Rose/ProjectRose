@@ -44,7 +44,15 @@ namespace Rose
 	private:
 		std::string ReadFile(const std::string& filepath);
 		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
-		void Compile(const std::unordered_map<GLenum, std::string>& shaderSources);
+
+		void CompileOrGetVulkanBinaries(const std::unordered_map<GLenum, std::string>& shaderSources);
+		void CompileOrGetOpenGLBinaries();
+		void CreateProgram();
+
+		void CompileOpenGLBinariesForAmd(GLenum& program, std::array<uint32_t, 2>& glShadersIDs);
+		void CreateProgramForAmd();
+
+		void Reflect(GLenum stage, const std::vector<uint32_t>& shaderData);
 	private:
 		uint32_t m_RendererID;
 		std::string m_FilePath;
@@ -55,5 +63,4 @@ namespace Rose
 
 		std::unordered_map<GLenum, std::string> m_OpenGLSourceCode;
 	};
-
 }
