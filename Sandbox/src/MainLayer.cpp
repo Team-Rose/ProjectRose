@@ -33,6 +33,7 @@ namespace Sandbox {
 		Rose::Renderer::DrawCube(cursed, transform, { 1.0, 1.0, 1.0, 1.0 });
 
 		glm::mat4 transform2 = glm::translate(glm::mat4(1.0f), { 0.f, 0.f, 0.f }) * glm::scale(glm::mat4(1.0f), { 1.0f, 1.0f,1.0f });
+		transform2 = glm::rotate(transform2, glm::radians(45.f), { 0.0f, 1.0f, 1.0f });
 		Rose::Renderer::DrawCube(frog, transform2, { 1.0, 1.0, 1.0, 1.0 });
 
 		Rose::Renderer2D::DrawQuad({ 0.0f, 2.0f }, { 1.0f, 1.0f }, frog);

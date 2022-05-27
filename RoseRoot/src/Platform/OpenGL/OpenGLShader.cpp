@@ -54,7 +54,7 @@ namespace Rose
 		static const char* GetCacheDirectory()
 		{
 			// TODO: make sure the assets directory is valid
-			return "assets/cache/shader/opengl";
+			return "Resources/cache/shader/opengl";
 		}
 
 		static void CreateCacheDirectoryIfNeeded()
@@ -105,6 +105,7 @@ namespace Rose
 		auto shaderSources = PreProcess(source);
 
 		{
+			RR_PROFILE_SCOPE("Shader Creation");
 			Timer timer;
 			CompileOrGetVulkanBinaries(shaderSources);
 			if (Utils::IsAmdGpu()) {
@@ -271,10 +272,10 @@ namespace Rose
 		shaderc::Compiler compiler;
 		shaderc::CompileOptions options;
 		options.SetTargetEnvironment(shaderc_target_env_opengl, shaderc_env_version_opengl_4_5);
-		const bool optimize = false;
-		if (optimize)
-			options.SetOptimizationLevel(shaderc_optimization_level_performance);
-
+		
+#ifdef RR_DIST
+		options.SetOptimizationLevel(shaderc_optimization_level_performance);
+#endif
 		std::filesystem::path cacheDirectory = Utils::GetCacheDirectory();
 
 		shaderData.clear();
@@ -520,6 +521,12 @@ namespace Rose
 		RR_PROFILE_FUNCTION();
 
 		glUseProgram(0);
+	}
+
+	void OpenGLShader::Recompile() const
+	{
+		//TODO Recompiling of shaders
+		RR_CORE_WARN("Recompiling shaders is not supported yet");
 	}
 
 	void OpenGLShader::SetInt(const std::string& name, int value)

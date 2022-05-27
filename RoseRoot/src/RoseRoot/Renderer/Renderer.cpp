@@ -10,6 +10,22 @@ namespace Rose
 		float pad;
 
 		glm::vec3 ambient;
+		float pad1;
+		glm::vec3 diffuse;
+		float pad2;
+		glm::vec3 specular;
+		float pad3;
+	};
+
+	struct PointLight {
+		glm::vec3 position;
+		float pad;
+
+		float constant;
+		float linear;
+		float quadratic;
+
+		glm::vec3 ambient;
 		float pad2;
 		glm::vec3 diffuse;
 		float pad3;
@@ -17,21 +33,11 @@ namespace Rose
 		float pad4;
 	};
 
-	struct PointLight {
-		glm::vec3 position;
-
-		float constant;
-		float linear;
-		float quadratic;
-
-		glm::vec3 ambient;
-		glm::vec3 diffuse;
-		glm::vec3 specular;
-	};
-
 	struct SpotLight {
 		glm::vec3 position;
+		float pad;
 		glm::vec3 direction;
+		float pad2;
 		float cutOff;
 		float outerCutOff;
 
@@ -40,20 +46,18 @@ namespace Rose
 		float quadratic;
 
 		glm::vec3 ambient;
+		float pad3;
 		glm::vec3 diffuse;
+		float pad4;
 		glm::vec3 specular;
+		float pad5;
 	};
 
-	struct CubeVertex
+	struct Vertex
 	{
 		glm::vec3 Position;
-		glm::vec4 Color;
+		glm::vec3 Normal;
 		glm::vec2 TexCoord;
-		//float TexIndex; This may be added back to optimize in the future
-		float TilingFactor;
-
-		// Editor-only
-		int EntityID;
 	};
 
 	struct RendererData
@@ -74,12 +78,20 @@ namespace Rose
 		struct ObjectAndSceneData {
 			glm::mat4 Transform;
 			glm::vec4 Color;
-			
-			DirLight DirLight;
+
 			int EntityID;
 		};
+
 		ObjectAndSceneData ObjectAndSceneDataBuffer;
 		Ref<UniformBuffer> ObjectAndSceneDataUniformBuffer;
+
+		struct LightData {
+			DirLight DirLight;
+			PointLight PointLight;
+			SpotLight SpotLight;
+		};
+		LightData LightDataBuffer;
+		Ref<UniformBuffer> LightDataUniformBuffer;
 	};
 
 	static RendererData s_Data;
@@ -91,55 +103,56 @@ namespace Rose
 		RenderCommand::Init();
 		Renderer2D::Init();
 
-		s_Data.CubeVertexArray = VertexArray::Create();
-
-		float cubeVertices[] = {
+		Vertex cubeVertices[] = {
 			//Position				  //Normal				 //Texcoord
-			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
-			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-
-			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-			
-			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-			-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-			-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-
-			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-
-			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-
-			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-			 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
+			{{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {0.0f, 0.0f}},
+			{{ 0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {1.0f, 0.0f}},
+			{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {1.0f, 1.0f}},
+			{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {1.0f, 1.0f}},
+			{{-0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {0.0f, 1.0f}},
+			{{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {0.0f, 0.0f}},
+																   		
+			{{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  {0.0f, 0.0f}},
+			{{ 0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  {1.0f, 0.0f}},
+			{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  {1.0f, 1.0f}},
+			{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  {1.0f, 1.0f}},
+			{{-0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  {0.0f, 1.0f}},
+			{{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  {0.0f, 0.0f}},
+																   		
+			{{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f},  {1.0f, 0.0f}},
+			{{-0.5f,  0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f},  {1.0f, 1.0f}},
+			{{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f},  {0.0f, 1.0f}},
+			{{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f},  {0.0f, 1.0f}},
+			{{-0.5f, -0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f},  {0.0f, 0.0f}},
+			{{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f},  {1.0f, 0.0f}},
+																   		
+			{{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f},  {1.0f, 0.0f}},
+			{{ 0.5f,  0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f},  {1.0f, 1.0f}},
+			{{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f},  {0.0f, 1.0f}},
+			{{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f},  {0.0f, 1.0f}},
+			{{ 0.5f, -0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f},  {0.0f, 0.0f}},
+			{{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f},  {1.0f, 0.0f}},
+																   		
+			{{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f},  {0.0f, 1.0f}},
+			{{ 0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f},  {1.0f, 1.0f}},
+			{{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f},  {1.0f, 0.0f}},
+			{{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f},  {1.0f, 0.0f}},
+			{{-0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f},  {0.0f, 0.0f}},
+			{{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f},  {0.0f, 1.0f}},
+																   		
+			{{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f},  {0.0f, 1.0f}},
+			{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f},  {1.0f, 1.0f}},
+			{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f},  {1.0f, 0.0f}},
+			{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f},  {1.0f, 0.0f}},
+			{{-0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f},  {0.0f, 0.0f}},
+			{{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f},  {0.0f, 1.0f}},
 		};
 
-		Ref<VertexBuffer> cubeVertexBuffer;
-		cubeVertexBuffer = VertexBuffer::Create(cubeVertices, sizeof(cubeVertices));
+		uint32_t cubeIndices[36] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35};
+
+		s_Data.CubeVertexArray = VertexArray::Create();
+		Ref<VertexBuffer> cubeVertexBuffer = VertexBuffer::Create(sizeof(cubeVertices));
+		cubeVertexBuffer->SetData(cubeVertices, sizeof(cubeVertices));
 		cubeVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "a_Position" },
 			{ ShaderDataType::Float3, "a_Normal" },
@@ -147,7 +160,6 @@ namespace Rose
 			});
 		s_Data.CubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
 
-		uint32_t cubeIndices[36] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35};
 		Ref<IndexBuffer> cubeIndexBuffer;
 		cubeIndexBuffer = IndexBuffer::Create(cubeIndices, sizeof(cubeIndices) / sizeof(uint32_t));
 		s_Data.CubeVertexArray->SetIndexBuffer(cubeIndexBuffer);
@@ -160,6 +172,7 @@ namespace Rose
 
 		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
 		s_Data.ObjectAndSceneDataUniformBuffer = UniformBuffer::Create(sizeof(RendererData::ObjectAndSceneData), 1);
+		s_Data.LightDataUniformBuffer = UniformBuffer::Create(sizeof(RendererData::LightData), 2);
 	}
 
 	void Renderer::Shutdown()
@@ -206,18 +219,44 @@ namespace Rose
 
 	void Renderer::ClearLightData()
 	{
-		s_Data.ObjectAndSceneDataBuffer.DirLight.direction = {0.0f,0.0f,0.0f};
-		s_Data.ObjectAndSceneDataBuffer.DirLight.ambient = { 0.0f,0.0f,0.0f};
-		s_Data.ObjectAndSceneDataBuffer.DirLight.diffuse = { 0.0f,0.0f,0.0f };
-		s_Data.ObjectAndSceneDataBuffer.DirLight.specular = { 0.0f,0.0f,0.0f };
+		s_Data.LightDataBuffer.DirLight.direction = {0.0f,0.0f,0.0f};
+		s_Data.LightDataBuffer.DirLight.ambient = { 0.0f,0.0f,0.0f};
+		s_Data.LightDataBuffer.DirLight.diffuse = { 0.0f,0.0f,0.0f };
+		s_Data.LightDataBuffer.DirLight.specular = { 0.0f,0.0f,0.0f };
+
+		s_Data.LightDataBuffer.PointLight.position = { 2.0f,2.0f,0.0f };
+
+		s_Data.LightDataBuffer.PointLight.constant = 0.0f;
+		s_Data.LightDataBuffer.PointLight.linear = 1.0f;
+		s_Data.LightDataBuffer.PointLight.quadratic = 1.0f;
+
+		s_Data.LightDataBuffer.PointLight.ambient = { 0.1f,0.1f,0.1f };
+		s_Data.LightDataBuffer.PointLight.diffuse = { 1.0f,1.0f,1.0f };
+		s_Data.LightDataBuffer.PointLight.specular = { 1.0f,1.0f,1.0f };
+	
+	
+
+		s_Data.LightDataBuffer.SpotLight.position = { 0.0f,0.0f,0.0f };
+		s_Data.LightDataBuffer.SpotLight.direction = { 0.0f,0.0f,0.0f };
+
+		s_Data.LightDataBuffer.SpotLight.cutOff = 0.0f;
+		s_Data.LightDataBuffer.SpotLight.outerCutOff = 0.0f;
+
+		s_Data.LightDataBuffer.SpotLight.constant = 1.0f;
+		s_Data.LightDataBuffer.SpotLight.linear = 0.0f;
+		s_Data.LightDataBuffer.SpotLight.quadratic = 0.0f;
+
+		s_Data.LightDataBuffer.SpotLight.ambient = { 0.0f,0.0f,0.0f };
+		s_Data.LightDataBuffer.SpotLight.diffuse = { 0.0f,0.0f,0.0f };
+		s_Data.LightDataBuffer.SpotLight.specular = { 0.0f,0.0f,0.0f };
 	}
 
 	void Renderer::DrawDirLight(const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular)
 	{
-		s_Data.ObjectAndSceneDataBuffer.DirLight.direction = direction;
-		s_Data.ObjectAndSceneDataBuffer.DirLight.ambient = ambient;
-		s_Data.ObjectAndSceneDataBuffer.DirLight.diffuse = diffuse;
-		s_Data.ObjectAndSceneDataBuffer.DirLight.specular = specular;
+		s_Data.LightDataBuffer.DirLight.direction = direction;
+		s_Data.LightDataBuffer.DirLight.ambient = ambient;
+		s_Data.LightDataBuffer.DirLight.diffuse = diffuse;
+		s_Data.LightDataBuffer.DirLight.specular = specular;
 	}
 
 	void Renderer::DrawCube(const glm::mat4& transform, const glm::vec4& color)
@@ -245,13 +284,14 @@ namespace Rose
 		s_Data.ObjectAndSceneDataBuffer.EntityID = entityID;
 		s_Data.ObjectAndSceneDataBuffer.Color = color;
 		s_Data.ObjectAndSceneDataUniformBuffer->SetData(&s_Data.ObjectAndSceneDataBuffer, sizeof(RendererData::ObjectAndSceneData));
+		s_Data.LightDataUniformBuffer->SetData(&s_Data.LightDataBuffer, sizeof(RendererData::LightData));
 
 		struct ShaderProps {
 			float shininess = 32.0f;
 		};
 		ShaderProps ShaderPropsBuffer;
 		Ref<UniformBuffer> ShaderPropsUniformBuffer;
-		ShaderPropsUniformBuffer = UniformBuffer::Create(sizeof(ShaderProps), 2);
+		ShaderPropsUniformBuffer = UniformBuffer::Create(sizeof(ShaderProps), 3);
 		ShaderPropsUniformBuffer->SetData(&ShaderPropsBuffer, sizeof(ShaderProps));
 
 		vertexArray->Bind();
