@@ -82,6 +82,19 @@ struct SpotLight {
 layout(location = 0) out vec4 color;
 layout(location = 1) out int color2;
 
+layout(std140, binding = 0) uniform Camera
+{
+	mat4 u_ViewProjection;
+	vec3 u_ViewPosition;
+};
+
+layout(std140, binding = 1) uniform ObjectAndSceneData
+{
+	mat4 u_Transform;
+	vec4 u_Color;
+	int u_EntityID;
+};
+
 layout(std140, binding = 2) uniform LightData
 {
 	DirLight u_DirLight;
@@ -93,7 +106,6 @@ layout(std140, binding = 3) uniform ShaderProps
 {
 	float u_Shininess;
 };
-
 
 layout (location = 0) in vec4 v_Color;
 layout (location = 1) in vec2 v_TexCoord;
@@ -176,12 +188,11 @@ void main()
     vec3 result = CalcDirLight(u_DirLight, norm, viewDir);
     // phase 2: point lights
     //for(int i = 0; i < 1; i++)
-    //result += CalcPointLight(u_PointLight, norm, v_FragPos, viewDir);    
+    result += CalcPointLight(u_PointLight, norm, v_FragPos, viewDir);    
     // phase 3: spot light
-    //result += CalcSpotLight(u_SpotLight, norm, v_FragPos, viewDir);    
+    CalcSpotLight(u_SpotLight, norm, v_FragPos, viewDir);    
 
 	color = vec4(result,1.0);
-    //color = vec4(u_PointLights[0].position, 1.0);
 	color2 = v_EntityID;
 }
 

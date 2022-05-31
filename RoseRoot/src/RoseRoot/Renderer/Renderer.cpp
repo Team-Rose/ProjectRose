@@ -19,11 +19,12 @@ namespace Rose
 
 	struct PointLight {
 		glm::vec3 position;
-		float pad;
 
 		float constant;
 		float linear;
 		float quadratic;
+		float pad0;
+		float pad1;
 
 		glm::vec3 ambient;
 		float pad2;
@@ -38,11 +39,13 @@ namespace Rose
 		float pad;
 		glm::vec3 direction;
 		float pad2;
+
 		float cutOff;
 		float outerCutOff;
 
 		float constant;
 		float linear;
+
 		float quadratic;
 
 		glm::vec3 ambient;
@@ -224,15 +227,16 @@ namespace Rose
 		s_Data.LightDataBuffer.DirLight.diffuse = { 0.0f,0.0f,0.0f };
 		s_Data.LightDataBuffer.DirLight.specular = { 0.0f,0.0f,0.0f };
 
-		s_Data.LightDataBuffer.PointLight.position = { 2.0f,2.0f,0.0f };
+		s_Data.LightDataBuffer.PointLight.position = { 1.0f,2.0f,0.0f };
 
-		s_Data.LightDataBuffer.PointLight.constant = 0.0f;
-		s_Data.LightDataBuffer.PointLight.linear = 1.0f;
-		s_Data.LightDataBuffer.PointLight.quadratic = 1.0f;
 
-		s_Data.LightDataBuffer.PointLight.ambient = { 0.1f,0.1f,0.1f };
-		s_Data.LightDataBuffer.PointLight.diffuse = { 1.0f,1.0f,1.0f };
-		s_Data.LightDataBuffer.PointLight.specular = { 1.0f,1.0f,1.0f };
+		s_Data.LightDataBuffer.PointLight.constant = 1.0f;
+		s_Data.LightDataBuffer.PointLight.linear = 0.09f;
+		s_Data.LightDataBuffer.PointLight.quadratic = 0.032f;
+
+		s_Data.LightDataBuffer.PointLight.ambient = { 0.05f, 0.05f, 0.05f };
+		s_Data.LightDataBuffer.PointLight.diffuse = { 0.2f, 0.2f, 0.6f };
+		s_Data.LightDataBuffer.PointLight.specular = { 0.2f, 0.2f, 0.6f };
 	
 	
 

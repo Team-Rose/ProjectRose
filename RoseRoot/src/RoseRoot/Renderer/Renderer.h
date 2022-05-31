@@ -22,7 +22,7 @@ namespace Rose
 		static void EndScene();
 
 		static void ClearLightData();
-		static void DrawDirLight(const glm::vec3& direction, const glm::vec3& ambient = glm::vec3(0.05f, 0.05f, 0.05f), const glm::vec3& diffuse = glm::vec3(0.4f, 0.9f, 0.4f), const glm::vec3& specular = glm::vec3(0.5f, 0.5f, 0.5f));
+		static void DrawDirLight(const glm::vec3& direction, const glm::vec3& ambient = glm::vec3(0.05f, 0.05f, 0.05f), const glm::vec3& diffuse = glm::vec3(0.1f, 0.1f, 0.1f), const glm::vec3& specular = glm::vec3(0.2f, 0.2f, 0.2f));
 
 		static void DrawCube(const glm::mat4& transform = glm::mat4(1.0f), const glm::vec4& color = glm::vec4(1.0f));
 
