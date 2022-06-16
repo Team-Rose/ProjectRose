@@ -8,6 +8,7 @@ namespace Rose {
 	Rose::SceneManger::SceneManger()
 	{
 		m_IconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
+		m_IconSimulate = Texture2D::Create("Resources/Icons/SimulateButton.png");
 		m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
 
 		FramebufferSpecification fbSpec;
@@ -35,7 +36,8 @@ namespace Rose {
 		}
 
 		// Update
-		m_EditorCamera.OnUpdate(ts);
+		if(m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
+			m_EditorCamera.OnUpdate(ts);
 
 		// Render
 		Renderer2D::ResetStats();
@@ -46,10 +48,11 @@ namespace Rose {
 		// Clear our entity ID attachment to -1
 		m_Framebuffer->ClearAttachment(1, -1);
 
-		if (m_SceneState == SceneState::Edit)
-			m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
-		else if (m_SceneState == SceneState::Play)
-			m_ActiveScene->OnUpdateRuntime(ts);
+		switch (m_SceneState) {
+		case SceneState::Edit: m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera); break;
+		case SceneState::Simulate: m_ActiveScene->OnUpdateSimulation(ts, m_EditorCamera); break;
+		case SceneState::Play: m_ActiveScene->OnUpdateRuntime(ts); break;
+		}
 	}
 
 	void SceneManger::OnOverlayRender()
@@ -222,6 +225,9 @@ namespace Rose {
 
 	void SceneManger::OnScenePlay()
 	{
+		if (m_SceneState == SceneState::Simulate)
+			OnSceneStop();
+
 		m_GizmoType = -1;
 		m_ActiveScene = Scene::Copy(m_EditorScene);
 		m_ActiveScene->OnRuntimeStart(m_AssetPath.string());
@@ -229,15 +235,33 @@ namespace Rose {
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 		m_SceneState = SceneState::Play;
 	}
+	void SceneManger::OnSceneSimululate()
+	{
+		if (m_SceneState == SceneState::Play)
+			OnSceneStop();
+
+		m_GizmoType = -1;
+		m_ActiveScene = Scene::Copy(m_EditorScene);
+		m_ActiveScene->OnRuntimeStart(m_AssetPath.string());
+
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		m_SceneState = SceneState::Simulate;
+	}
 
 	void SceneManger::OnSceneStop()
 	{
-		m_ActiveScene->OnRuntimeStop();
+		RR_CORE_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate)
+		if(m_SceneState == SceneState::Play)
+			m_ActiveScene->OnRuntimeStop();
+		else
+			m_ActiveScene->OnSimulationStop();
+
 		m_ActiveScene = m_EditorScene;
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 		m_SceneState = SceneState::Edit;
 	}
+
 	void SceneManger::UI_Toolbar()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
@@ -249,14 +273,28 @@ namespace Rose {
 		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
 		float size = ImGui::GetWindowHeight() - 4.0f;
-		Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
-		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
-		if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
 		{
-			if (m_SceneState == SceneState::Edit)
-				OnScenePlay();
-			else if (m_SceneState == SceneState::Play)
-				OnSceneStop();
+			Ref<Texture2D> icon = (m_SceneState ==  SceneState::Edit || m_SceneState ==  SceneState::Simulate) ? m_IconPlay : m_IconStop;
+			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+			{
+				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
+					OnScenePlay();
+				else if (m_SceneState == SceneState::Play)
+					OnSceneStop();
+			}
+		}
+		ImGui::SameLine();
+		{
+			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) ? m_IconSimulate : m_IconStop;
+			//ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+			{
+				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play)
+					OnSceneSimululate();
+				else if (m_SceneState == SceneState::Simulate)
+					OnSceneStop();
+			}
 		}
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(3);

@@ -29,7 +29,11 @@ namespace Rose
 		void OnRuntimeStart(const std::string& assetPath);
 		void OnRuntimeStop();
 
+		void OnSimulationStart(const std::string& assetPath);
+		void OnSimulationStop();
+
 		void OnUpdateRuntime(Timestep ts, bool pause = false);
+		void OnUpdateSimulation(Timestep ts, EditorCamera& camera, bool pause = false);
 		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
@@ -51,6 +55,11 @@ namespace Rose
 	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
+
+		void OnPhysics2DStart();
+		void OnPhysics2DStop();
+
+		void RenderScene(EditorCamera& camera);
 	private:
 		struct SceneSettings
 		{
