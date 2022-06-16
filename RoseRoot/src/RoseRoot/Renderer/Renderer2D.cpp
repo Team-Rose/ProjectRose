@@ -232,6 +232,7 @@ namespace Rose
 
 	void Renderer2D::Flush()
 	{
+		RenderCommand::CullFaceDisabled();
 		if (s_Data.QuadIndexCount)
 		{
 			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);

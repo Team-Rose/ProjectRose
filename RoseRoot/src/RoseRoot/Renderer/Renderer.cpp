@@ -3,6 +3,7 @@
 #include "Renderer2D.h"
 #include "UniformBuffer.h"
 #include "RoseRoot/Math/Math.h"
+
 namespace Rose
  {
 	struct DirLight {
@@ -67,6 +68,8 @@ namespace Rose
 	{
 		Ref<VertexArray> CubeVertexArray;
 		Ref<Shader> StandardShader;
+		Ref<VertexArray> FrameBufferVertexArray;
+		Ref<Shader> FrameBufferShader;
 		Ref<Texture2D> WhiteTexture;
 
 		struct CameraData
@@ -82,6 +85,7 @@ namespace Rose
 			glm::mat4 Transform;
 			glm::vec4 Color;
 
+			float Tile;
 			int EntityID;
 		};
 
@@ -105,73 +109,108 @@ namespace Rose
 
 		RenderCommand::Init();
 		Renderer2D::Init();
+		{
+			Vertex cubeVertices[] = {
+				//Position				  //Normal				 //Texcoord
 
-		Vertex cubeVertices[] = {
-			//Position				  //Normal				 //Texcoord
-			{{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {0.0f, 0.0f}},
-			{{ 0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {1.0f, 0.0f}},
-			{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {1.0f, 1.0f}},
-			{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {1.0f, 1.0f}},
-			{{-0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {0.0f, 1.0f}},
-			{{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {0.0f, 0.0f}},
-																   		
-			{{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  {0.0f, 0.0f}},
-			{{ 0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  {1.0f, 0.0f}},
-			{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  {1.0f, 1.0f}},
-			{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  {1.0f, 1.0f}},
-			{{-0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  {0.0f, 1.0f}},
-			{{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  {0.0f, 0.0f}},
-																   		
-			{{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f},  {1.0f, 0.0f}},
-			{{-0.5f,  0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f},  {1.0f, 1.0f}},
-			{{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f},  {0.0f, 1.0f}},
-			{{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f},  {0.0f, 1.0f}},
-			{{-0.5f, -0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f},  {0.0f, 0.0f}},
-			{{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f},  {1.0f, 0.0f}},
-																   		
-			{{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f},  {1.0f, 0.0f}},
-			{{ 0.5f,  0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f},  {1.0f, 1.0f}},
-			{{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f},  {0.0f, 1.0f}},
-			{{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f},  {0.0f, 1.0f}},
-			{{ 0.5f, -0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f},  {0.0f, 0.0f}},
-			{{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f},  {1.0f, 0.0f}},
-																   		
-			{{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f},  {0.0f, 1.0f}},
-			{{ 0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f},  {1.0f, 1.0f}},
-			{{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f},  {1.0f, 0.0f}},
-			{{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f},  {1.0f, 0.0f}},
-			{{-0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f},  {0.0f, 0.0f}},
-			{{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f},  {0.0f, 1.0f}},
-																   		
-			{{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f},  {0.0f, 1.0f}},
-			{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f},  {1.0f, 1.0f}},
-			{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f},  {1.0f, 0.0f}},
-			{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f},  {1.0f, 0.0f}},
-			{{-0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f},  {0.0f, 0.0f}},
-			{{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f},  {0.0f, 1.0f}},
-		};
+				// Back face
+				{{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {0.0f, 0.0f}},
+				{{ 0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {1.0f, 0.0f}},
+				{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {1.0f, 1.0f}},
+				{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {1.0f, 1.0f}},
+				{{-0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {0.0f, 1.0f}},
+				{{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f},  {0.0f, 0.0f}},
 
-		uint32_t cubeIndices[36] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35};
+				// Front face
+				{{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  { 0.0f, 0.0f}},
+				{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  { 1.0f, 1.0f}},
+				{{ 0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  { 1.0f, 0.0f}},
+				{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  { 1.0f, 1.0f}},
+				{{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  { 0.0f, 0.0f}},
+				{{-0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f},  { 0.0f, 1.0f}},
 
-		s_Data.CubeVertexArray = VertexArray::Create();
-		Ref<VertexBuffer> cubeVertexBuffer = VertexBuffer::Create(sizeof(cubeVertices));
-		cubeVertexBuffer->SetData(cubeVertices, sizeof(cubeVertices));
-		cubeVertexBuffer->SetLayout({
-			{ ShaderDataType::Float3, "a_Position" },
-			{ ShaderDataType::Float3, "a_Normal" },
-			{ ShaderDataType::Float2, "a_TexCoord" }
-			});
-		s_Data.CubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
+				// Left face
+				{{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f},  {1.0f, 0.0f}},
+				{{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f},  {0.0f, 1.0f}},
+				{{-0.5f,  0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f},  {1.0f, 1.0f}},
+				{{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f},  {0.0f, 1.0f}},
+				{{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f},  {1.0f, 0.0f}},
+				{{-0.5f, -0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f},  {0.0f, 0.0f}},
 
-		Ref<IndexBuffer> cubeIndexBuffer;
-		cubeIndexBuffer = IndexBuffer::Create(cubeIndices, sizeof(cubeIndices) / sizeof(uint32_t));
-		s_Data.CubeVertexArray->SetIndexBuffer(cubeIndexBuffer);
+				// Right face
+				{{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f},  {1.0f, 0.0f}},
+				{{ 0.5f,  0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f},  {1.0f, 1.0f}},
+				{{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f},  {0.0f, 1.0f}},
+				{{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f},  {0.0f, 1.0f}},
+				{{ 0.5f, -0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f},  {0.0f, 0.0f}},
+				{{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f},  {1.0f, 0.0f}},
 
+				// Bottom face 
+				{{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f},  {0.0f, 1.0f}},
+				{{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f},  {1.0f, 0.0f}},
+				{{ 0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f},  {1.0f, 1.0f}},
+				{{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f},  {1.0f, 0.0f}},
+				{{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f},  {0.0f, 1.0f}},
+				{{-0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f},  {0.0f, 0.0f}},
+
+				// Top face
+				{{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f},  {0.0f, 1.0f}},
+				{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f},  {1.0f, 1.0f}},
+				{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f},  {1.0f, 0.0f}},
+				{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f},  {1.0f, 0.0f}},
+				{{-0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f},  {0.0f, 0.0f}},
+				{{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f},  {0.0f, 1.0f}},
+			};
+
+			uint32_t cubeIndices[36] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35 };
+
+			s_Data.CubeVertexArray = VertexArray::Create();
+			Ref<VertexBuffer> cubeVertexBuffer = VertexBuffer::Create(sizeof(cubeVertices));
+			cubeVertexBuffer->SetData(cubeVertices, sizeof(cubeVertices));
+			cubeVertexBuffer->SetLayout({
+				{ ShaderDataType::Float3, "a_Position" },
+				{ ShaderDataType::Float3, "a_Normal" },
+				{ ShaderDataType::Float2, "a_TexCoord" }
+				});
+			s_Data.CubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
+
+			Ref<IndexBuffer> cubeIndexBuffer;
+			cubeIndexBuffer = IndexBuffer::Create(cubeIndices, sizeof(cubeIndices) / sizeof(uint32_t));
+			s_Data.CubeVertexArray->SetIndexBuffer(cubeIndexBuffer);
+		}
+		{
+			float frameBufferVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+				// positions   // texCoords
+				-1.0f,  1.0f,0.0f,  0.0f, 1.0f,
+				-1.0f, -1.0f,0.0f,  0.0f, 0.0f,
+				 1.0f, -1.0f,0.0f,  1.0f, 0.0f,
+
+				-1.0f,  1.0f,0.0f,  0.0f, 1.0f,
+				 1.0f, -1.0f,0.0f,  1.0f, 0.0f,
+				 1.0f,  1.0f,0.0f,  1.0f, 1.0f
+			};
+
+			uint32_t frameBufferIndices[6] = { 0,1,2,3,4,5 };
+
+			s_Data.FrameBufferVertexArray = VertexArray::Create();
+			Ref<VertexBuffer> frameBufferVertexBuffer = VertexBuffer::Create(sizeof(frameBufferVertices));
+			frameBufferVertexBuffer->SetData(frameBufferVertices, sizeof(frameBufferVertices));
+			frameBufferVertexBuffer->SetLayout({
+				{ ShaderDataType::Float3, "a_Position" },
+				{ ShaderDataType::Float2, "a_TexCoord" }
+				});
+			s_Data.FrameBufferVertexArray->AddVertexBuffer(frameBufferVertexBuffer);
+
+			Ref<IndexBuffer> frameBufferIndexBuffer;
+			frameBufferIndexBuffer = IndexBuffer::Create(frameBufferIndices, sizeof(frameBufferIndices) / sizeof(uint32_t));
+			s_Data.FrameBufferVertexArray->SetIndexBuffer(frameBufferIndexBuffer);
+		}
 		s_Data.WhiteTexture = Texture2D::Create(1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
 		s_Data.StandardShader = Shader::Create("Resources/DefaultShaders/Standard.glsl");
+		s_Data.FrameBufferShader = Shader::Create("Resources/DefaultShaders/FrameBuffer.glsl");
 
 		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
 		s_Data.ObjectAndSceneDataUniformBuffer = UniformBuffer::Create(sizeof(RendererData::ObjectAndSceneData), 1);
@@ -199,6 +238,7 @@ namespace Rose
 
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
 
+		//RenderCommand::CullFaceDisabled();
 		Renderer2D::BeginScene(camera, transform);
 
 	}
@@ -227,7 +267,7 @@ namespace Rose
 		s_Data.LightDataBuffer.DirLight.diffuse = { 0.0f,0.0f,0.0f };
 		s_Data.LightDataBuffer.DirLight.specular = { 0.0f,0.0f,0.0f };
 
-		s_Data.LightDataBuffer.PointLight.position = { 1.0f,2.0f,0.0f };
+		s_Data.LightDataBuffer.PointLight.position = { 1.0f,4.0f,0.0f };
 
 
 		s_Data.LightDataBuffer.PointLight.constant = 1.0f;
@@ -265,24 +305,39 @@ namespace Rose
 
 	void Renderer::DrawCube(const glm::mat4& transform, const glm::vec4& color)
 	{
-		Submit(s_Data.StandardShader, s_Data.CubeVertexArray, s_Data.WhiteTexture,transform, color);
+		s_Data.WhiteTexture->Bind(0);
+		s_Data.WhiteTexture->Bind(1);
+		Submit(s_Data.StandardShader, s_Data.CubeVertexArray,transform, color);
 	}
 
 	void Renderer::DrawCube(const Ref<Texture2D>& texure, const glm::mat4& transform, const glm::vec4& color)
 	{
-		Submit(s_Data.StandardShader, s_Data.CubeVertexArray, texure, transform, color);
+		texure->Bind(0);
+		s_Data.WhiteTexture->Bind(1);
+		s_Data.ObjectAndSceneDataBuffer.Tile = 1.0f;
+		Submit(s_Data.StandardShader, s_Data.CubeVertexArray, transform, color);
+	}
+
+	void Renderer::DrawCube(const Ref<Texture2D>& texure, const Ref<Texture2D>& spec, const glm::mat4& transform, const float& tile, const glm::vec4& color)
+	{
+		texure->Bind(0);
+		spec->Bind(1);
+		s_Data.ObjectAndSceneDataBuffer.Tile = tile;
+		Submit(s_Data.StandardShader, s_Data.CubeVertexArray, transform, color);
 	}
 
 	void Renderer::DrawCube(const Ref<Shader>& shader, const glm::mat4& transform)
 	{
-		Submit(shader, s_Data.CubeVertexArray, s_Data.WhiteTexture,transform);
+		s_Data.WhiteTexture->Bind(0);
+		s_Data.WhiteTexture->Bind(1);
+		Submit(shader, s_Data.CubeVertexArray,transform);
 	}
 
-	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const Ref<Texture2D>& texure,const glm::mat4& transform ,const glm::vec4& color, int entityID)
+	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray,const glm::mat4& transform ,const glm::vec4& color, int entityID)
 	{
+		RenderCommand::CullFaceBack();
 		shader->Bind();
-		texure->Bind(0);
-		s_Data.WhiteTexture->Bind(1);
+
 
 		s_Data.ObjectAndSceneDataBuffer.Transform = transform;
 		s_Data.ObjectAndSceneDataBuffer.EntityID = entityID;
@@ -292,6 +347,7 @@ namespace Rose
 
 		struct ShaderProps {
 			float shininess = 32.0f;
+			float gamma = 1.8f;
 		};
 		ShaderProps ShaderPropsBuffer;
 		Ref<UniformBuffer> ShaderPropsUniformBuffer;

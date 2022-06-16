@@ -14,6 +14,7 @@ layout(std140, binding = 1) uniform ObjectAndSceneData
 {
 	mat4 u_Transform;
 	vec4 u_Color;
+    float u_Tile;
 	int u_EntityID;
 };
 
@@ -35,7 +36,7 @@ void main()
 
 	v_Color = vec4(1.0,1.0,1.0,1.0);
 	v_TexCoord = a_TexCoord;
-	v_TilingFactor = 1;
+	v_TilingFactor = u_Tile;
 	v_EntityID = u_EntityID;
 
 	gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
@@ -105,6 +106,7 @@ layout(std140, binding = 2) uniform LightData
 layout(std140, binding = 3) uniform ShaderProps
 {
 	float u_Shininess;
+	float u_Gamma;
 };
 
 layout (location = 0) in vec4 v_Color;
@@ -128,9 +130,9 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Shininess);
     // combine results
-    vec3 ambient = light.ambient * vec3(texture(u_Textures[0], v_TexCoord));
-    vec3 diffuse = light.diffuse * diff * vec3(texture(u_Textures[0], v_TexCoord));
-    vec3 specular = light.specular * spec * vec3(texture(u_Textures[1], v_TexCoord));
+    vec3 ambient = light.ambient * vec3(texture(u_Textures[0], v_TexCoord * v_TilingFactor));
+    vec3 diffuse = light.diffuse * diff * vec3(texture(u_Textures[0], v_TexCoord * v_TilingFactor));
+    vec3 specular = light.specular * spec * vec3(texture(u_Textures[1], v_TexCoord * v_TilingFactor));
     return (ambient + diffuse + specular);
 }
 
@@ -146,9 +148,9 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float distancee = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distancee + light.quadratic * (distancee * distancee));      
     // combine results
-    vec3 ambient = light.ambient * vec3(texture(u_Textures[0], v_TexCoord));
-    vec3 diffuse = light.diffuse * diff * vec3(texture(u_Textures[0], v_TexCoord));
-    vec3 specular = light.specular * spec * vec3(texture(u_Textures[1], v_TexCoord));
+    vec3 ambient = light.ambient * vec3(texture(u_Textures[0], v_TexCoord * v_TilingFactor));
+    vec3 diffuse = light.diffuse * diff * vec3(texture(u_Textures[0], v_TexCoord * v_TilingFactor));
+    vec3 specular = light.specular * spec * vec3(texture(u_Textures[1], v_TexCoord * v_TilingFactor));
     ambient *= attenuation;
     diffuse *= attenuation;
     specular *= attenuation;
@@ -162,7 +164,9 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Shininess);
+
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(viewDir, halfwayDir), 0.0), u_Shininess);
     // attenuation
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
@@ -171,9 +175,9 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float epsilon = light.cutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
     // combine results
-    vec3 ambient = light.ambient * vec3(texture(u_Textures[0], v_TexCoord));
-    vec3 diffuse = light.diffuse * diff * vec3(texture(u_Textures[0], v_TexCoord));
-    vec3 specular = light.specular * spec * vec3(texture(u_Textures[1], v_TexCoord));
+    vec3 ambient = light.ambient * vec3(texture(u_Textures[0], v_TexCoord * v_TilingFactor));
+    vec3 diffuse = light.diffuse * diff * vec3(texture(u_Textures[0], v_TexCoord * v_TilingFactor));
+    vec3 specular = light.specular * spec * vec3(texture(u_Textures[1], v_TexCoord * v_TilingFactor));
     ambient *= attenuation * intensity;
     diffuse *= attenuation * intensity;
     specular *= attenuation * intensity;
@@ -190,9 +194,9 @@ void main()
     //for(int i = 0; i < 1; i++)
     result += CalcPointLight(u_PointLight, norm, v_FragPos, viewDir);    
     // phase 3: spot light
-    CalcSpotLight(u_SpotLight, norm, v_FragPos, viewDir);    
+    result += CalcSpotLight(u_SpotLight, norm, v_FragPos, viewDir);    
 
-	color = vec4(result,1.0);
+	color = vec4(pow(result, vec3(1.0/u_Gamma)),1.0);
 	color2 = v_EntityID;
 }
 

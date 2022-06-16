@@ -43,6 +43,26 @@ namespace Rose
 			s_RendererAPI->SetLineWidth(width);
 		}
 
+		static void CullFaceDisabled()
+		{
+			s_RendererAPI->CullFaceDisabled();
+		}
+		static void CullFaceFront()
+		{
+			s_RendererAPI->CullFaceFront();
+		}
+		static void CullFaceBack()
+		{
+			s_RendererAPI->CullFaceBack();
+		}
+		static void DisableDepthTest()
+		{
+			s_RendererAPI->DisableDepthTest();
+		}
+		static void EnableDepthTest()
+		{
+			s_RendererAPI->EnableDepthTest();
+		}
 	private:
 		static Scope<RendererAPI> s_RendererAPI;
 	};

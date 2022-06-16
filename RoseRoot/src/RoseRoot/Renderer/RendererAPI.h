@@ -25,6 +25,12 @@ namespace Rose
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0) = 0;
 		virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount) = 0;
 
+		virtual void CullFaceDisabled() = 0;
+		virtual void CullFaceFront() = 0;
+		virtual void CullFaceBack() = 0;
+
+		virtual void DisableDepthTest() = 0;
+		virtual void EnableDepthTest() = 0;
 
 		virtual void SetLineWidth(float width) = 0;
 
