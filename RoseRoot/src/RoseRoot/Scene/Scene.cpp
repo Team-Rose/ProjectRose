@@ -3,7 +3,7 @@
 
 #include "Components.h"
 #include "ScriptableEntity.h"
-#include "RoseRoot/LUA/Lua.h"
+#include "RoseRoot/Scripting/LUA/Lua.h"
 #include "RoseRoot/Renderer/Renderer.h"
 #include "RoseRoot/Renderer/Renderer2D.h"
 
@@ -250,7 +250,7 @@ namespace Rose
 				}
 			}
 
-			Renderer2D::EndScene();
+			Renderer::EndScene();
 		}
 
 	}

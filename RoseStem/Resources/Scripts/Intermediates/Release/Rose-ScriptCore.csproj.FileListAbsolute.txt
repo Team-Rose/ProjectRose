@@ -1,0 +1,6 @@
+C:\dev\ProjectRose\RoseStem\Resources\Scripts\Intermediates\Release\Rose-ScriptCore.csproj.AssemblyReference.cache
+C:\dev\ProjectRose\RoseStem\Resources\Scripts\Intermediates\Release\Rose-ScriptCore.csproj.CoreCompileInputs.cache
+C:\dev\ProjectRose\RoseStem\Resources\Scripts\Intermediates\Release\Rose-ScriptCore.dll
+C:\dev\ProjectRose\RoseStem\Resources\Scripts\Intermediates\Release\Rose-ScriptCore.pdb
+C:\dev\ProjectRose\RoseStem\Resources\Scripts\Rose-ScriptCore.dll
+C:\dev\ProjectRose\RoseStem\Resources\Scripts\Rose-ScriptCore.pdb

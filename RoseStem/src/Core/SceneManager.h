@@ -18,6 +18,7 @@ namespace Rose {
 		
 		Ref<Scene> getActiveScene() { return m_ActiveScene; }
 		bool isEditing() { return m_SceneState == SceneState::Edit; }
+		bool isSimulating() { return m_SceneState == SceneState::Simulate; }
 
 		void NewScene();
 		void OpenScene();

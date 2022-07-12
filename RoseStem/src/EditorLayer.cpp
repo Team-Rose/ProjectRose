@@ -9,6 +9,7 @@
 #include "ImGuizmo.h"
 #include "RoseRoot/Math/Math.h"
 #include "Core/CommandHistory.h"
+#include <Box2D/include/box2d/b2_body.h>
 
 namespace Rose {
 	EditorLayer::EditorLayer()
@@ -260,15 +261,30 @@ namespace Rose {
 
 				if (translation != tc.Translation) {
 					CommandHistory::ChangeVec3(CreateRef<ChangeValueCommand<glm::vec3>>(tc.Translation, translation));
+
 				}
 
 				if (rotation != tc.Rotation) {
-					CommandHistory::ChangeVec3(CreateRef < ChangeValueCommand<glm::vec3>>(tc.Rotation,rotation));
+					CommandHistory::ChangeVec3(CreateRef<ChangeValueCommand<glm::vec3>>(tc.Rotation,rotation));
 				}
 
 				if (scale != tc.Scale) {
 					CommandHistory::ChangeVec3(CreateRef<ChangeValueCommand<glm::vec3>>(tc.Scale, scale));
 				}
+
+				if (!m_SceneManager.isEditing()) {
+					if (selectedEntity.HasComponent<Rigidbody2DComponent>()) {
+						auto& rb2d = selectedEntity.GetComponent<Rigidbody2DComponent>();
+
+						b2Body* body = (b2Body*)rb2d.RuntimeBody;
+						body->SetAwake(false);
+						body->SetTransform({tc.Translation.x, tc.Translation.y}, tc.Rotation.z);
+						body->SetAwake(true);
+					}
+				}
+
+				
+
 			} else if (m_GizmoLastFrame) {
 				m_GizmoLastFrame = false;
 				CommandHistory::LockLastCommand();
@@ -368,25 +384,25 @@ namespace Rose {
 		// Gizmos
 		case Key::Q:
 		{
-			if (!ImGuizmo::IsUsing() && m_SceneManager.isEditing())
+			if (!ImGuizmo::IsUsing() && m_SceneManager.isEditing() || m_SceneManager.isSimulating())
 				m_SceneManager.m_GizmoType = -1;
 			break;
 		}
 		case Key::W:
 		{
-			if (!ImGuizmo::IsUsing() && m_SceneManager.isEditing())
+			if (!ImGuizmo::IsUsing() && m_SceneManager.isEditing() || m_SceneManager.isSimulating())
 				m_SceneManager.m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 			break;
 		}
 		case Key::E:
 		{
-			if (!ImGuizmo::IsUsing() && m_SceneManager.isEditing())
+			if (!ImGuizmo::IsUsing() && m_SceneManager.isEditing() || m_SceneManager.isSimulating())
 				m_SceneManager.m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 			break;
 		}
 		case Key::R:
 		{
-			if (!ImGuizmo::IsUsing() && m_SceneManager.isEditing())
+			if (!ImGuizmo::IsUsing() && m_SceneManager.isEditing() || m_SceneManager.isSimulating())
 				m_SceneManager.m_GizmoType = ImGuizmo::OPERATION::SCALE;
 			break;
 		}

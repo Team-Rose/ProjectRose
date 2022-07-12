@@ -26,6 +26,15 @@ group "Dependencies"
 	include "RoseRoot/vendor/yaml-cpp"
 group ""
 
-include "RoseRoot"
-include "Sandbox"
-include "RoseStem"
+group "Core"
+	include "RoseRoot"
+	include "Rose-ScriptCore"
+group ""
+
+group "Tools"
+	include "RoseStem"
+group ""
+
+group "Misc"
+	include "Sandbox"
+group ""

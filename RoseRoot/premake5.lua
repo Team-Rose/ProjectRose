@@ -42,10 +42,13 @@ project "RoseRoot"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
+
+		"%{IncludeDir.Lua}",
+		"%{IncludeDir.Mono}",
+
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.VulkanSDK}",
-		"%{IncludeDir.Lua}",
 	}
 
 	links
@@ -55,8 +58,10 @@ project "RoseRoot"
 		"Glad",
 		"ImGui",
 		"yaml-cpp",
+		"opengl32.lib",
+
 		"%{Library.Lua}",
-		"opengl32.lib"
+		"%{Library.Mono}",
 	}
 
 	filter "files:vendor/ImGuizmo/**.cpp"
@@ -65,8 +70,12 @@ project "RoseRoot"
 	filter "system:windows"
 		systemversion "latest"
 
-		defines
+		links
 		{
+			"%{Library.WinSock}",
+			"%{Library.WinMM}",
+			"%{Library.WinVersion}",
+			"%{Library.BCrypt}",
 		}
 
 	filter "configurations:Debug"

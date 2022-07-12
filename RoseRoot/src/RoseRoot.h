@@ -23,7 +23,7 @@
 #include "RoseRoot/Scene/ScriptableEntity.h"
 #include "RoseRoot/Scene/Components.h"
 
-#include "RoseRoot/LUA/Lua.h"
+#include "RoseRoot/Scripting/LUA/Lua.h"
 
 //Renderer
 #include "RoseRoot/Renderer/Renderer.h"

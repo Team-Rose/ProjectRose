@@ -14,6 +14,7 @@ IncludeDir["ImGuizmo"] = "%{wks.location}/RoseRoot/vendor/ImGuizmo"
 IncludeDir["glm"] = "%{wks.location}/RoseRoot/vendor/glm"
 IncludeDir["entt"] = "%{wks.location}/RoseRoot/vendor/entt/include"
 IncludeDir["Lua"] = "%{wks.location}/RoseRoot/vendor/lua/include"
+IncludeDir["Mono"] = "%{wks.location}/RoseRoot/vendor/mono/include"
 IncludeDir["shaderc"] = "%{wks.location}/RoseRoot/vendor/shaderc/include"
 IncludeDir["SPIRV_Cross"] = "%{wks.location}/RoseRoot/vendor/SPIRV-Cross"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
@@ -21,21 +22,29 @@ IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
 LibraryDir = {}
 
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
-LibraryDir["VulkanSDK_Debug"] = "%{wks.location}/RoseRoot/vendor/VulkanSDK/Lib"
-LibraryDir["VulkanSDK_DebugDLL"] = "%{wks.location}/RoseRoot/vendor/VulkanSDK/Bin"
+LibraryDir["Mono"] = "%{wks.location}/RoseRoot/vendor/mono/lib/%{cfg.buildcfg}"
 LibraryDir["Lua"] = "%{wks.location}/RoseRoot/vendor/lua"
 
 
 Library = {}
+
 Library["Lua"] = "%{LibraryDir.Lua}/lua54.lib"
+Library["Mono"] = "%{LibraryDir.Mono}/libmono-static-sgen.lib"
+
 Library["Vulkan"] = "%{LibraryDir.VulkanSDK}/vulkan-1.lib"
 Library["VulkanUtils"] = "%{LibraryDir.VulkanSDK}/VkLayer_utils.lib"
 
-Library["ShaderC_Debug"] = "%{LibraryDir.VulkanSDK_Debug}/shaderc_sharedd.lib"
-Library["SPIRV_Cross_Debug"] = "%{LibraryDir.VulkanSDK_Debug}/spirv-cross-cored.lib"
-Library["SPIRV_Cross_GLSL_Debug"] = "%{LibraryDir.VulkanSDK_Debug}/spirv-cross-glsld.lib"
-Library["SPIRV_Tools_Debug"] = "%{LibraryDir.VulkanSDK_Debug}/SPIRV-Toolsd.lib"
+Library["ShaderC_Debug"] = "%{LibraryDir.VulkanSDK}/shaderc_sharedd.lib"
+Library["SPIRV_Cross_Debug"] = "%{LibraryDir.VulkanSDK}/spirv-cross-cored.lib"
+Library["SPIRV_Cross_GLSL_Debug"] = "%{LibraryDir.VulkanSDK}/spirv-cross-glsld.lib"
+Library["SPIRV_Tools_Debug"] = "%{LibraryDir.VulkanSDK}/SPIRV-Toolsd.lib"
 
 Library["ShaderC_Release"] = "%{LibraryDir.VulkanSDK}/shaderc_shared.lib"
 Library["SPIRV_Cross_Release"] = "%{LibraryDir.VulkanSDK}/spirv-cross-core.lib"
 Library["SPIRV_Cross_GLSL_Release"] = "%{LibraryDir.VulkanSDK}/spirv-cross-glsl.lib"
+
+-- Windows
+Library["WinSock"] = "Ws2_32.lib"
+Library["WinMM"] = "Winmm.lib"
+Library["WinVersion"] = "Version.lib"
+Library["BCrypt"] = "BCrypt.lib"
