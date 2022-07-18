@@ -4,7 +4,7 @@
 #include "RoseRoot/Core/Log.h"
 
 #include "RoseRoot/Renderer/Renderer.h"
-#include "RoseRoot/Scripting/ScriptEngine.h"
+#include "RoseRoot/Scripting/Mono/MonoScriptEngine.h"
 
 #include "Input.h"
 
@@ -29,7 +29,7 @@ namespace Rose {
 		m_Window->SetCapturesMouse(false);
 
 		Renderer::Init();
-		ScriptEngine::Init();
+		MonoScriptEngine::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
@@ -39,7 +39,7 @@ namespace Rose {
 	{
 		RR_PROFILE_FUNCTION();
 
-		ScriptEngine::Shutdown();
+		MonoScriptEngine::Shutdown();
 		Renderer::Shutdown();
 	}
 
