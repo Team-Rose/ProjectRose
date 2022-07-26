@@ -79,7 +79,6 @@ namespace Rose {
 
 				const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
 				const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
-
 				RR_CORE_TRACE("{}.{}", nameSpace, name);
 			}
 		}
@@ -94,6 +93,11 @@ namespace Rose {
 		MonoImage* CoreAssemblyImage = nullptr;
 
 		MonoScriptClass EntityClass;
+
+		std::unordered_map<std::string, Ref<MonoScriptClass>> EntityClasses;
+		std::unordered_map<UUID, Ref<MonoScriptInstance>> EntityInstances;
+		
+		Scene* SceneContext;
 	};
 
 	static MonoScriptEngineData* s_MonoData = nullptr;
@@ -102,35 +106,10 @@ namespace Rose {
 	{
 		InitMono();
 		LoadAssembly("Resources/Scripts/Rose-ScriptCore.dll");
+		LoadAssemblyClasses(s_MonoData->CoreAssembly);
 
 		MonoGlue::RegisterFunctions();
-
-		// Retrieve and instantiate class
 		s_MonoData->EntityClass = MonoScriptClass("Rose", "Entity");
-		MonoObject* instance = s_MonoData->EntityClass.Instantiate();
-
-		// call method
-		MonoMethod* printMessageMethod = s_MonoData->EntityClass.GetMethod("PrintMessage", 0);
-		s_MonoData->EntityClass.InvokeMethod(instance ,printMessageMethod, nullptr);
-
-		// call method with param
-
-		int value = 5;
-		int value2 = 123;
-		void* params[2] = {
-			&value,
-			&value2
-		};
-
-		MonoMethod* printIntsMethod = s_MonoData->EntityClass.GetMethod("PrintInts", 2);
-		s_MonoData->EntityClass.InvokeMethod(instance, printIntsMethod, params);
-
-
-		MonoString* monoString = mono_string_new(s_MonoData->AppDomain, "Hello Worlds from C++!!!! :D");
-		MonoMethod* printStringMethod = s_MonoData->EntityClass.GetMethod("PrintString", 1);
-		void* param = monoString;
-
-		s_MonoData->EntityClass.InvokeMethod(instance, printStringMethod, &param);
 	}
 
 	void MonoScriptEngine::Shutdown()
@@ -140,9 +119,8 @@ namespace Rose {
 
 	void MonoScriptEngine::InitMono()
 	{
-		s_MonoData = new MonoScriptEngineData();
-
 		mono_set_assemblies_path("mono/lib");
+		s_MonoData = new MonoScriptEngineData();
 
 		MonoDomain* rootDomain = mono_jit_init("RoseJITRuntime");
 		RR_CORE_ASSERT(rootDomain);
@@ -172,12 +150,89 @@ namespace Rose {
 		s_MonoData->CoreAssemblyImage = mono_assembly_get_image(s_MonoData->CoreAssembly);
 	}
 
+	void MonoScriptEngine::OnRuntimeStart(Scene* scene)
+	{
+		s_MonoData->SceneContext = scene;
+	}
+
+	void MonoScriptEngine::OnRuntimeStop()
+	{
+		s_MonoData->SceneContext = nullptr;
+		s_MonoData->EntityInstances.clear();
+	}
+
+	void MonoScriptEngine::OnCreateEntity(Entity entity)
+	{
+		const MonoScriptComponent& msc = entity.GetComponent<MonoScriptComponent>();
+		if (MonoScriptEngine::EntityClassExist(msc.ClassName)) {
+			Ref<MonoScriptInstance> instance = CreateRef<MonoScriptInstance>(s_MonoData->EntityClasses[msc.ClassName], entity);
+			s_MonoData->EntityInstances[entity.GetUUID()] = instance;
+
+			instance->InvokeOnCreate();
+		}
+	}
+
+	void MonoScriptEngine::OnUpdateEntity(Entity entity, float ts)
+	{
+		UUID entityUUID = entity.GetUUID();
+		RR_CORE_ASSERT(s_MonoData->EntityInstances.find(entityUUID) != s_MonoData->EntityInstances.end());
+
+		s_MonoData->EntityInstances[entityUUID]->InvokeOnUpdate(ts);
+	}
+
+	Scene* MonoScriptEngine::GetSceneContext()
+	{
+		return s_MonoData->SceneContext;
+	}
+
+	bool MonoScriptEngine::EntityClassExist(const std::string& fullClassName)
+	{
+		return s_MonoData->EntityClasses.find(fullClassName) != s_MonoData->EntityClasses.end();
+	}
+
+	std::unordered_map<std::string, Ref<MonoScriptClass>> MonoScriptEngine::GetEntityClasses()
+	{
+		return s_MonoData->EntityClasses;
+	}
+
+	void MonoScriptEngine::LoadAssemblyClasses(MonoAssembly* assembly)
+	{
+		s_MonoData->EntityClasses.clear();
+
+		MonoImage* image = mono_assembly_get_image(assembly);
+		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+		int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
+		MonoClass* entityClass = mono_class_from_name(s_MonoData->CoreAssemblyImage, "Rose", "Entity");
+
+		for (int32_t i = 0; i < numTypes; i++)
+		{
+			uint32_t cols[MONO_TYPEDEF_SIZE];
+			mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
+
+			const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
+			const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+
+			std::string fullName;
+			if (strlen(nameSpace) != 0)
+				fullName = fmt::format("{}.{}", nameSpace, name);
+			else
+				fullName = name;
+			MonoClass* monoClass = mono_class_from_name(s_MonoData->CoreAssemblyImage, nameSpace, name);
+			if (monoClass == entityClass)
+				continue;
+
+			bool isEntity = mono_class_is_subclass_of(monoClass, entityClass, false);
+			if (isEntity)
+				s_MonoData->EntityClasses[fullName] = CreateRef<MonoScriptClass>(nameSpace, name);
+		}
+	}
 	MonoObject* MonoScriptEngine::InstantiateClass(MonoClass* monoClass)
 	{
 		MonoObject* instance = mono_object_new(s_MonoData->AppDomain, monoClass);
 		mono_runtime_object_init(instance);
 		return instance;
 	}
+
 
 
 	MonoScriptClass::MonoScriptClass(const std::string& classNameSpace, const std::string& className)
@@ -193,9 +248,36 @@ namespace Rose {
 	{
 		return mono_class_get_method_from_name(m_MonoClass, name.c_str(), parameterCount);
 	}
-
 	MonoObject* MonoScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)
 	{
 		return mono_runtime_invoke(method, instance, params, nullptr);
+	}
+
+
+
+	MonoScriptInstance::MonoScriptInstance(Ref<MonoScriptClass> scriptClass, Entity entity)
+		: m_ScriptClass(scriptClass)
+	{
+		m_Instance = scriptClass->Instantiate();
+
+		m_Constructor = s_MonoData->EntityClass.GetMethod(".ctor", 1);
+		m_OnCreateMethod = scriptClass->GetMethod("OnCreate", 0);
+		m_OnUpdateMethod = scriptClass->GetMethod("OnUpdate", 1);
+		
+		// Call Entity Constructor
+		{
+			void* param = &entity.GetUUID();
+			m_ScriptClass->InvokeMethod(m_Instance, m_Constructor, &param);
+		}
+		
+	}
+	void MonoScriptInstance::InvokeOnCreate()
+	{
+		m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);
+	}
+	void MonoScriptInstance::InvokeOnUpdate(float ts)
+	{
+		void* param = &ts;
+		m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &param);
 	}
 }

@@ -24,6 +24,7 @@
 #include "RoseRoot/Scene/Components.h"
 
 #include "RoseRoot/Scripting/LUA/Lua.h"
+#include "RoseRoot/Scripting/Mono/MonoScriptEngine.h"
 
 //Renderer
 #include "RoseRoot/Renderer/Renderer.h"

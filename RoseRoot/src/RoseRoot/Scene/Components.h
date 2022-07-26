@@ -108,6 +108,14 @@ namespace Rose {
 		LuaScriptComponent() = default;
 		LuaScriptComponent(const LuaScriptComponent&) = default;
 	};
+
+	struct MonoScriptComponent
+	{
+		std::string ClassName;
+
+		MonoScriptComponent() = default;
+		MonoScriptComponent(const MonoScriptComponent&) = default;
+	};
 	//----Physics----
 
 	struct Rigidbody2DComponent
@@ -158,4 +166,14 @@ namespace Rose {
 		CircleCollider2DComponent() = default;
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
+
+	template<typename... Component>
+	struct ComponentGroup
+	{
+	};
+
+	using AllComponents =
+		ComponentGroup<TransformComponent, SpriteRendererComponent,CircleRendererComponent, CameraComponent,
+		LuaScriptComponent, MonoScriptComponent, NativeScriptComponent, 
+		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent>;
 }

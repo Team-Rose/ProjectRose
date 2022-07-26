@@ -7,11 +7,31 @@ namespace Rose
     {
         public float X, Y, Z;
 
+        public static Vector3 Zero = new Vector3(0.0f);
+
+        public Vector3(float scalar)
+        {
+            X = scalar;
+            Y = scalar;
+            Z = scalar;
+        }
         public Vector3(float x, float y, float z)
         {
             X = x;
             Y = y;
             Z = z;
+        }
+        public static Vector3 operator+(Vector3 a, Vector3 b)
+        {
+            return new Vector3(a.X + b.X, a.Y+b.Y, b.Z + b.Z);
+        }
+        public static Vector3 operator -(Vector3 a, Vector3 b)
+        {
+            return new Vector3(a.X - b.X, a.Y - b.Y, b.Z - b.Z);
+        }
+        public static Vector3 operator*(Vector3 vector, float scalar)
+        {
+            return new Vector3(vector.X * scalar, vector.Y * scalar, vector.Z * scalar); 
         }
     }
     public static class InternalCalls
@@ -20,62 +40,43 @@ namespace Rose
         internal extern static void NativeLog(string text, int parameter);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void NativeLog_Vector3(ref Vector3 parameter, out Vector3 result);
+        internal extern static void NativeLog_Vector3(string text, Vector3 parameter);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void CustomTypeReturnExample(ref Vector3 parameter, out Vector3 result);
+
+
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Entity_GetTranslation(ulong entityID, out Vector3 translation);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Entity_SetTranslation(ulong entityID, ref Vector3 translation);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsKeyDown(KeyCode keycode);
     }
 
     public class Entity
     {
-
-        public float MyPublicFloatVar = 5.0f;
-
-        private string m_Name = "Hello";
-        public string Name
+        protected Entity() { ID = 0; }
+        internal Entity(ulong id)
         {
-            get => m_Name;
+            ID = id;
+        }
+
+        public readonly ulong ID;
+        public Vector3 Translation
+        {
+            get
+            {
+                InternalCalls.Entity_GetTranslation(ID, out Vector3 translation);
+                return translation;
+            }
             set
             {
-                m_Name = value;
-                MyPublicFloatVar += 5.0f;
+                InternalCalls.Entity_SetTranslation(ID, ref value);
             }
         }
-
-        public Entity()
-        {
-            Console.WriteLine("Main constructor!");
-            Log("Rose is Swag", 34980);
-
-            Vector3 pos = new Vector3(2, 4, 3);
-            Vector3 result = Log(pos);
-            Console.WriteLine($"{result.X}, {result.Y}, {result.Z}");
-        }
-
-        public void PrintMessage()
-        {
-            Console.WriteLine($"C# Says: m_Name = {m_Name}, MyPublicFloatVar = {MyPublicFloatVar}");
-        }
-
-        public void PrintInts(int value, int value2)
-        {
-            Console.WriteLine($"C# recieved: {value} and {value2}");
-
-        }
-
-        public void PrintString(string str)
-        {
-            Console.WriteLine($"C# says: {str}");
-        }
-
-        public void Log(string text, int parameter)
-        {
-            InternalCalls.NativeLog(text, parameter);
-        }
-
-        public Vector3 Log(Vector3 parameter)
-        {
-            InternalCalls.NativeLog_Vector3(ref parameter, out Vector3 result);
-            return result;
-        }
-
-
     }
 }

@@ -8,16 +8,16 @@ rself:GetRigidBody2D():SetGravityScale(0)
 log(Key.left)
 
 function Update(ts)
-	if Input.IsKeyPressed(Key.right) then
+	if Input.IsKeyPressed(Key.d) then
 		vel.x = vel.x + speed
 	end
-	if Input.IsKeyPressed(Key.left) then
+	if Input.IsKeyPressed(Key.a) then
 		vel.x = vel.x - speed
 	end
-	if Input.IsKeyPressed(Key.up) then
+	if Input.IsKeyPressed(Key.w) then
 		vel.y = vel.y + speed
 	end
-	if Input.IsKeyPressed(Key.down) then
+	if Input.IsKeyPressed(Key.s) then
 		vel.y = vel.y - speed
 	end
 	if Input.IsKeyPressed(Key.e) then

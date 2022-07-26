@@ -141,7 +141,7 @@ Entities:
       RestitutionThreshold: 0.5
   - Entity: 5206894307176489370
     TagComponent:
-      Tag: Sky
+      Tag: Mono
     TransformComponent:
       Translation: [0.688000023, -4.76837158e-07, -100]
       Rotation: [0, 0, 0]
@@ -247,7 +247,36 @@ Entities:
       Path: scripts\cloud.lua
   - Entity: 14603567309299716690
     TagComponent:
+      Tag: Mono
+    TransformComponent:
+      Translation: [1.87697649, 4.11111021, 0]
+      Rotation: [0, 0, 0]
+      Scale: [3, 0.25, 1]
+    SpriteRendererComponent:
+      Color: [1, 0, 0, 1]
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+    MonoScriptComponent:
+      ClassName: Sandbox.Player
+  - Entity: 1764937667636027409
+    TagComponent:
       Tag: Cloud
+    TransformComponent:
+      Translation: [-11.181675, 3.40217638, -5]
+      Rotation: [0, 0, 0]
+      Scale: [3.27596736, 0.760344625, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+    LuaScriptComponent:
+      Path: scripts\cloud.lua
+  - Entity: 10184417427497762509
+    TagComponent:
+      Tag: Lua
     TransformComponent:
       Translation: [-2.12302351, 4.11111021, 0]
       Rotation: [0, 0, 0]
@@ -266,14 +295,3 @@ Entities:
       RestitutionThreshold: 0.5
     LuaScriptComponent:
       Path: move.lua
-  - Entity: 1764937667636027409
-    TagComponent:
-      Tag: Cloud
-    TransformComponent:
-      Translation: [-11.181675, 3.40217638, -5]
-      Rotation: [0, 0, 0]
-      Scale: [3.27596736, 0.760344625, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-    LuaScriptComponent:
-      Path: scripts\cloud.lua

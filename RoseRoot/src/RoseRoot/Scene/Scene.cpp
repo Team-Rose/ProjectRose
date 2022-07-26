@@ -4,6 +4,8 @@
 #include "Components.h"
 #include "ScriptableEntity.h"
 #include "RoseRoot/Scripting/LUA/Lua.h"
+#include "RoseRoot/Scripting/Mono/MonoScriptEngine.h"
+
 #include "RoseRoot/Renderer/Renderer.h"
 #include "RoseRoot/Renderer/Renderer2D.h"
 
@@ -44,20 +46,28 @@ namespace Rose
 		delete m_PhysicsWorld;
 	}
 
-	template<typename Component>
+	template<typename... Component>
 	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
 	{
-		auto view = src.view<Component>();
-		for (auto e : view)
-		{
-			UUID uuid = src.get<IDComponent>(e).ID;
-			RR_CORE_ASSERT(enttMap.find(uuid) != enttMap.end());
-			entt::entity dstEnttID = enttMap.at(uuid);
+		([&]()
+			{
+				auto view = src.view<Component>();
+				for (auto srcEntity : view)
+				{
+					entt::entity dstEntity = enttMap.at(src.get<IDComponent>(srcEntity).ID);
 
-			auto& component = src.get<Component>(e);
-			dst.emplace_or_replace<Component>(dstEnttID, component);
-		}
+					auto& srcComponent = src.get<Component>(srcEntity);
+					dst.emplace_or_replace<Component>(dstEntity, srcComponent);
+				}
+			}(), ...);
 	}
+
+	template<typename... Component>
+	static void CopyComponent(ComponentGroup<Component...>, entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
+	{
+		CopyComponent<Component...>(dst, src, enttMap);
+	}
+
 
 	template<typename Component>
 	static void CopyComponentIfExists(Entity dst, Entity src)
@@ -90,15 +100,7 @@ namespace Rose
 		}
 
 		// Copy components (except IDComponent and TagComponent)
-		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<SpriteRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<CircleRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<Rigidbody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<LuaScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent(AllComponents{}, dstSceneRegistry, srcSceneRegistry, enttMap);
 
 		return newScene;
 	}
@@ -115,13 +117,16 @@ namespace Rose
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
+
+		m_EntityMap[uuid] = entity;
+
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
 		m_Registry.destroy(entity);
-		
+		m_EntityMap.erase(entity.GetUUID());
 	}
 
 	void Scene::OnRuntimeStart(const std::string& assetPath)
@@ -129,6 +134,15 @@ namespace Rose
 		RR_PROFILE_FUNCTION();
 		RR_CORE_TRACE("-----Runtime Scene Started-----");
 		OnPhysics2DStart();
+
+
+		MonoScriptEngine::OnRuntimeStart(this);
+		m_Registry.view<MonoScriptComponent>().each([=](auto entity, MonoScriptComponent& msc)
+			{
+				if (MonoScriptEngine::EntityClassExist(msc.ClassName)) {
+					MonoScriptEngine::OnCreateEntity(Entity{ entity, this });
+				}
+			});
 
 		m_Registry.view<LuaScriptComponent>().each([=](auto entity, LuaScriptComponent& lsc)
 			{
@@ -140,6 +154,7 @@ namespace Rose
 	void Scene::OnRuntimeStop()
 	{
 		OnPhysics2DStop();
+		MonoScriptEngine::OnRuntimeStop();
 	}
 
 	void Scene::OnSimulationStart(const std::string& assetPath)
@@ -176,6 +191,14 @@ namespace Rose
 						nsc.Instance->OnUpdate(ts);
 					});
 
+				//C# OnUpdate
+				m_Registry.view<MonoScriptComponent>().each([=](auto entity, MonoScriptComponent& msc)
+					{
+						Entity rEntity = { entity, this };
+						MonoScriptEngine::OnUpdateEntity(rEntity, (float)ts);
+					});
+
+				//Lua OnUpdate
 				m_Registry.view<LuaScriptComponent>().each([=](auto entity, auto& lsc)
 					{
 						lsc.Script->Update(ts);
@@ -323,6 +346,15 @@ namespace Rose
 		CopyComponentIfExists<CircleCollider2DComponent>(newEntity, entity);
 		CopyComponentIfExists<LuaScriptComponent>(newEntity, entity);
 	}
+
+	Entity Scene::GetEntityByUUID(UUID uuid)
+	{
+		if (m_EntityMap.find(uuid) != m_EntityMap.end())
+			return { m_EntityMap.at(uuid), this };
+
+		RR_CORE_WARN("Entity with UUID {} was not found!");
+		return {};
+	} 
 
 	Entity Scene::GetPrimaryCameraEntity()
 	{
@@ -481,6 +513,10 @@ namespace Rose
 	}
 	template<>
 	void Scene::OnComponentAdded<LuaScriptComponent>(Entity entity, LuaScriptComponent& component)
+	{
+	}
+	template<>
+	void Scene::OnComponentAdded<MonoScriptComponent>(Entity entity, MonoScriptComponent& component)
 	{
 	}
 }

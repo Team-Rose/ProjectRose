@@ -245,6 +245,15 @@ namespace Rose {
 				}
 			}
 
+			if (!m_SelectionContext.HasComponent<MonoScriptComponent>())
+			{
+				if (ImGui::MenuItem("Mono Script"))
+				{
+					m_SelectionContext.AddComponent<MonoScriptComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
 			if (!m_SelectionContext.HasComponent<CameraComponent>())
 			{
 				if (ImGui::MenuItem("Camera"))
@@ -324,6 +333,39 @@ namespace Rose {
 				if (scale != component.Scale) {
 					CommandHistory::ChangeVec3(CreateRef<ChangeValueCommand<glm::vec3>>(component.Scale, scale));
 				}
+			});
+
+		DrawComponent<LuaScriptComponent>("Lua Script", entity, [](auto& component)
+			{
+				ImGui::Button("Script", ImVec2(100.0f, 0.0f));
+
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path scriptPath = path;
+						component.Path = scriptPath.string();
+					}
+					ImGui::EndDragDropTarget();
+				}
+			});
+		DrawComponent<MonoScriptComponent>("Mono Script", entity, [](auto& component)
+			{
+				bool scriptClassExist = MonoScriptEngine::EntityClassExist(component.ClassName);
+				if (!scriptClassExist)
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.9f, 0.5f, 0.6f, 1.0f));
+
+				char buffer[256];
+				memset(buffer, 0, sizeof(buffer));
+				std::strncpy(buffer, component.ClassName.c_str(), sizeof(buffer));
+				if (ImGui::InputText("Class", buffer, sizeof(buffer)))
+				{
+					component.ClassName = std::string(buffer);
+				}
+
+				if (!scriptClassExist)
+					ImGui::PopStyleColor();
 			});
 
 		DrawComponent<CameraComponent>("Camera", entity, [](auto& component)
@@ -465,22 +507,6 @@ namespace Rose {
 				ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 2.0f);
 				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 2.0f);
 				ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
-			});
-
-		DrawComponent<LuaScriptComponent>("Lua Script", entity, [](auto& component)
-			{
-				ImGui::Button("Script", ImVec2(100.0f, 0.0f));
-
-				if (ImGui::BeginDragDropTarget())
-				{
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-					{
-						const wchar_t* path = (const wchar_t*)payload->Data;
-						std::filesystem::path scriptPath = path;
-						component.Path = scriptPath.string();
-					}
-					ImGui::EndDragDropTarget();
-				}
 			});
 	}
 }

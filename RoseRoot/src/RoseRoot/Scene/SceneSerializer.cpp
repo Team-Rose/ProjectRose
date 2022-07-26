@@ -274,6 +274,16 @@ namespace Rose
 
 			out << YAML::EndMap; // LuaScriptComponent
 		}
+		if (entity.HasComponent<MonoScriptComponent>())
+		{
+			out << YAML::Key << "MonoScriptComponent";
+			out << YAML::BeginMap; // MonoScriptComponent
+
+			auto& monoComponent = entity.GetComponent<MonoScriptComponent>();
+			out << YAML::Key << "ClassName" << YAML::Value << monoComponent.ClassName;
+
+			out << YAML::EndMap; // MonoScriptComponent
+		}
 		out << YAML::EndMap; // Entity
 	}
 
@@ -451,6 +461,13 @@ namespace Rose
 				{
 					auto& lsc = deserializedEntity.AddComponent<LuaScriptComponent>();
 					lsc.Path = luaScriptComponent["Path"].as<std::string>();
+				}
+
+				auto monoScriptComponent = entity["MonoScriptComponent"];
+				if (monoScriptComponent)
+				{
+					auto& lsc = deserializedEntity.AddComponent<MonoScriptComponent>();
+					lsc.ClassName = monoScriptComponent["ClassName"].as<std::string>();
 				}
 			}
 		}

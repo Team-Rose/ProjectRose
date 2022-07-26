@@ -39,6 +39,8 @@ namespace Rose
 
 		void DuplicateEntity(Entity entity);
 
+		Entity GetEntityByUUID(UUID uuid);
+
 		glm::vec2 GetGravity2D() { return m_SceneSettings.Gravity2D; }
 		void SetGravity2D(glm::vec2 gravity) { m_SceneSettings.Gravity2D = gravity;}
 
@@ -76,6 +78,8 @@ namespace Rose
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 
 		b2World* m_PhysicsWorld = nullptr;
+
+		std::unordered_map<UUID, entt::entity> m_EntityMap;
 
 		friend class Entity;
 		friend class SceneSerializer;
