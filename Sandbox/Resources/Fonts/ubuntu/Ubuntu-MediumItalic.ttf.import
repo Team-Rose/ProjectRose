@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://c8map0hmoob4l"
-path="res://.godot/imported/Ubuntu-MediumItalic.ttf-9b1461afe0272802dbd353be5ef9c440.fontdata"
+uid="uid://6k061j1hu7g"
+path="res://.godot/imported/Ubuntu-MediumItalic.ttf-c02d57cf9e8ad95481ba1006ea323985.fontdata"
 
 [deps]
 
-source_file="res://ProjectRose/Sandbox/Resources/Fonts/ubuntu/Ubuntu-MediumItalic.ttf"
-dest_files=["res://.godot/imported/Ubuntu-MediumItalic.ttf-9b1461afe0272802dbd353be5ef9c440.fontdata"]
+source_file="res://ProjectRose/RoseStem/Resources/Fonts/ubuntu/Ubuntu-MediumItalic.ttf"
+dest_files=["res://.godot/imported/Ubuntu-MediumItalic.ttf-c02d57cf9e8ad95481ba1006ea323985.fontdata"]
 
 [params]
 

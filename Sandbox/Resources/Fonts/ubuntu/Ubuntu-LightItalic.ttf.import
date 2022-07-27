@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://bpwlbvuhkgnbb"
-path="res://.godot/imported/Ubuntu-LightItalic.ttf-382bdf220bd7994077facced9f8c1760.fontdata"
+uid="uid://ypp6s50cevxj"
+path="res://.godot/imported/Ubuntu-LightItalic.ttf-9814dbd5eb9e80a71deae94039a23c41.fontdata"
 
 [deps]
 
-source_file="res://ProjectRose/Sandbox/Resources/Fonts/ubuntu/Ubuntu-LightItalic.ttf"
-dest_files=["res://.godot/imported/Ubuntu-LightItalic.ttf-382bdf220bd7994077facced9f8c1760.fontdata"]
+source_file="res://ProjectRose/RoseStem/Resources/Fonts/ubuntu/Ubuntu-LightItalic.ttf"
+dest_files=["res://.godot/imported/Ubuntu-LightItalic.ttf-9814dbd5eb9e80a71deae94039a23c41.fontdata"]
 
 [params]
 

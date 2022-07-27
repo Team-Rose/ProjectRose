@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://uprpscrx76qx"
-path="res://.godot/imported/Ubuntu-Regular.ttf-8f8806f516da51306325e01309662c04.fontdata"
+uid="uid://c0pwynqarv1jc"
+path="res://.godot/imported/Ubuntu-Regular.ttf-b9b50503a6439259df2a2209a208b6d4.fontdata"
 
 [deps]
 
-source_file="res://ProjectRose/Sandbox/Resources/Fonts/ubuntu/Ubuntu-Regular.ttf"
-dest_files=["res://.godot/imported/Ubuntu-Regular.ttf-8f8806f516da51306325e01309662c04.fontdata"]
+source_file="res://ProjectRose/RoseStem/Resources/Fonts/ubuntu/Ubuntu-Regular.ttf"
+dest_files=["res://.godot/imported/Ubuntu-Regular.ttf-b9b50503a6439259df2a2209a208b6d4.fontdata"]
 
 [params]
 

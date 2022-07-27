@@ -19,9 +19,11 @@ namespace Sandbox {
 		m_Framebuffer = Rose::Framebuffer::Create(fbSpec);
 
 		wood = Rose::Texture2D::Create("assets/textures/WoodFloor/WoodFloor051_1K_Color.png");
-		woodspec = Rose::Texture2D::Create("assets/textures/WoodFloor/WoodFloor051_1K_Displacement.png");
+		//woodspec = Rose::Texture2D::Create("assets/textures/WoodFloor/WoodFloor051_1K_Displacement.png");
+		
 		crate = Rose::Texture2D::Create("assets/textures/Crate/container2.png");
 		cratespec = Rose::Texture2D::Create("assets/textures/Crate/container2_specular.png");
+		// 
 		//m_Lua.Init();
 		//m_Lua2.Init();
 	}
@@ -41,7 +43,7 @@ namespace Sandbox {
 
 		Rose::Renderer::DrawDirLight({-0.2f, -1.0f, -0.3f});
 
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), { 0.f, -1.0f, 0.f }) * glm::scale(glm::mat4(1.0f), { 40.0f, 1.0f,40.0f });
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), {0.f, -1.0f, 0.f}) * glm::scale(glm::mat4(1.0f), {40.0f, 1.0f,40.0f});
 		Rose::Renderer::DrawCube(wood, transform,{ 1.0, 1.0, 1.0, 1.0 });
 		{
 			glm::mat4 transform = glm::translate(glm::mat4(1.0f), { 0.f, 0.0f, -1.f }) * glm::scale(glm::mat4(1.0f), { 1.0f, 1.0f,1.0f });
