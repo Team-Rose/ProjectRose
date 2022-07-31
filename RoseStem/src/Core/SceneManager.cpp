@@ -36,9 +36,6 @@ namespace Rose {
 		// Render
 		Renderer2D::ResetStats();
 
-		// Clear our entity ID attachment to -1
-		Renderer::GetFinalFrameBuffer()->ClearAttachment(1, -1);
-
 		switch (m_SceneState) {
 		case SceneState::Edit: m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera); break;
 		case SceneState::Simulate: m_ActiveScene->OnUpdateSimulation(ts, m_EditorCamera); break;
@@ -63,16 +60,6 @@ namespace Rose {
 
 		if (m_ShowPhysicsColliders)
 		{
-			if (m_SceneState == SceneState::Play)
-			{
-				Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
-				Renderer::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
-			}
-			else
-			{
-				Renderer::BeginScene(m_EditorCamera);
-			}
-
 			if (m_ShowPhysicsColliders)
 			{
 				// Box Colliders
@@ -111,8 +98,8 @@ namespace Rose {
 				}
 			}
 
-			Renderer::EndScene();
 		}
+		Renderer::EndScene();
 	}
 
 	void SceneManger::SceneSettingsWindow()

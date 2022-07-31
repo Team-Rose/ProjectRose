@@ -15,7 +15,7 @@ namespace Rose
 
 	struct RendererData {
 		Ref<Framebuffer> GeometryPass;
-		Ref<Framebuffer> ShadowPass;
+		//Ref<Framebuffer> ShadowPass;
 
 		Ref<Shader> FinalPassShader;
 		Ref<VertexArray> FrameBufferVertexArray;
@@ -87,6 +87,7 @@ namespace Rose
 		RR_PROFILE_FUNCTION();
 
 		s_Data.GeometryPass->Bind();
+
 		Renderer2D::BeginScene(camera, transform);
 		Renderer3D::BeginScene(camera, transform);
 
@@ -125,6 +126,7 @@ namespace Rose
 	{
 		s_Data.CustomViewSize = true;
 		OnViewResized(width, height);
+
 	}
 	void Renderer::OnViewResized(uint32_t width, uint32_t height)
 	{

@@ -60,13 +60,14 @@ namespace Rose {
 
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
+			Renderer::GetFinalFrameBuffer()->Bind();
 			int pixelData = Renderer::GetFinalFrameBuffer()->ReadPixel(1, mouseX, mouseY);
 			m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_SceneManager.getActiveScene().get());
+			//RR_INFO(pixelData);
+			Renderer::GetFinalFrameBuffer()->Unbind();
 		}
 
 		m_SceneManager.OnOverlayRender();
-
-		Renderer::GetFinalFrameBuffer()->Unbind();
 	}
 
 	void EditorLayer::OnImGuiRender()

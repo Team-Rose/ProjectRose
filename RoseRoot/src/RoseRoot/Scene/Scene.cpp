@@ -253,6 +253,9 @@ namespace Rose
 			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 			RenderCommand::Clear();
 
+			// Clear our entity ID attachment to -1
+			Renderer::GetFinalFrameBuffer()->ClearAttachment(1, -1);
+
 			// Draw sprites
 			{
 				auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
@@ -438,6 +441,8 @@ namespace Rose
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 		RenderCommand::Clear();
 
+		Renderer::GetFinalFrameBuffer()->ClearAttachment(1, -1);
+
 		{
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
@@ -457,7 +462,6 @@ namespace Rose
 				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
 			}
 		}
-
 		Renderer::EndScene();
 	}
 

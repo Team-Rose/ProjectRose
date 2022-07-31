@@ -20,7 +20,7 @@ namespace Rose
 		s_CoreLogger = std::make_shared<spdlog::logger>("ROSE", begin(sinks), end(sinks));
 		s_CoreLogger->set_level(spdlog::level::trace);
 		
-		s_ClientLogger = std::make_shared<spdlog::logger>("APP ", begin(sinks), end(sinks));
+		s_ClientLogger = std::make_shared<spdlog::logger>("APP", begin(sinks), end(sinks));
 		s_ClientLogger->set_level(spdlog::level::trace);
 	}
 }
