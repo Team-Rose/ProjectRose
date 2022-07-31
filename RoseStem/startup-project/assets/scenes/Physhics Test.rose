@@ -124,7 +124,7 @@ Entities:
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
     MonoScriptComponent:
-      Name: Sandbox.Cloud
+      ClassName: Sandbox.Cloud
   - Entity: 15327776994160925166
     TagComponent:
       Tag: Cloud3

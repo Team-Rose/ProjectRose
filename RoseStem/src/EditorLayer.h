@@ -6,6 +6,8 @@
 
 #include "RoseRoot/Renderer/EditorCamera.h"
 
+#include <chrono>
+
 namespace Rose {
 	class EditorLayer : public Layer
 	{
@@ -38,6 +40,7 @@ namespace Rose {
 		bool m_SceneSettingsOpen = true;
 		bool m_ProjectSettingsOpen = true;
 
+		std::chrono::time_point<std::chrono::high_resolution_clock> m_LastTime = std::chrono::high_resolution_clock::now();
 		//Project Buffer
 		int m_NumberOfScenes = 0;
 		std::unordered_map<int, std::pair<int, std::filesystem::path>> m_ScenePathsBuffer;

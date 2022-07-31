@@ -337,7 +337,7 @@ namespace Rose {
 
 		DrawComponent<LuaScriptComponent>("Lua Script", entity, [](auto& component)
 			{
-				ImGui::Button("Script", ImVec2(100.0f, 0.0f));
+				ImGui::Button(component.Path.c_str(), ImVec2(300.0f, 0.0f));
 
 				if (ImGui::BeginDragDropTarget())
 				{

@@ -173,6 +173,12 @@ namespace Rose {
 		ImGui::Begin("Stats");
 
 		auto stats = Renderer2D::GetStats();
+		std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();
+
+		float duration = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - m_LastTime).count() * 0.001f * 0.001f * 0.001f;;
+		ImGui::Text("Frame Time: %.3fms", duration*1000.0f);
+		m_LastTime = currentTime;
+
 		ImGui::Text("Renderer2D Stats:");
 		ImGui::Text("Draw Calls: %d", stats.DrawCalls);
 		ImGui::Text("Quads: %d", stats.QuadCount);
