@@ -60,13 +60,13 @@ namespace Rose {
 
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
-			int pixelData = m_SceneManager.m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+			int pixelData = Renderer::GetFinalFrameBuffer()->ReadPixel(1, mouseX, mouseY);
 			m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_SceneManager.getActiveScene().get());
 		}
 
 		m_SceneManager.OnOverlayRender();
 
-		m_SceneManager.m_Framebuffer->Unbind();
+		Renderer::GetFinalFrameBuffer()->Unbind();
 	}
 
 	void EditorLayer::OnImGuiRender()
@@ -198,7 +198,7 @@ namespace Rose {
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_SceneManager.m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-		uint64_t textureID = m_SceneManager.m_Framebuffer->GetColorAttachmentRendererID();
+		uint64_t textureID = Renderer::GetFinalFrameBuffer()->GetColorAttachmentRendererID();
 		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ m_SceneManager.m_ViewportSize.x, m_SceneManager.m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 		if (ImGui::BeginDragDropTarget())

@@ -221,4 +221,9 @@ namespace Rose {
 
 	}
 
+	void OpenGLFramebuffer::BindTexture(uint32_t attachmentIndex)
+	{
+		glBindTextureUnit(0, attachmentIndex);
+	}
+
 }

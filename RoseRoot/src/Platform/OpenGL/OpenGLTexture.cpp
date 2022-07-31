@@ -45,6 +45,7 @@ namespace Rose
 			m_Height = height;
 
 			GLenum internalFormat = 0, dataFormat = 0;
+
 			if (channels == 4)
 			{
 				internalFormat = GL_RGBA8;
@@ -55,11 +56,22 @@ namespace Rose
 				internalFormat = GL_RGB8;
 				dataFormat = GL_RGB;
 			}
+			else if (channels == 2)
+			{
+				internalFormat = GL_RG8;
+				dataFormat = GL_RG;
+			}
+			else if (channels == 1)
+			{
+				internalFormat = GL_R8;
+				dataFormat = GL_R;
+			}
 
 			m_InternalFormat = internalFormat;
 			m_DataFormat = dataFormat;
 
-			RR_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
+			//TODO Figure out what this is.
+			//RR_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
 
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 			glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
@@ -88,6 +100,20 @@ namespace Rose
 		RR_PROFILE_FUNCTION();
 
 		uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
+
+		switch (m_DataFormat)
+		{
+		case GL_RGBA:
+			bpp = 4; break;
+		case GL_RGB:
+			bpp = 3; break;
+		case GL_RG:
+			bpp = 2; break;
+		case GL_R:
+			bpp = 1; break;
+		}
+		RR_CORE_ASSERT(!bpp == 0, "Invalid data format");
+
 		RR_CORE_ASSERT(size == m_Width * m_Height * bpp, "Data must be entire texture!");
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
 	}

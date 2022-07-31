@@ -43,7 +43,6 @@ namespace Rose {
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		ContentBrowserPanel m_ContentBrowserPanel;
 
-		Ref<Framebuffer> m_Framebuffer;
 		EditorCamera m_EditorCamera;
 
 		int m_GizmoType = -1;

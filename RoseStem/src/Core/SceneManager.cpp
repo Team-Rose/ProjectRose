@@ -11,12 +11,6 @@ namespace Rose {
 		m_IconSimulate = Texture2D::Create("Resources/Icons/SimulateButton.png");
 		m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
 
-		FramebufferSpecification fbSpec;
-		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
-		fbSpec.Width = 1280;
-		fbSpec.Height = 720;
-		m_Framebuffer = Framebuffer::Create(fbSpec);
-
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 	}
 
@@ -26,11 +20,11 @@ namespace Rose {
 	void SceneManger::OnUpdate(Timestep ts)
 	{
 		// Resize
-		if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+		if (FramebufferSpecification spec = Renderer::GetFinalFrameBuffer()->GetSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
 			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
 		{
-			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			Renderer::ResizeView((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
@@ -41,12 +35,9 @@ namespace Rose {
 
 		// Render
 		Renderer2D::ResetStats();
-		m_Framebuffer->Bind();
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-		RenderCommand::Clear();
 
 		// Clear our entity ID attachment to -1
-		m_Framebuffer->ClearAttachment(1, -1);
+		Renderer::GetFinalFrameBuffer()->ClearAttachment(1, -1);
 
 		switch (m_SceneState) {
 		case SceneState::Edit: m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera); break;

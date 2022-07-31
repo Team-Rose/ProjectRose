@@ -250,6 +250,8 @@ namespace Rose
 		if (mainCamera)
 		{
 			Renderer::BeginScene(*mainCamera, cameraTransform);
+			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+			RenderCommand::Clear();
 
 			// Draw sprites
 			{
@@ -433,6 +435,8 @@ namespace Rose
 	{
 		RR_PROFILE_FUNCTION();
 		Renderer::BeginScene(camera);
+		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+		RenderCommand::Clear();
 
 		{
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);

@@ -27,9 +27,9 @@
 #include "RoseRoot/Scripting/Mono/MonoScriptEngine.h"
 
 //Renderer
-#include "RoseRoot/Renderer/Renderer.h"
-#include "RoseRoot/Renderer/RendererVoxel.h"
+#include "RoseRoot/Renderer/Renderer.h" 
 #include "RoseRoot/Renderer/Renderer2D.h"
+#include "RoseRoot/Renderer/Renderer3D.h"
 #include "RoseRoot/Renderer/RenderCommand.h"
 
 #include "RoseRoot/Renderer/Buffer.h"
