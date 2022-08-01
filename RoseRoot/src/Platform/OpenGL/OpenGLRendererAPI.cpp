@@ -59,6 +59,31 @@ namespace Rose
 	void OpenGLRendererAPI::Clear()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+#ifdef RR_DEBUG
+		GLenum error = glGetError();
+		if (error != GL_NO_ERROR) {
+			switch (error)
+			{
+			case(GL_INVALID_ENUM):
+				RR_CORE_ERROR("GL_INVALID_ENUM : {}", error); break;
+			case(GL_INVALID_VALUE):
+				RR_CORE_ERROR("GL_INVALID_VALUE : {}", error); break;
+			case(GL_STACK_OVERFLOW):
+				RR_CORE_ERROR("GL_STACK_OVERFLOW : {}", error); break;
+			case(GL_STACK_UNDERFLOW):
+				RR_CORE_ERROR("GL_STACK_UNDERFLOW : {}", error); break;
+			case(GL_OUT_OF_MEMORY):
+				RR_CORE_ERROR("GL_OUT_OF_MEMORY : {}", error); break;
+			case(GL_INVALID_FRAMEBUFFER_OPERATION):
+				RR_CORE_ERROR("GL_INVALID_FRAMEBUFFER_OPERATION : {}", error); break;
+			case(GL_CONTEXT_LOST):
+				RR_CORE_ERROR("GL_CONTEXT_LOST : {}", error); break;
+			default:
+				RR_CORE_ERROR(error); break;
+			}
+		}
+#endif
 	}
 
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)

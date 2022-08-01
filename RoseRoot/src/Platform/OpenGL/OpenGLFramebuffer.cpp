@@ -209,18 +209,6 @@ namespace Rose {
 		int pixelData = -2;
 		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
 
-		GLenum error = glGetError();
-		if (error != GL_NO_ERROR) {
-
-			switch (error)
-			{
-			case(GL_INVALID_OPERATION):
-				RR_CORE_ERROR("GL_INVALID_OPERATION : {}", error); break;
-			default:
-				RR_CORE_ERROR(error); break;
-			}
-		}
-
 		return pixelData;
 
 	}
@@ -237,8 +225,16 @@ namespace Rose {
 	void OpenGLFramebuffer::BindTexture(uint32_t attachmentIndex)
 	{
 		RR_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size());
+		bool multisampled = m_Specification.Samples > 1;
 
-		glBindTextureUnit(0, m_ColorAttachments[attachmentIndex]);
+		if (multisampled) {
+			glBlitFramebuffer(0, 0, m_Specification.Width, m_Specification.Height, 0, 0, m_Specification.Width, m_Specification.Height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+			glBindTextureUnit(0, m_ColorAttachments[attachmentIndex]);
+		}
+		else {
+			glBindTextureUnit(0, m_ColorAttachments[attachmentIndex]);
+		}
+		
 	}
 
 }

@@ -34,6 +34,7 @@ namespace Rose
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
 		fbSpec.Width = 1600;
 		fbSpec.Height = 900;
+		fbSpec.Samples = 1;
 		s_Data.GeometryPass = Framebuffer::Create(fbSpec);
 
 		float frameBufferVertices[] = {
