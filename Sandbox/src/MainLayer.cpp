@@ -43,9 +43,11 @@ namespace Sandbox {
 		Rose::RenderCommand::Clear();
 
 		Rose::Renderer3D::DrawDirLight({-0.2f, -1.0f, -0.3f});
-
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), {0.f, -1.0f, 0.f}) * glm::scale(glm::mat4(1.0f), {40.0f, 1.0f,40.0f});
-		Rose::Renderer3D::DrawCube(wood, cratespec,transform, 20.0f, { 1.0, 1.0, 1.0, 1.0 });
+		{
+			glm::mat4 transform = glm::translate(glm::mat4(1.0f), { 0.f, -1.0f, 0.f }) * glm::scale(glm::mat4(1.0f), { 40.0f, 1.0f,40.0f });
+			Rose::Renderer3D::DrawCube(wood, transform, 20.0f, { 1.0, 1.0, 1.0, 1.0 });
+		}
+		
 		{
 			glm::mat4 transform = glm::translate(glm::mat4(1.0f), { 0.f, 0.0f, -1.f }) * glm::scale(glm::mat4(1.0f), { 1.0f, 1.0f,1.0f });
 			transform = glm::rotate(transform, glm::radians(90.f), { 1.0f, 0.1f, 0.0f });
@@ -55,6 +57,11 @@ namespace Sandbox {
 			glm::mat4 transform = glm::translate(glm::mat4(1.0f), { 2.f, 0.0f, 1.f }) * glm::scale(glm::mat4(1.0f), { 1.0f, 1.0f,1.0f });
 			transform = glm::rotate(transform, glm::radians(90.f), { 1.0f, 0.0f, 0.0f });
 			Rose::Renderer3D::DrawCube(crate, cratespec, transform, 1.0f, { 1.0, 1.0, 1.0, 1.0 });
+		}
+
+		{
+			glm::mat4 transform = glm::translate(glm::mat4(1.0f), { 1.0f,3.0f,0.0f }) * glm::scale(glm::mat4(1.0f), { 0.25f, 0.25f,0.25f });
+			Rose::Renderer3D::DrawCube(transform, { 1.0f, 1.0f, 0.4f, 0.6f });
 		}
 		//Rose::Renderer2D::DrawQuad({ 0.0f, 2.0f }, { 1.0f, 1.0f }, grass);
 		Rose::Renderer::EndScene();

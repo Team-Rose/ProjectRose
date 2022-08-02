@@ -19,8 +19,12 @@ namespace Rose
 		static void BeginScene(const Camera& camera, const glm::mat4& transform);
 		static void BeginScene(const EditorCamera& camera);
 		static void EndScene();
+
+		//TODO Find a better way to handle framebuffers
 		static void DrawFinalFrameBuffer();
 		static Ref<Framebuffer> GetFinalFrameBuffer();
+
+		static Ref<Framebuffer> GetShadowFrameBuffer();
 
 		static void ResizeView(uint32_t width, uint32_t height);
 

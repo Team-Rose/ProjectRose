@@ -234,16 +234,16 @@ namespace Rose
 		s_Data.LightDataBuffer.DirLight.diffuse = { 0.0f,0.0f,0.0f };
 		s_Data.LightDataBuffer.DirLight.specular = { 0.0f,0.0f,0.0f };
 
-		s_Data.LightDataBuffer.PointLight.position = { 1.0f,4.0f,0.0f };
+		s_Data.LightDataBuffer.PointLight.position = { 1.0f,3.0f,0.0f };
 
 
 		s_Data.LightDataBuffer.PointLight.constant = 1.0f;
 		s_Data.LightDataBuffer.PointLight.linear = 0.09f;
 		s_Data.LightDataBuffer.PointLight.quadratic = 0.032f;
 
-		s_Data.LightDataBuffer.PointLight.ambient = { 0.05f, 0.05f, 0.05f };
-		s_Data.LightDataBuffer.PointLight.diffuse = { 0.2f, 0.2f, 0.6f };
-		s_Data.LightDataBuffer.PointLight.specular = { 0.2f, 0.2f, 0.6f };
+		s_Data.LightDataBuffer.PointLight.ambient = { 0.00f, 0.00f, 0.00f };
+		s_Data.LightDataBuffer.PointLight.diffuse = { 0.16f, 0.16f, 0.14f };
+		s_Data.LightDataBuffer.PointLight.specular = { 0.16f, 0.16f, 0.14f };
 
 
 
@@ -277,11 +277,11 @@ namespace Rose
 		Submit(s_Data.StandardShader, s_Data.CubeVertexArray, transform, color);
 	}
 
-	void Renderer3D::DrawCube(const Ref<Texture2D>& texure, const glm::mat4& transform, const glm::vec4& color)
+	void Renderer3D::DrawCube(const Ref<Texture2D>& texure, const glm::mat4& transform, const float& tile, const glm::vec4& color)
 	{
 		texure->Bind(0);
 		s_Data.WhiteTexture->Bind(1);
-		s_Data.ObjectAndSceneDataBuffer.Tile = 1.0f;
+		s_Data.ObjectAndSceneDataBuffer.Tile = tile;
 		Submit(s_Data.StandardShader, s_Data.CubeVertexArray, transform, color);
 	}
 

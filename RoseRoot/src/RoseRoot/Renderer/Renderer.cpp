@@ -15,7 +15,7 @@ namespace Rose
 
 	struct RendererData {
 		Ref<Framebuffer> GeometryPass;
-		//Ref<Framebuffer> ShadowPass;
+		Ref<Framebuffer> ShadowPass;
 
 		Ref<Shader> FinalPassShader;
 		Ref<VertexArray> FrameBufferVertexArray;
@@ -29,13 +29,23 @@ namespace Rose
 	void Renderer::Init()
 	{
 		RR_PROFILE_FUNCTION();
-
-		FramebufferSpecification fbSpec;
-		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
-		fbSpec.Width = 1600;
-		fbSpec.Height = 900;
-		fbSpec.Samples = 1;
-		s_Data.GeometryPass = Framebuffer::Create(fbSpec);
+		{
+			FramebufferSpecification fbSpec;
+			fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
+			fbSpec.Width = 1600;
+			fbSpec.Height = 900;
+			fbSpec.Samples = 1;
+			s_Data.GeometryPass = Framebuffer::Create(fbSpec);
+		}
+		
+		{
+			FramebufferSpecification fbSpec;
+			fbSpec.Attachments = { FramebufferTextureFormat::Depth };
+			fbSpec.Width = 1024;
+			fbSpec.Height = 1024;
+			fbSpec.Samples = 1;
+			s_Data.ShadowPass = Framebuffer::Create(fbSpec);
+		}
 
 		float frameBufferVertices[] = {
 			-1.0f,  1.0f,  0.0f, 1.0f,
@@ -122,6 +132,10 @@ namespace Rose
 	Ref<Framebuffer> Renderer::GetFinalFrameBuffer()
 	{
 		return s_Data.GeometryPass;
+	}
+	Ref<Framebuffer> Renderer::GetShadowFrameBuffer()
+	{
+		return s_Data.ShadowPass;
 	}
 	void Renderer::ResizeView(uint32_t width, uint32_t height)
 	{
