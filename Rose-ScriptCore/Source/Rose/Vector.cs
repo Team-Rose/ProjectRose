@@ -99,7 +99,7 @@ namespace Rose
         }
         public static Vector4 operator +(Vector4 a, Vector4 b)
         {
-            return new Vector4(a.X + b.X, a.Y + b.Y, b.Z + b.Z, b.W + b.W);
+            return new Vector4(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
         }
         public static Vector4 operator -(Vector4 a, Vector4 b)
         {

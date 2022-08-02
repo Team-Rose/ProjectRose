@@ -28,6 +28,7 @@ namespace Rose {
 		return s_EntityHasComponentFuncs.at(managedType)(entity);
 	}
 
+#pragma region  TranformComponent
 	static void TransformComponent_GetTranslation(UUID entityID, glm::vec3* outTranslation)
 	{
 		Scene* scene = MonoScriptEngine::GetSceneContext();
@@ -37,7 +38,6 @@ namespace Rose {
 
 		*outTranslation = entity.GetComponent<TransformComponent>().Translation;
 	}
-
 	static void TransformComponent_SetTranslation(UUID entityID, glm::vec3* translation)
 	{
 		Scene* scene = MonoScriptEngine::GetSceneContext();
@@ -47,6 +47,47 @@ namespace Rose {
 
 		entity.GetComponent<TransformComponent>().Translation = *translation;
 	}
+
+	static void TransformComponent_GetRotation(UUID entityID, glm::vec3* outTranslation)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		*outTranslation = entity.GetComponent<TransformComponent>().Rotation;
+	}
+	static void TransformComponent_SetRotation(UUID entityID, glm::vec3* rotation)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		entity.GetComponent<TransformComponent>().Rotation = *rotation;
+	}
+
+	static void TransformComponent_GetScale(UUID entityID, glm::vec3* outTranslation)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		*outTranslation = entity.GetComponent<TransformComponent>().Scale;
+	}
+	static void TransformComponent_SetScale(UUID entityID, glm::vec3* scale)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		entity.GetComponent<TransformComponent>().Scale = *scale;
+	}
+#pragma endregion
+
+	
 
 	static void RigidBody2DComponeny_ApplyLinearImpulse(UUID entityID, glm::vec2* impulse, glm::vec2* point, bool wake)
 	{
@@ -114,6 +155,10 @@ namespace Rose {
 
 		RR_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
 		RR_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);
+		RR_ADD_INTERNAL_CALL(TransformComponent_GetRotation);
+		RR_ADD_INTERNAL_CALL(TransformComponent_SetRotation);
+		RR_ADD_INTERNAL_CALL(TransformComponent_GetScale);
+		RR_ADD_INTERNAL_CALL(TransformComponent_SetScale);
 
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponeny_ApplyLinearImpulse);
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponeny_ApplyLinearImpulseToCenter);

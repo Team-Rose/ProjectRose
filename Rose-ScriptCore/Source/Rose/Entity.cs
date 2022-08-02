@@ -39,5 +39,29 @@ namespace Rose
                 InternalCalls.TransformComponent_SetTranslation(ID, ref value);
             }
         }
+        public Vector3 Rotation
+        {
+            get
+            {
+                InternalCalls.TransformComponent_GetRotation(ID, out Vector3 rotation);
+                return rotation;
+            }
+            set
+            {
+                InternalCalls.TransformComponent_SetRotation(ID, ref value);
+            }
+        }
+        public Vector3 Scale
+        {
+            get
+            {
+                InternalCalls.TransformComponent_GetScale(ID, out Vector3 scale);
+                return scale;
+            }
+            set
+            {
+                InternalCalls.TransformComponent_SetScale(ID, ref value);
+            }
+        }
     }
 }

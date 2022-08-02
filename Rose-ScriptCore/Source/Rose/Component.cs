@@ -20,6 +20,30 @@ namespace Rose
                 InternalCalls.TransformComponent_SetTranslation(entity.ID, ref value);
             }
         }
+        public Vector3 Rotation
+        {
+            get
+            {
+                InternalCalls.TransformComponent_GetRotation(entity.ID, out Vector3 rotation);
+                return rotation;
+            }
+            set
+            {
+                InternalCalls.TransformComponent_SetRotation(entity.ID, ref value);
+            }
+        }
+        public Vector3 Scale
+        {
+            get
+            {
+                InternalCalls.TransformComponent_GetScale(entity.ID, out Vector3 scale);
+                return scale;
+            }
+            set
+            {
+                InternalCalls.TransformComponent_SetScale(entity.ID, ref value);
+            }
+        }
     }
 
     public class Rigidbody2DComponent : Component
