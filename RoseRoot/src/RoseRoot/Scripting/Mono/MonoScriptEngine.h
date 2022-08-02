@@ -66,6 +66,8 @@ namespace Rose {
 
 		static Scene* GetSceneContext();
 		static std::unordered_map<std::string, Ref<MonoScriptClass>> GetEntityClasses();
+
+		static MonoImage* GetCoreAssemblyImage();
 	private:
 		static void InitMono();
 		static void ShutDownMono();
@@ -73,6 +75,8 @@ namespace Rose {
 		static void LoadAssemblyClasses(MonoAssembly* assembly);
 		static MonoObject* InstantiateClass(MonoClass* monoClass);
 
+
 		friend class MonoScriptClass;
+		friend class MonoGlue;
 	};
 }

@@ -21,7 +21,8 @@
     <OutputPath>..\RoseStem\Resources\Scripts\</OutputPath>
     <BaseIntermediateOutputPath>..\RoseStem\Resources\Scripts\Intermediates\Debug\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
-    <DefineConstants></DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +34,8 @@
     <OutputPath>..\RoseStem\Resources\Scripts\</OutputPath>
     <BaseIntermediateOutputPath>..\RoseStem\Resources\Scripts\Intermediates\Release\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
-    <DefineConstants></DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -45,7 +47,8 @@
     <OutputPath>..\RoseStem\Resources\Scripts\</OutputPath>
     <BaseIntermediateOutputPath>..\RoseStem\Resources\Scripts\Intermediates\Dist\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
-    <DefineConstants></DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -56,10 +59,14 @@
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Dist|x64' ">
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Source\Input.cs" />
-    <Compile Include="Source\KeyCode.cs" />
-    <Compile Include="Source\Main.cs" />
+    <Compile Include="Source\Flap.cs" />
+    <Compile Include="Source\Rose\Component.cs" />
+    <Compile Include="Source\Rose\Input.cs" />
+    <Compile Include="Source\Rose\InternalCalls.cs" />
+    <Compile Include="Source\Rose\KeyCode.cs" />
+    <Compile Include="Source\Rose\Entity.cs" />
     <Compile Include="Source\Player.cs" />
+    <Compile Include="Source\Rose\Vector.cs" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

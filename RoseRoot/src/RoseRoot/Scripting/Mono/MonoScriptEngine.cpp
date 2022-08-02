@@ -108,6 +108,7 @@ namespace Rose {
 		LoadAssembly("Resources/Scripts/Rose-ScriptCore.dll");
 		LoadAssemblyClasses(s_MonoData->CoreAssembly);
 
+		MonoGlue::RegisterComponents();
 		MonoGlue::RegisterFunctions();
 		s_MonoData->EntityClass = MonoScriptClass("Rose", "Entity");
 	}
@@ -233,7 +234,12 @@ namespace Rose {
 		return instance;
 	}
 
+	MonoImage* MonoScriptEngine::GetCoreAssemblyImage()
+	{
+		return s_MonoData->CoreAssemblyImage;
+	}
 
+	//-----------------------
 
 	MonoScriptClass::MonoScriptClass(const std::string& classNameSpace, const std::string& className)
 		: m_ClassNameSpace(classNameSpace), m_ClassName(className)

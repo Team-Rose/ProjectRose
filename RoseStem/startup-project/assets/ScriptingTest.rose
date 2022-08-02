@@ -2,6 +2,27 @@ Scene: ScriptTest
 Scene Settings:
   Gravity2D: [1, -9.80000019]
 Entities:
+  - Entity: 4301367954215162597
+    TagComponent:
+      Tag: FlappyStan
+    TransformComponent:
+      Translation: [-8.00733852, 2.01330924, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0.936708808, 0, 1]
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: true
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+    MonoScriptComponent:
+      ClassName: Sandbox.Flap
   - Entity: 1518317705166236004
     TagComponent:
       Tag: Cloud
@@ -185,6 +206,8 @@ Entities:
         OrthographicFar: 1
       Primary: true
       FixedAspectRatio: false
+    MonoScriptComponent:
+      ClassName: Sandbox.Player
   - Entity: 12328675614770202790
     TagComponent:
       Tag: Top

@@ -6,9 +6,12 @@ namespace Sandbox
 {
     internal class Player : Entity
     {
+        private TransformComponent m_Transfrom;
         void OnCreate()
         {
             Console.WriteLine($"Player.OnCreate - {ID}");
+
+            m_Transfrom = GetComponent<TransformComponent>();
         }
         void OnUpdate(float ts)
         {
@@ -27,7 +30,7 @@ namespace Sandbox
             if (Input.IsKeyDown(KeyCode.Right))
                 vel.X += 1.0f;
 
-            Translation += (vel * speed) * ts;
+            m_Transfrom.Translation += (vel * speed) * ts;
         }
     }
 }
