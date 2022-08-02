@@ -50,11 +50,11 @@ namespace Rose
     {
         public void ApplyLinearImpulse(Vector2 impulse, Vector2 point, bool wake)
         {
-            InternalCalls.RigidBody2DComponeny_ApplyLinearImpulse(entity.ID, ref impulse, ref point, wake);
+            InternalCalls.RigidBody2DComponent_ApplyLinearImpulse(entity.ID, ref impulse, ref point, wake);
         }
         public void ApplyLinearImpulse(Vector2 impulse, bool wake)
         {
-            InternalCalls.RigidBody2DComponeny_ApplyLinearImpulseToCenter(entity.ID, ref impulse, wake);
+            InternalCalls.RigidBody2DComponent_ApplyLinearImpulseToCenter(entity.ID, ref impulse, wake);
         }
     }
 }

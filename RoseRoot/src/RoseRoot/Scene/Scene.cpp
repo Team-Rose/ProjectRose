@@ -155,6 +155,7 @@ namespace Rose
 	{
 		OnPhysics2DStop();
 		MonoScriptEngine::OnRuntimeStop();
+		RR_CORE_TRACE("-----Runtime Scene Stopped-----");
 	}
 
 	void Scene::OnSimulationStart(const std::string& assetPath)
@@ -168,6 +169,7 @@ namespace Rose
 	void Scene::OnSimulationStop()
 	{
 		OnPhysics2DStop();
+		RR_CORE_TRACE("-----Simulation Scene Stopped-----");
 	}
 
 	void Scene::OnUpdateRuntime(Timestep ts, bool pause)

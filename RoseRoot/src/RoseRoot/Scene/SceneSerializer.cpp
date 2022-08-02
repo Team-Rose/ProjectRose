@@ -338,8 +338,11 @@ namespace Rose
 			return false;
 
 		std::string sceneName = data["Scene"].as<std::string>();
+
+#ifdef RR_DEBUG
 		RR_CORE_TRACE("Deserializing scene '{0}'", sceneName);
-		
+#endif
+
 		auto sceneSettings = data["Scene Settings"];
 		if (sceneSettings)
 		{
@@ -349,7 +352,9 @@ namespace Rose
 			if (Gravity2D)
 			{
 				glm::vec2 gravity = Gravity2D.as<glm::vec2>();
+#ifdef RR_DEBUG
 				RR_CORE_TRACE("Deserialized Gravity2D {0}, {1}", gravity.x, gravity.y);
+#endif
 				m_Scene->m_SceneSettings.Gravity2D = gravity;
 			}
 		}
@@ -365,9 +370,9 @@ namespace Rose
 				auto tagComponent = entity["TagComponent"];
 				if (tagComponent)
 					name = tagComponent["Tag"].as<std::string>();
-
+#ifdef RR_DEBUG
 				RR_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
-
+#endif
 				Entity deserializedEntity = m_Scene->CreateEntityWithUUID(uuid, name);
 
 				auto transformComponent = entity["TransformComponent"];

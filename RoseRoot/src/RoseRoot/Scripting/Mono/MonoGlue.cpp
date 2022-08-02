@@ -87,9 +87,7 @@ namespace Rose {
 	}
 #pragma endregion
 
-	
-
-	static void RigidBody2DComponeny_ApplyLinearImpulse(UUID entityID, glm::vec2* impulse, glm::vec2* point, bool wake)
+	static void RigidBody2DComponent_ApplyLinearImpulse(UUID entityID, glm::vec2* impulse, glm::vec2* point, bool wake)
 	{
 		Scene* scene = MonoScriptEngine::GetSceneContext();
 		RR_CORE_ASSERT(scene);
@@ -100,7 +98,7 @@ namespace Rose {
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
 		body->ApplyLinearImpulse(b2Vec2(impulse->x, impulse->y), b2Vec2(point->x, point->y), wake);
 	}
-	static void RigidBody2DComponeny_ApplyLinearImpulseToCenter(UUID entityID, glm::vec2* impulse, bool wake)
+	static void RigidBody2DComponent_ApplyLinearImpulseToCenter(UUID entityID, glm::vec2* impulse, bool wake)
 	{
 		Scene* scene = MonoScriptEngine::GetSceneContext();
 		RR_CORE_ASSERT(scene);
@@ -160,8 +158,8 @@ namespace Rose {
 		RR_ADD_INTERNAL_CALL(TransformComponent_GetScale);
 		RR_ADD_INTERNAL_CALL(TransformComponent_SetScale);
 
-		RR_ADD_INTERNAL_CALL(RigidBody2DComponeny_ApplyLinearImpulse);
-		RR_ADD_INTERNAL_CALL(RigidBody2DComponeny_ApplyLinearImpulseToCenter);
+		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulse);
+		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulseToCenter);
 
 		RR_ADD_INTERNAL_CALL(Input_IsKeyDown);
 	}

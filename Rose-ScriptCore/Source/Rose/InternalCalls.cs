@@ -28,9 +28,9 @@ namespace Rose
 
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void RigidBody2DComponeny_ApplyLinearImpulse(ulong entityID, ref Vector2 impulse, ref Vector2 point, bool wake);
+        internal extern static void RigidBody2DComponent_ApplyLinearImpulse(ulong entityID, ref Vector2 impulse, ref Vector2 point, bool wake);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void RigidBody2DComponeny_ApplyLinearImpulseToCenter(ulong entityID, ref Vector2 impulse, bool wake);
+        internal extern static void RigidBody2DComponent_ApplyLinearImpulseToCenter(ulong entityID, ref Vector2 impulse, bool wake);
 
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]

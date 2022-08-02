@@ -14,7 +14,7 @@ namespace Rose
 
 	static void GLFWErrorCallback(int error, const char* description)
 	{
-		RR_CORE_ERROR("GLFW Error ({0}):", error, description);
+		RR_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
