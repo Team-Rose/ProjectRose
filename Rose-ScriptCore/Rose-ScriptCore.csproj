@@ -66,6 +66,7 @@
     <Compile Include="Source\Rose\KeyCode.cs" />
     <Compile Include="Source\Rose\Entity.cs" />
     <Compile Include="Source\Player.cs" />
+    <Compile Include="Source\Rose\Math.cs" />
     <Compile Include="Source\Rose\Vector.cs" />
   </ItemGroup>
   <ItemGroup>
