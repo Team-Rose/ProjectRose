@@ -4,7 +4,7 @@ using System;
 
 namespace Sandbox
 {
-    internal class Flap : Entity
+    internal class Balloon : Entity
     {
         private Rigidbody2DComponent m_RigidBody2D;
         private TransformComponent m_Transform;
@@ -13,7 +13,7 @@ namespace Sandbox
 
         void OnCreate()
         {
-            Console.WriteLine($"Player.OnCreate - {ID}");
+            Console.WriteLine($"Balloon.OnCreate - {ID}");
 
             m_RigidBody2D = GetComponent<Rigidbody2DComponent>();
             m_Transform = GetComponent<TransformComponent>();
@@ -28,8 +28,8 @@ namespace Sandbox
                 {
                     time = 1.0f;
                 }
-                
-                m_RigidBody2D.ApplyLinearImpulse(new Vector2(0.0f, 19.0f*ts), true);
+
+                m_RigidBody2D.ApplyLinearImpulse(new Vector2(0.0f, 19.0f * ts), true);
             } else
             {
                 time -= ts * 5;
@@ -37,6 +37,15 @@ namespace Sandbox
                 {
                     time = 0.0f;
                 }
+            }
+
+            if (Input.IsKeyDown(KeyCode.A))
+            {
+                m_RigidBody2D.ApplyLinearImpulse(new Vector2(-8.0f * ts, 0.0f), true);
+            }
+            if (Input.IsKeyDown(KeyCode.D))
+            {
+                m_RigidBody2D.ApplyLinearImpulse(new Vector2( 8.0f * ts, 0.0f), true);
             }
 
             float scale = Rose.Math.Lerp(1.0f, 1.1f, time);
