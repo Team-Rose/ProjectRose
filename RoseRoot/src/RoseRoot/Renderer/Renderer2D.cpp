@@ -182,21 +182,9 @@ namespace Rose
 		delete[] s_Data.QuadVertexBufferBase;
 	}
 
-	void Renderer2D::BeginScene(const OrthographicCamera& camera)
-	{
-		RR_PROFILE_FUNCTION();
-
-		s_Data.QuadShader->Bind();
-		s_Data.QuadShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-
-		StartBatch();
-	}
-
 	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
 	{
 		RR_PROFILE_FUNCTION();
-
-
 
 		StartBatch();
 	}
@@ -204,7 +192,6 @@ namespace Rose
 	void Renderer2D::BeginScene(const EditorCamera& camera)
 	{
 		RR_PROFILE_FUNCTION();
-
 
 		StartBatch();
 	}

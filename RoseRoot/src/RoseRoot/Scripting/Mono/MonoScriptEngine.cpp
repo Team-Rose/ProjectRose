@@ -11,7 +11,7 @@
 namespace Rose {
 
 	namespace Utils {
-		// TODO: Move to FIleSystem class
+		// TODO: Move to FileSystem class
 		static char* ReadBytes(const std::filesystem::path& filepath, uint32_t* outSize)
 		{
 			std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
