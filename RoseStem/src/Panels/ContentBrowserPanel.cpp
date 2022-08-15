@@ -12,6 +12,7 @@ namespace Rose {
 		m_DirectoryIcon = Texture2D::Create("Resources/Icons/ContentBrowser/DirectoryIcon.png");
 		m_FileIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FileIcon.png");
 		m_LuaIcon = Texture2D::Create("Resources/Icons/ContentBrowser/LuaIcon.png");
+		m_CSIcon = Texture2D::Create("Resources/Icons/ContentBrowser/C#Icon.png");
 		m_SceneIcon = Texture2D::Create("Resources/Icons/ContentBrowser/SceneIcon.png");
 		m_PictureIcon = Texture2D::Create("Resources/Icons/ContentBrowser/PictureIcon.png");
 	}
@@ -53,6 +54,8 @@ namespace Rose {
 			if (LastDot != std::string::npos) {
 				if (filenameString.substr(LastDot) == ".lua")
 					icon = m_LuaIcon;
+				else if (filenameString.substr(LastDot) == ".cs")
+					icon = m_CSIcon;
 				else if (filenameString.substr(LastDot) == ".rose")
 					icon = m_SceneIcon;
 				else if (filenameString.substr(LastDot) == ".png" || filenameString.substr(LastDot) == ".jpeg")

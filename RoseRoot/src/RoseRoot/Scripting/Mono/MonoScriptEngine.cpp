@@ -92,6 +92,9 @@ namespace Rose {
 		MonoAssembly* CoreAssembly = nullptr;
 		MonoImage* CoreAssemblyImage = nullptr;
 
+		MonoAssembly* AppAssembly = nullptr;
+		MonoImage* AppAssemblyImage = nullptr;
+
 		MonoScriptClass EntityClass;
 
 		std::unordered_map<std::string, Ref<MonoScriptClass>> EntityClasses;
@@ -105,12 +108,13 @@ namespace Rose {
 	void MonoScriptEngine::Init()
 	{
 		InitMono();
-		LoadAssembly("Resources/Scripts/Rose-ScriptCore.dll");
-		LoadAssemblyClasses(s_MonoData->CoreAssembly);
+		LoadCoreAssembly("Resources/Scripts/Rose-ScriptCore.dll");
+		LoadAppAssembly("startup-project/Binaries/Startup-Project.dll");
+		LoadAssemblyClasses(s_MonoData->AppAssembly);
 
 		MonoGlue::RegisterComponents();
 		MonoGlue::RegisterFunctions();
-		s_MonoData->EntityClass = MonoScriptClass("Rose", "Entity");
+		s_MonoData->EntityClass = MonoScriptClass("Rose", "Entity", true);
 	}
 
 	void MonoScriptEngine::Shutdown()
@@ -138,7 +142,7 @@ namespace Rose {
 		delete s_MonoData;
 	}
 
-	void MonoScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
+	void MonoScriptEngine::LoadCoreAssembly(const std::filesystem::path& filepath)
 	{
 		// Create an App Domain
 		s_MonoData->AppDomain = mono_domain_create_appdomain("RoseScriptRuntime", nullptr);
@@ -146,9 +150,14 @@ namespace Rose {
 
 		//Move this maybe
 		s_MonoData->CoreAssembly = Utils::LoadMonoAssembly(filepath);
-		//PrintAssemblyTypes(s_MonoData->CoreAssembly);
-
 		s_MonoData->CoreAssemblyImage = mono_assembly_get_image(s_MonoData->CoreAssembly);
+	}
+
+	void MonoScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
+	{
+		//Move this maybe
+		s_MonoData->AppAssembly = Utils::LoadMonoAssembly(filepath);
+		s_MonoData->AppAssemblyImage = mono_assembly_get_image(s_MonoData->AppAssembly);
 	}
 
 	void MonoScriptEngine::OnRuntimeStart(Scene* scene)
@@ -218,7 +227,7 @@ namespace Rose {
 				fullName = fmt::format("{}.{}", nameSpace, name);
 			else
 				fullName = name;
-			MonoClass* monoClass = mono_class_from_name(s_MonoData->CoreAssemblyImage, nameSpace, name);
+			MonoClass* monoClass = mono_class_from_name(image, nameSpace, name);
 			if (monoClass == entityClass)
 				continue;
 
@@ -241,10 +250,10 @@ namespace Rose {
 
 	//-----------------------
 
-	MonoScriptClass::MonoScriptClass(const std::string& classNameSpace, const std::string& className)
+	MonoScriptClass::MonoScriptClass(const std::string& classNameSpace, const std::string& className, bool isCore)
 		: m_ClassNameSpace(classNameSpace), m_ClassName(className)
 	{
-		m_MonoClass = mono_class_from_name(s_MonoData->CoreAssemblyImage, classNameSpace.c_str(), className.c_str());
+		m_MonoClass = mono_class_from_name(isCore ? s_MonoData->CoreAssemblyImage : s_MonoData->AppAssemblyImage, classNameSpace.c_str(), className.c_str());
 	}
 	MonoObject* MonoScriptClass::Instantiate()
 	{

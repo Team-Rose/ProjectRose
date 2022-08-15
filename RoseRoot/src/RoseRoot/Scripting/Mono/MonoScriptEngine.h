@@ -21,7 +21,7 @@ namespace Rose {
 	public:
 		MonoScriptClass() = default;
 
-		MonoScriptClass(const std::string& classNameSpace, const std::string& className);
+		MonoScriptClass(const std::string& classNameSpace, const std::string& className, bool isCore = false);
 		MonoObject* Instantiate();
 		MonoMethod* GetMethod(const std::string& name, int parameterCount);
 		MonoObject* InvokeMethod(MonoObject* instance, MonoMethod* method, void** params = nullptr);
@@ -55,7 +55,8 @@ namespace Rose {
 		static void Init();
 		static void Shutdown();
 
-		static void LoadAssembly(const std::filesystem::path& filepath);
+		static void LoadCoreAssembly(const std::filesystem::path& filepath);
+		static void LoadAppAssembly(const std::filesystem::path& filepath);
 
 		static void OnRuntimeStart(Scene* scene);
 		static void OnRuntimeStop();

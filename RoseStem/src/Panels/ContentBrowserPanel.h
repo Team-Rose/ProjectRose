@@ -21,6 +21,7 @@ namespace Rose {
 		Ref<Texture2D> m_DirectoryIcon;
 		Ref<Texture2D> m_FileIcon;
 		Ref<Texture2D> m_LuaIcon;
+		Ref<Texture2D> m_CSIcon;
 		Ref<Texture2D> m_SceneIcon;
 		Ref<Texture2D> m_PictureIcon;
 	};

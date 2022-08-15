@@ -3,8 +3,8 @@ project "Rose-ScriptCore"
 	language "C#"
 	dotnetframework "4.7.2"
 
-	targetdir ("%{wks.location}/RoseStem/Resources/Scripts")
-	objdir ("%{wks.location}/RoseStem/Resources/Scripts/Intermediates")
+	targetdir ("../RoseStem/Resources/Scripts")
+	objdir ("../RoseStem/Resources/Scripts/Intermediates")
 
 	files
 	{

@@ -1,6 +1,6 @@
 ﻿namespace Rose
 {
-    internal class Input
+    public class Input
     {
         public static bool IsKeyDown(KeyCode keycode)
         {

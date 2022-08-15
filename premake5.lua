@@ -26,6 +26,7 @@ group "Dependencies"
 	include "RoseRoot/vendor/yaml-cpp"
 group ""
 
+RoseRootDir = "../"
 group "Core"
 	include "RoseRoot"
 	include "Rose-ScriptCore"

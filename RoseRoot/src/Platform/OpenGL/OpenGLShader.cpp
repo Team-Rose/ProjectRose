@@ -108,7 +108,7 @@ namespace Rose
 			RR_PROFILE_SCOPE("Shader Creation");
 			Timer timer;
 			CompileOrGetVulkanBinaries(shaderSources);
-			if (Utils::IsAmdGpu()) {
+			if (Utils::IsAmdGpu() && false) {
 				CreateProgramForAmd();
 			}
 			else {
@@ -136,7 +136,7 @@ namespace Rose
 		sources[GL_FRAGMENT_SHADER] = fragmentSrc;
 
 		CompileOrGetVulkanBinaries(sources);
-		if (Utils::IsAmdGpu()) {
+		if (Utils::IsAmdGpu() && false) {
 			CreateProgramForAmd();
 		}
 		else {
