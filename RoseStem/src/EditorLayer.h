@@ -31,6 +31,8 @@ namespace Rose {
 
 		void NewProject();
 		void OpenProject();
+
+		void QuickReloadAppAssembly();
 	private:
 		bool m_GizmoLastFrame;
 		Project m_Project;

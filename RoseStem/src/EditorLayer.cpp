@@ -34,6 +34,7 @@ namespace Rose {
 		m_SceneManager.m_SceneHierarchyPanel.SetAssetPath(m_Project.GetAssetPath());
 		m_SceneManager.SetAssetPath(m_Project.GetAssetPath());
 		m_SceneManager.SetAppAssemblyPath(m_Project.GetAppAssemblyPath());
+		QuickReloadAppAssembly();
 
 		ResetToProjectSettings();
 		m_SceneManager.NewScene();
@@ -158,6 +159,16 @@ namespace Rose {
 					CommandHistory::Undo();
 				if (ImGui::MenuItem("Redo", "Ctrl+Y"))
 					CommandHistory::Redo();
+
+				if (ImGui::MenuItem("Reload App Assembly", "Ctrl+R")) {
+					if (std::filesystem::exists(m_Project.GetAppAssemblyPath())) {
+						MonoScriptEngine::ReloadAppAssembly(m_Project.GetAppAssemblyPath());
+					}
+					else {
+						MonoScriptEngine::UnloadAppAssembly();
+					}
+				}
+
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Window"))
@@ -414,13 +425,19 @@ namespace Rose {
 		}
 		case Key::E:
 		{
-			if (!ImGuizmo::IsUsing() && m_SceneManager.isEditing() || m_SceneManager.isSimulating())
-				m_SceneManager.m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+			if (control) {
+				
+			} else {
+				if (!ImGuizmo::IsUsing() && m_SceneManager.isEditing() || m_SceneManager.isSimulating())
+					m_SceneManager.m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+			}
 			break;
 		}
 		case Key::R:
 		{
-			if (!ImGuizmo::IsUsing() && m_SceneManager.isEditing() || m_SceneManager.isSimulating())
+			if(control)
+				QuickReloadAppAssembly();
+			else if (!ImGuizmo::IsUsing() && m_SceneManager.isEditing() || m_SceneManager.isSimulating())
 				m_SceneManager.m_GizmoType = ImGuizmo::OPERATION::SCALE;
 			break;
 		}
@@ -530,6 +547,8 @@ namespace Rose {
 		m_SceneManager.m_SceneHierarchyPanel.SetAssetPath(m_Project.GetAssetPath());
 		m_SceneManager.SetAssetPath(m_Project.GetAssetPath());
 		m_SceneManager.SetAppAssemblyPath(m_Project.GetAppAssemblyPath());
+
+		QuickReloadAppAssembly();
 	}
 
 	void EditorLayer::NewProject()
@@ -558,6 +577,15 @@ namespace Rose {
 			m_SceneManager.m_SceneHierarchyPanel.SetAssetPath(m_Project.GetAssetPath());
 			m_SceneManager.SetAssetPath(m_Project.GetAssetPath());
 			ResetToProjectSettings();
+		}
+	}
+	void EditorLayer::QuickReloadAppAssembly()
+	{
+		if (std::filesystem::exists(m_Project.GetAppAssemblyPath())) {
+			MonoScriptEngine::ReloadAppAssembly(m_Project.GetAppAssemblyPath());
+		}
+		else {
+			MonoScriptEngine::UnloadAppAssembly();
 		}
 	}
 }

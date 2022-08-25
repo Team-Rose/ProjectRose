@@ -14,6 +14,31 @@ namespace Rose {
 		virtual bool IsLocked() = 0;
 	};
 
+	class DeleteEntityCommand : public Command {
+	public:
+		DeleteEntityCommand(const Ref<Scene>& editorScene, Entity entity)
+		: m_Context(editorScene), m_DeletedEntity(entity)
+		{
+			m_Scene = CreateRef<Scene>();
+			m_CopyEntity = m_Scene->DuplicateEntity(m_DeletedEntity);
+		}
+		virtual ~DeleteEntityCommand() = default;
+
+		virtual void Execute() override {
+			m_Context->DestroyEntity(m_DeletedEntity);
+		}
+		virtual void Undo() override {
+			m_Context->DuplicateEntity(m_CopyEntity);
+		}
+		virtual void Lock() override {}
+		virtual bool IsLocked() override { return true; }
+	private:
+		Entity m_DeletedEntity;
+		Entity m_CopyEntity;
+		Ref<Scene> m_Scene;
+		Ref<Scene> m_Context;
+	};
+
 	template<typename T>
 	class ChangeValueCommand : public Command{
 	public:
@@ -48,7 +73,6 @@ namespace Rose {
 	class CommandHistory {
 	public:
 		static void Init();
-
 		static void Clear();
 
 		//A generic execute for command without ammending

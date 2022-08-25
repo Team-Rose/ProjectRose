@@ -2,6 +2,7 @@
 
 #include "RoseRoot/Scene/SceneSerializer.h"
 #include "RoseRoot/Utils/PlatformUtils.h"
+#include "CommandHistory.h"
 
 #include "imgui/imgui.h"
 namespace Rose {
@@ -164,6 +165,7 @@ namespace Rose {
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(path.string(), m_AssetPath.string()))
 		{
+			CommandHistory::Clear();
 			m_EditorScene = newScene;
 			m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_SceneName = m_EditorScene->GetName();

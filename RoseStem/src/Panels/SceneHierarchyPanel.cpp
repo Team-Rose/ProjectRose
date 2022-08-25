@@ -82,6 +82,9 @@ namespace Rose {
 		}
 
 		bool entityDeleted = false;
+
+		if (Input::IsKeyPressed(Key::Delete) && m_SelectionContext == entity)
+			entityDeleted = true;
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("Delete Entity"))
@@ -98,7 +101,7 @@ namespace Rose {
 
 		if (entityDeleted)
 		{
-			m_Context->DestroyEntity(entity);
+			CommandHistory::Execute(CreateRef<DeleteEntityCommand>(m_Context, entity));
 			if (m_SelectionContext == entity)
 				m_SelectionContext = {};
 		}

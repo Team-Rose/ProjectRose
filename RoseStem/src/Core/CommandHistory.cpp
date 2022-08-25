@@ -18,6 +18,7 @@ namespace Rose {
 	void CommandHistory::Clear()
 	{
 		s_commandData.commandBuffer.clear();
+		s_commandData.commandBuffer.resize(s_commandData.MaxSize);
 		s_commandData.Location = 0;
 	}
 	
