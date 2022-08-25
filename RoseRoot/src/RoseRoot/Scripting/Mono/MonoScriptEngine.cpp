@@ -5,6 +5,7 @@
 
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
+#include <mono/metadata/mono-gc.h>
 #include "mono/metadata/object.h"
 #include <glm/glm.hpp>
 
@@ -88,6 +89,7 @@ namespace Rose {
 	{
 		MonoDomain* RootDomain = nullptr;
 		MonoDomain* AppDomain = nullptr;
+		MonoDomain* OldAppDomain = nullptr;
 
 		MonoAssembly* CoreAssembly = nullptr;
 		MonoImage* CoreAssemblyImage = nullptr;
@@ -107,23 +109,6 @@ namespace Rose {
 
 	void MonoScriptEngine::Init()
 	{
-		InitMono();
-		LoadCoreAssembly("Resources/Scripts/Rose-ScriptCore.dll");
-		LoadAppAssembly("startup-project/Binaries/Startup-Project.dll");
-		LoadAssemblyClasses(s_MonoData->AppAssembly);
-
-		MonoGlue::RegisterComponents();
-		MonoGlue::RegisterFunctions();
-		s_MonoData->EntityClass = MonoScriptClass("Rose", "Entity", true);
-	}
-
-	void MonoScriptEngine::Shutdown()
-	{
-		ShutDownMono();
-	}
-
-	void MonoScriptEngine::InitMono()
-	{
 		mono_set_assemblies_path("mono/lib");
 		s_MonoData = new MonoScriptEngineData();
 
@@ -132,9 +117,20 @@ namespace Rose {
 
 		// Store the root domain pointer
 		s_MonoData->RootDomain = rootDomain;
+
+		// Create an App Domain
+		s_MonoData->AppDomain = mono_domain_create_appdomain("RoseScriptRuntime", nullptr);
+		mono_domain_set(s_MonoData->AppDomain, true);
+
+		LoadCoreAssembly("Resources/Scripts/Rose-ScriptCore.dll");
+		LoadAppAssembly("startup-project/Binaries/Startup-Project.dll");
+
+		MonoGlue::RegisterComponents();
+		MonoGlue::RegisterFunctions();
+		s_MonoData->EntityClass = MonoScriptClass("Rose", "Entity", true);
 	}
 
-	void MonoScriptEngine::ShutDownMono()
+	void MonoScriptEngine::Shutdown()
 	{
 		s_MonoData->AppDomain = nullptr;
 		s_MonoData->RootDomain = nullptr;
@@ -144,24 +140,43 @@ namespace Rose {
 
 	void MonoScriptEngine::LoadCoreAssembly(const std::filesystem::path& filepath)
 	{
-		// Create an App Domain
-		s_MonoData->AppDomain = mono_domain_create_appdomain("RoseScriptRuntime", nullptr);
-		mono_domain_set(s_MonoData->AppDomain, true);
-
-		//Move this maybe
 		s_MonoData->CoreAssembly = Utils::LoadMonoAssembly(filepath);
 		s_MonoData->CoreAssemblyImage = mono_assembly_get_image(s_MonoData->CoreAssembly);
 	}
 
 	void MonoScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
 	{
-		//Move this maybe
 		s_MonoData->AppAssembly = Utils::LoadMonoAssembly(filepath);
 		s_MonoData->AppAssemblyImage = mono_assembly_get_image(s_MonoData->AppAssembly);
+		LoadAssemblyClasses(s_MonoData->AppAssembly);
+	}
+
+	void MonoScriptEngine::ReloadAppAssembly(const std::filesystem::path& filepath)
+	{
+		s_MonoData->OldAppDomain = s_MonoData->AppDomain;
+		s_MonoData->AppDomain = mono_domain_create_appdomain("RoseScriptRuntime", nullptr);
+		mono_domain_set(s_MonoData->AppDomain, true);
+		mono_domain_unload(s_MonoData->OldAppDomain);
+
+		s_MonoData->EntityInstances.clear();
+		s_MonoData->EntityClasses.clear();
+
+		s_MonoData->AppAssembly = nullptr;
+		s_MonoData->AppAssemblyImage = nullptr;
+
+		LoadCoreAssembly("Resources/Scripts/Rose-ScriptCore.dll");
+		LoadAppAssembly(filepath);
+
+		MonoGlue::RegisterComponents();
+		MonoGlue::RegisterFunctions();
+		s_MonoData->EntityClass = MonoScriptClass("Rose", "Entity", true);
+
+		mono_gc_collect(mono_gc_max_generation());
 	}
 
 	void MonoScriptEngine::OnRuntimeStart(Scene* scene)
 	{
+		ReloadAppAssembly("startup-project/Binaries/Startup-Project.dll");
 		s_MonoData->SceneContext = scene;
 	}
 
@@ -176,6 +191,7 @@ namespace Rose {
 		const MonoScriptComponent& msc = entity.GetComponent<MonoScriptComponent>();
 		if (MonoScriptEngine::EntityClassExist(msc.ClassName)) {
 			Ref<MonoScriptInstance> instance = CreateRef<MonoScriptInstance>(s_MonoData->EntityClasses[msc.ClassName], entity);
+			RR_CORE_INFO("Mono: {} - {}", entity.GetName(), entity.GetUUID());
 			s_MonoData->EntityInstances[entity.GetUUID()] = instance;
 
 			instance->InvokeOnCreate();
@@ -184,6 +200,9 @@ namespace Rose {
 
 	void MonoScriptEngine::OnUpdateEntity(Entity entity, float ts)
 	{
+		if (!s_MonoData->AppAssembly)
+			return;
+
 		UUID entityUUID = entity.GetUUID();
 		RR_CORE_ASSERT(s_MonoData->EntityInstances.find(entityUUID) != s_MonoData->EntityInstances.end());
 
@@ -231,6 +250,7 @@ namespace Rose {
 			if (monoClass == entityClass)
 				continue;
 
+			RR_CORE_INFO(fullName);
 			bool isEntity = mono_class_is_subclass_of(monoClass, entityClass, false);
 			if (isEntity)
 				s_MonoData->EntityClasses[fullName] = CreateRef<MonoScriptClass>(nameSpace, name);
@@ -281,7 +301,8 @@ namespace Rose {
 		
 		// Call Entity Constructor
 		{
-			void* param = &entity.GetUUID();
+			UUID entityID = entity.GetUUID();
+			void* param = &entityID;
 			m_ScriptClass->InvokeMethod(m_Instance, m_Constructor, &param);
 		}
 		

@@ -3,8 +3,6 @@
 
 namespace Rose
  {
-	
-
 	class Project {
 	public:
 		Project(std::filesystem::path path = "startup-project");

@@ -119,14 +119,13 @@ namespace Rose
 		tag.Tag = name.empty() ? "Entity" : name;
 
 		m_EntityMap[uuid] = entity;
-
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
-		m_EntityMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
+		m_EntityMap.erase(entity.GetUUID());
 	}
 
 	void Scene::OnRuntimeStart(const std::string& assetPath)
@@ -135,13 +134,10 @@ namespace Rose
 		RR_CORE_TRACE("-----Runtime Scene Started-----");
 		OnPhysics2DStart();
 
-
-		MonoScriptEngine::OnRuntimeStart(this);
+		MonoScriptEngine::OnRuntimeStart(this); 
 		m_Registry.view<MonoScriptComponent>().each([=](auto entity, MonoScriptComponent& msc)
 			{
-				if (MonoScriptEngine::EntityClassExist(msc.ClassName)) {
-					MonoScriptEngine::OnCreateEntity(Entity{ entity, this });
-				}
+				MonoScriptEngine::OnCreateEntity(Entity{ entity, this });
 			});
 
 		m_Registry.view<LuaScriptComponent>().each([=](auto entity, LuaScriptComponent& lsc)
@@ -359,7 +355,7 @@ namespace Rose
 		if (m_EntityMap.find(uuid) != m_EntityMap.end())
 			return { m_EntityMap.at(uuid), this };
 
-		RR_CORE_WARN("Entity with UUID {} was not found!");
+		RR_CORE_WARN("Entity with UUID {} was not found!", uuid);
 		return {};
 	} 
 

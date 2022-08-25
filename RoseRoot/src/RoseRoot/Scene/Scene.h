@@ -12,8 +12,11 @@ class b2World;
 
 namespace Rose
 {
-
 	class Entity;
+
+	struct SceneStats {
+
+	};
 
 	class Scene {
 	public:

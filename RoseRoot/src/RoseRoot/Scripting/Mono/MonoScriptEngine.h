@@ -56,7 +56,9 @@ namespace Rose {
 		static void Shutdown();
 
 		static void LoadCoreAssembly(const std::filesystem::path& filepath);
+
 		static void LoadAppAssembly(const std::filesystem::path& filepath);
+		static void ReloadAppAssembly(const std::filesystem::path& filepath);
 
 		static void OnRuntimeStart(Scene* scene);
 		static void OnRuntimeStop();
@@ -70,9 +72,6 @@ namespace Rose {
 
 		static MonoImage* GetCoreAssemblyImage();
 	private:
-		static void InitMono();
-		static void ShutDownMono();
-
 		static void LoadAssemblyClasses(MonoAssembly* assembly);
 		static MonoObject* InstantiateClass(MonoClass* monoClass);
 
