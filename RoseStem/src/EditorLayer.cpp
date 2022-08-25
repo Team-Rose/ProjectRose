@@ -33,6 +33,7 @@ namespace Rose {
 		m_SceneManager.m_ContentBrowserPanel.SetAssetPath(m_Project.GetAssetPath());
 		m_SceneManager.m_SceneHierarchyPanel.SetAssetPath(m_Project.GetAssetPath());
 		m_SceneManager.SetAssetPath(m_Project.GetAssetPath());
+		m_SceneManager.SetAppAssemblyPath(m_Project.GetAppAssemblyPath());
 
 		ResetToProjectSettings();
 		m_SceneManager.NewScene();
@@ -178,6 +179,16 @@ namespace Rose {
 		float duration = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - m_LastTime).count() * 0.001f * 0.001f * 0.001f;;
 		ImGui::Text("Frame Time: %.3fms", duration*1000.0f);
 		m_LastTime = currentTime;
+
+		SceneStats sceneStats = m_SceneManager.getActiveScene()->GetSceneStats();
+		ImGui::Text("Scene Stats:");
+		ImGui::Text("Mono Script Time: %.3fms", sceneStats.MonoScriptTime);
+		ImGui::Text("Lua Script Time: %.3fms", sceneStats.LuaSciptTime);
+		ImGui::Text("Total Script Time: %.3fms", sceneStats.TotalScriptTime);
+
+		ImGui::Text("Physics Time: %.3fms", sceneStats.PhysicsTime);
+		ImGui::Text("Render Time: %.3fms", sceneStats.RenderTime);
+
 
 		ImGui::Text("Renderer2D Stats:");
 		ImGui::Text("Draw Calls: %d", stats.DrawCalls);
@@ -435,10 +446,10 @@ namespace Rose {
 
 		char buffer[256];
 		memset(buffer, 0, sizeof(buffer));
-		std::strncpy(buffer, m_Project.GetName().c_str(), sizeof(buffer));
+		std::strncpy(buffer, m_ProjectName.c_str(), sizeof(buffer));
 		if (ImGui::InputText("##Name", buffer, sizeof(buffer)))
 		{
-			m_Project.SetName(std::string(buffer));
+			m_ProjectName = std::string(buffer);
 		}
 
 		ImGui::PushItemWidth(70);
@@ -494,6 +505,7 @@ namespace Rose {
 	{
 		m_ScenePathsBuffer.clear();
 
+		m_ProjectName = m_Project.GetName();
 		m_NumberOfScenes = m_Project.GetSizeOfSceneIndex();
 
 		auto sceneIndexPtr = m_Project.GetSceneIndexPtr();
@@ -507,11 +519,17 @@ namespace Rose {
 
 	void EditorLayer::SaveProjectSettings()
 	{
+		m_Project.SetName(m_ProjectName);
 		for (int i = 0; i < m_NumberOfScenes; i++) {
 			m_Project.SetSceneToIndex(m_ScenePathsBuffer.at(i).first, m_ScenePathsBuffer.at(i).second);
 		}
 
 		m_Project.SaveProject();
+
+		m_SceneManager.m_ContentBrowserPanel.SetAssetPath(m_Project.GetAssetPath());
+		m_SceneManager.m_SceneHierarchyPanel.SetAssetPath(m_Project.GetAssetPath());
+		m_SceneManager.SetAssetPath(m_Project.GetAssetPath());
+		m_SceneManager.SetAppAssemblyPath(m_Project.GetAppAssemblyPath());
 	}
 
 	void EditorLayer::NewProject()

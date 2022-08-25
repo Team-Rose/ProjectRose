@@ -34,6 +34,7 @@ namespace Rose {
 	private:
 		bool m_GizmoLastFrame;
 		Project m_Project;
+		std::string m_ProjectName;
 		SceneManger m_SceneManager;
 
 		Entity m_HoveredEntity;

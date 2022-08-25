@@ -20,6 +20,7 @@
 #include "Box2D/b2_fixture.h"
 #include "Box2D/b2_polygon_shape.h"
 #include "Box2D/b2_circle_shape.h"
+#include <RoseRoot/Core/Timer.h>
 
 namespace Rose
  {
@@ -151,6 +152,7 @@ namespace Rose
 	{
 		OnPhysics2DStop();
 		MonoScriptEngine::OnRuntimeStop();
+		m_SceneStats = {};
 		RR_CORE_TRACE("-----Runtime Scene Stopped-----");
 	}
 
@@ -158,13 +160,13 @@ namespace Rose
 	{
 		RR_PROFILE_FUNCTION();
 		RR_CORE_TRACE("-----Simulation Scene Started-----");
-
 		OnPhysics2DStart();
 	}
 
 	void Scene::OnSimulationStop()
 	{
 		OnPhysics2DStop();
+		m_SceneStats = {};
 		RR_CORE_TRACE("-----Simulation Scene Stopped-----");
 	}
 
@@ -175,6 +177,7 @@ namespace Rose
 			// Update scripts
 			{
 				RR_PROFILE_SCOPE("Update Scripts");
+				Timer scriptTimer;
 
 				m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 					{
@@ -190,18 +193,26 @@ namespace Rose
 					});
 
 				//C# OnUpdate
+				Timer monoScriptTimer;
 				m_Registry.view<MonoScriptComponent>().each([=](auto entity, MonoScriptComponent& msc)
 					{
 						Entity rEntity = { entity, this };
 						MonoScriptEngine::OnUpdateEntity(rEntity, (float)ts);
 					});
+				m_SceneStats.MonoScriptTime = monoScriptTimer.ElapsedMillis();
 
 				//Lua OnUpdate
+				Timer luaScriptTimer;
 				m_Registry.view<LuaScriptComponent>().each([=](auto entity, auto& lsc)
 					{
 						lsc.Script->Update(ts);
 					});
+				m_SceneStats.LuaSciptTime = luaScriptTimer.ElapsedMillis();
+
+				m_SceneStats.TotalScriptTime = scriptTimer.ElapsedMillis();
 			}
+
+			Timer physicsTimer;	
 			//  Physics 2D
 			{
 				RR_PROFILE_SCOPE("Update Physics2D");
@@ -226,7 +237,10 @@ namespace Rose
 					//body->SetAwake(true);
 				}
 			}
+			m_SceneStats.PhysicsTime = physicsTimer.ElapsedMillis();
 		}
+
+		Timer renderTimer;
 		// Render
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
@@ -278,13 +292,14 @@ namespace Rose
 
 			Renderer::EndScene();
 		}
-
+		m_SceneStats.RenderTime = renderTimer.ElapsedMillis();
 	}
 
 	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera,bool pause)
 	{
 		RR_PROFILE_FUNCTION();
 
+		Timer physicsTimer;
 		//  Physics 2D
 		{
 			RR_PROFILE_SCOPE("Update Physics2D");
@@ -309,13 +324,18 @@ namespace Rose
 				//body->SetAwake(true);
 			}
 		}
+		m_SceneStats.PhysicsTime = physicsTimer.ElapsedMillis();
 
+		Timer renderTimer;
 		RenderScene(camera);
+		m_SceneStats.RenderTime = renderTimer.ElapsedMillis();
 	}
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
+		Timer renderTimer;
 		RenderScene(camera);
+		m_SceneStats.RenderTime = renderTimer.ElapsedMillis();
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)

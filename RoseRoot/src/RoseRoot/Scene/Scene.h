@@ -15,7 +15,13 @@ namespace Rose
 	class Entity;
 
 	struct SceneStats {
+		//Timers are in MS
+		float MonoScriptTime = 0.0f;
+		float LuaSciptTime = 0.0f;
+		float TotalScriptTime = 0.0f;
 
+		float PhysicsTime = 0.0f;
+		float RenderTime = 0.0f;
 	};
 
 	class Scene {
@@ -50,6 +56,8 @@ namespace Rose
 		std::string GetName() { return m_SceneSettings.Name; }
 		void SetName(std::string name) { m_SceneSettings.Name = name;}
 
+		SceneStats GetSceneStats() { return m_SceneStats; }
+
 		Entity GetPrimaryCameraEntity();
 
 		template<typename... Components>
@@ -76,7 +84,7 @@ namespace Rose
 		};
 
 		SceneSettings m_SceneSettings;
-		
+		SceneStats m_SceneStats;
 		entt::registry m_Registry;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 

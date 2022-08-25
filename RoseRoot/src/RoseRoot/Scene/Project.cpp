@@ -36,6 +36,14 @@ namespace Rose
 	{
 	}
 
+	void Project::SetName(std::string name)
+	{
+		std::string oldnameCopy = m_Name;
+		std::string newnameCopy = name;
+		std::filesystem::rename(m_Path / oldnameCopy.append(".rproj"), m_Path / newnameCopy.append(".rproj"));
+		m_Name = name;
+	}
+
 	void Project::SetSceneToIndex(int index, std::filesystem::path path)
 	{
 		if (IsSceneAtIndex(index)) {
@@ -65,7 +73,7 @@ namespace Rose
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap;
-		out << YAML::Key << "Project" << YAML::Value << "UntitledProject";
+		out << YAML::Key << "Project" << YAML::Value << m_Name;
 
 		out << YAML::Key << "Scenes" << YAML::Value << YAML::BeginSeq;
 		std::for_each(m_ScenePaths.begin(), m_ScenePaths.end(), [&](std::pair<int, std::filesystem::path> elements) {
@@ -78,7 +86,8 @@ namespace Rose
 
 		out << YAML::EndMap;
 
-		std::ofstream fout(m_Path / "UntitledProject.rproj");
+		std::string nameCopy = m_Name;
+		std::ofstream fout(m_Path / nameCopy.append(".rproj"));
 		fout << out.c_str();
 	}
 	bool Project::OpenProject(std::filesystem::path path)
@@ -100,6 +109,8 @@ namespace Rose
 
 		std::string projectName = data["Project"].as<std::string>();
 		RR_CORE_TRACE("Deserializing project '{0}'", projectName);
+		m_Name = projectName;
+
 		m_Path = path.parent_path();
 
 		RR_CORE_TRACE("Deserializing Scene Index");

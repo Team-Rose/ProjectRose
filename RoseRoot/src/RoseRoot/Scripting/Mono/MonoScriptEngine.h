@@ -59,6 +59,7 @@ namespace Rose {
 
 		static void LoadAppAssembly(const std::filesystem::path& filepath);
 		static void ReloadAppAssembly(const std::filesystem::path& filepath);
+		static void UnloadAppAssembly();
 
 		static void OnRuntimeStart(Scene* scene);
 		static void OnRuntimeStop();

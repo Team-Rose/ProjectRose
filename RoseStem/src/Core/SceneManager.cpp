@@ -208,6 +208,12 @@ namespace Rose {
 		if (m_SceneState == SceneState::Simulate)
 			OnSceneStop();
 
+		if (std::filesystem::exists(m_AppAssemblyPath)) {
+			MonoScriptEngine::ReloadAppAssembly(m_AppAssemblyPath);
+		}
+		else {
+			MonoScriptEngine::UnloadAppAssembly();
+		}
 		m_GizmoType = -1;
 		m_ActiveScene = Scene::Copy(m_EditorScene);
 		m_ActiveScene->OnRuntimeStart(m_AssetPath.string());

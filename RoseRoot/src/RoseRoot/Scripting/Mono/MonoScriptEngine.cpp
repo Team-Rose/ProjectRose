@@ -123,7 +123,6 @@ namespace Rose {
 		mono_domain_set(s_MonoData->AppDomain, true);
 
 		LoadCoreAssembly("Resources/Scripts/Rose-ScriptCore.dll");
-		LoadAppAssembly("startup-project/Binaries/Startup-Project.dll");
 
 		MonoGlue::RegisterComponents();
 		MonoGlue::RegisterFunctions();
@@ -153,16 +152,7 @@ namespace Rose {
 
 	void MonoScriptEngine::ReloadAppAssembly(const std::filesystem::path& filepath)
 	{
-		s_MonoData->OldAppDomain = s_MonoData->AppDomain;
-		s_MonoData->AppDomain = mono_domain_create_appdomain("RoseScriptRuntime", nullptr);
-		mono_domain_set(s_MonoData->AppDomain, true);
-		mono_domain_unload(s_MonoData->OldAppDomain);
-
-		s_MonoData->EntityInstances.clear();
-		s_MonoData->EntityClasses.clear();
-
-		s_MonoData->AppAssembly = nullptr;
-		s_MonoData->AppAssemblyImage = nullptr;
+		UnloadAppAssembly();
 
 		LoadCoreAssembly("Resources/Scripts/Rose-ScriptCore.dll");
 		LoadAppAssembly(filepath);
@@ -174,9 +164,22 @@ namespace Rose {
 		mono_gc_collect(mono_gc_max_generation());
 	}
 
+	void MonoScriptEngine::UnloadAppAssembly()
+	{
+		s_MonoData->OldAppDomain = s_MonoData->AppDomain;
+		s_MonoData->AppDomain = mono_domain_create_appdomain("RoseScriptRuntime", nullptr);
+		mono_domain_set(s_MonoData->AppDomain, true);
+		mono_domain_unload(s_MonoData->OldAppDomain);
+
+		s_MonoData->EntityInstances.clear();
+		s_MonoData->EntityClasses.clear();
+
+		s_MonoData->AppAssembly = nullptr;
+		s_MonoData->AppAssemblyImage = nullptr;
+	}
+
 	void MonoScriptEngine::OnRuntimeStart(Scene* scene)
 	{
-		ReloadAppAssembly("startup-project/Binaries/Startup-Project.dll");
 		s_MonoData->SceneContext = scene;
 	}
 
@@ -191,7 +194,6 @@ namespace Rose {
 		const MonoScriptComponent& msc = entity.GetComponent<MonoScriptComponent>();
 		if (MonoScriptEngine::EntityClassExist(msc.ClassName)) {
 			Ref<MonoScriptInstance> instance = CreateRef<MonoScriptInstance>(s_MonoData->EntityClasses[msc.ClassName], entity);
-			RR_CORE_INFO("Mono: {} - {}", entity.GetName(), entity.GetUUID());
 			s_MonoData->EntityInstances[entity.GetUUID()] = instance;
 
 			instance->InvokeOnCreate();
@@ -249,8 +251,6 @@ namespace Rose {
 			MonoClass* monoClass = mono_class_from_name(image, nameSpace, name);
 			if (monoClass == entityClass)
 				continue;
-
-			RR_CORE_INFO(fullName);
 			bool isEntity = mono_class_is_subclass_of(monoClass, entityClass, false);
 			if (isEntity)
 				s_MonoData->EntityClasses[fullName] = CreateRef<MonoScriptClass>(nameSpace, name);
