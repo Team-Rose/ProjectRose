@@ -41,7 +41,7 @@ namespace Rose
 		}
 		{
 			FramebufferSpecification fbSpec;
-			fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
+			fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER };
 			fbSpec.Width = 1600;
 			fbSpec.Height = 900;
 			fbSpec.Samples = 1;

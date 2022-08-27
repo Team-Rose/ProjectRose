@@ -36,7 +36,9 @@ layout(std140, binding = 32) uniform Viewport
 };
 
 layout (binding = 0) uniform sampler2D u_Screencapture[32];
+layout (binding = 0) uniform isampler2D u_ScreencaptureI[32];
 layout (binding = 0) uniform sampler2DMS u_ScreencaptureMS[32];
+layout (binding = 0) uniform isampler2DMS u_ScreencaptureMSI[32];
 
 vec4 MultiSampleTexture(sampler2DMS tex, ivec2 texCoord, int samples)
 {
@@ -58,11 +60,11 @@ void main()
 		ivec2 texCoord = ivec2(Input.TexCoord * texSize);
 
 		color = MultiSampleTexture(u_ScreencaptureMS[0], texCoord, u_Samples);
-		entityid = int(texelFetch(u_ScreencaptureMS[1], texCoord, 0).r);
+		entityid = texelFetch(u_ScreencaptureMSI[1], texCoord, 0).r;
 	} 
 	if(u_Samples == 1)  {
 		color = texture(u_Screencapture[0], Input.TexCoord);
-		entityid = int(texture(u_Screencapture[1], Input.TexCoord).r);
+		entityid = texture(u_ScreencaptureI[1], Input.TexCoord).r;
 	}
 
 
