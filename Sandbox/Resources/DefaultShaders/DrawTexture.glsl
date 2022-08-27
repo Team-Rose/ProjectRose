@@ -4,12 +4,6 @@
 layout(location = 0) in vec2 a_Position;
 layout(location = 1) in vec2 a_TexCoord;
 
-layout(std140, binding = 0) uniform Camera
-{
-	mat4 u_ViewProjection;
-	vec3 u_ViewPosition;
-};
-
 struct VertexOutput
 {
 	vec2 TexCoord;
@@ -27,7 +21,6 @@ void main()
 #version 450 core
 
 layout(location = 0) out vec4 color;
-layout(location = 1) out int entityid;
 
 struct VertexOutput
 {
@@ -41,5 +34,4 @@ layout (binding = 0) uniform sampler2D u_Textures[32];
 void main()
 {
 	color = texture(u_Textures[0], Input.TexCoord);
-	entityid = -1;
 }

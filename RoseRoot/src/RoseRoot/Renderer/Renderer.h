@@ -24,6 +24,7 @@ namespace Rose
 		static void DrawFinalFrameBuffer();
 		static Ref<Framebuffer> GetFinalFrameBuffer();
 
+		static Ref<Framebuffer> GetGeometryFrameBuffer();
 		static Ref<Framebuffer> GetShadowFrameBuffer();
 
 		static void ResizeView(uint32_t width, uint32_t height);

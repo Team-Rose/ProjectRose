@@ -60,7 +60,7 @@ namespace Rose
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-#ifdef RR_DEBUG
+#ifdef t
 		GLenum error = glGetError();
 		if (error != GL_NO_ERROR) {
 			switch (error)

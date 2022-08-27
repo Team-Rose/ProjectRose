@@ -14,9 +14,11 @@ namespace Rose
 	};
 
 	struct RendererData {
+		Ref<Framebuffer> CompPass;
 		Ref<Framebuffer> GeometryPass;
 		Ref<Framebuffer> ShadowPass;
 
+		Ref<Shader> CompositeShader;
 		Ref<Shader> FinalPassShader;
 		Ref<VertexArray> FrameBufferVertexArray;
 
@@ -34,10 +36,18 @@ namespace Rose
 			fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
 			fbSpec.Width = 1600;
 			fbSpec.Height = 900;
-			fbSpec.Samples = 1;
+			fbSpec.Samples = 4;
 			s_Data.GeometryPass = Framebuffer::Create(fbSpec);
 		}
-		
+		{
+			FramebufferSpecification fbSpec;
+			fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
+			fbSpec.Width = 1600;
+			fbSpec.Height = 900;
+			fbSpec.Samples = 1;
+			s_Data.CompPass = Framebuffer::Create(fbSpec);
+		}
+
 		{
 			FramebufferSpecification fbSpec;
 			fbSpec.Attachments = { FramebufferTextureFormat::Depth };
@@ -72,7 +82,8 @@ namespace Rose
 		frameBufferIndexBuffer = IndexBuffer::Create(frameBufferIndices, sizeof(frameBufferIndices) / sizeof(uint32_t));
 		s_Data.FrameBufferVertexArray->SetIndexBuffer(frameBufferIndexBuffer);
 
-		s_Data.FinalPassShader = Shader::Create("Resources/DefaultShaders/FinalPass.glsl");
+		s_Data.CompositeShader = Shader::Create("Resources/DefaultShaders/Composites.glsl"); 
+		s_Data.FinalPassShader = Shader::Create("Resources/DefaultShaders/DrawTexture.glsl");
 
 		RenderCommand::Init();
 		Renderer2D::Init();
@@ -119,17 +130,45 @@ namespace Rose
 		Renderer2D::EndScene();
 		Renderer3D::EndScene();
 		s_Data.GeometryPass->Unbind();
+		
+		{
+			s_Data.CompPass->Bind();
+
+			struct ViewportProps {
+				int samples = 4;
+			};
+			ViewportProps ViewportPropsBuffer;
+			ViewportPropsBuffer.samples = s_Data.GeometryPass->GetSpecification().Samples;
+
+			Ref<UniformBuffer> ViewportPropsUniformBuffer;
+			ViewportPropsUniformBuffer = UniformBuffer::Create(sizeof(ViewportProps), 32);
+			ViewportPropsUniformBuffer->SetData(&ViewportPropsBuffer, sizeof(ViewportProps));
+
+			RenderCommand::DisableDepthTest();
+			s_Data.GeometryPass->BindTexture(0, 0);
+			s_Data.GeometryPass->BindTexture(1, 1);
+			s_Data.CompositeShader->Bind();
+			s_Data.FrameBufferVertexArray->Bind();
+			RenderCommand::DrawIndexed(s_Data.FrameBufferVertexArray);
+			RenderCommand::EnableDepthTest();
+
+			s_Data.CompPass->Unbind();
+		}
 	}
 	void Renderer::DrawFinalFrameBuffer()
 	{
 		RenderCommand::DisableDepthTest();
-		s_Data.GeometryPass->BindTexture();
+		s_Data.CompPass->BindTexture();
 		s_Data.FinalPassShader->Bind();
 		s_Data.FrameBufferVertexArray->Bind();
 		RenderCommand::DrawIndexed(s_Data.FrameBufferVertexArray);
 		RenderCommand::EnableDepthTest();
 	}
 	Ref<Framebuffer> Renderer::GetFinalFrameBuffer()
+	{
+		return s_Data.CompPass;
+	}
+	Ref<Framebuffer> Renderer::GetGeometryFrameBuffer()
 	{
 		return s_Data.GeometryPass;
 	}
@@ -146,5 +185,6 @@ namespace Rose
 	void Renderer::OnViewResized(uint32_t width, uint32_t height)
 	{
 		s_Data.GeometryPass->Resize(width, height);
+		s_Data.CompPass->Resize(width, height);
 	}
 }

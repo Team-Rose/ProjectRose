@@ -266,7 +266,7 @@ namespace Rose
 			RenderCommand::Clear();
 
 			// Clear our entity ID attachment to -1
-			Renderer::GetFinalFrameBuffer()->ClearAttachment(1, -1);
+			Renderer::GetGeometryFrameBuffer()->ClearAttachment(1, -1);
 
 			// Draw sprites
 			{
@@ -461,7 +461,7 @@ namespace Rose
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 		RenderCommand::Clear();
 
-		Renderer::GetFinalFrameBuffer()->ClearAttachment(1, -1);
+		Renderer::GetGeometryFrameBuffer()->ClearAttachment(1, -1);
 
 		{
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);

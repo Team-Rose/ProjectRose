@@ -56,22 +56,11 @@ namespace Rose
 				internalFormat = GL_RGB8;
 				dataFormat = GL_RGB;
 			}
-			else if (channels == 2)
-			{
-				internalFormat = GL_RG8;
-				dataFormat = GL_RG;
-			}
-			else if (channels == 1)
-			{
-				internalFormat = GL_R8;
-				dataFormat = GL_R;
-			}
 
 			m_InternalFormat = internalFormat;
 			m_DataFormat = dataFormat;
 
-			//TODO Figure out what this is.
-			//RR_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
+			RR_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
 
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 			glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);

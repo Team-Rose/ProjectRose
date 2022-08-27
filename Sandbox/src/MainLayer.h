@@ -13,14 +13,9 @@ namespace Sandbox {
 		virtual void OnUpdate(Rose::Timestep ts) override;
 		virtual void OnImGuiRender() override;
 	private:
-		//Rose::LuaScript m_Lua = Rose::LuaScript("assets/scripts/test.lua");
-		//Rose::LuaScript m_Lua2 = Rose::LuaScript("assets/scripts/test2.lua");
-
-		Rose::Ref<Rose::Framebuffer> m_Framebuffer;
-
 		Rose::Ref<Rose::Texture2D> wood;
 		Rose::Ref<Rose::Texture2D> woodspec;
-		// 
+
 		Rose::Ref<Rose::Texture2D> crate;
 		Rose::Ref<Rose::Texture2D> cratespec;
 		Rose::EditorCamera m_EditorCamera;

@@ -117,16 +117,6 @@ namespace Rose {
 
 		// Store the root domain pointer
 		s_MonoData->RootDomain = rootDomain;
-
-		// Create an App Domain
-		s_MonoData->AppDomain = mono_domain_create_appdomain("RoseScriptRuntime", nullptr);
-		mono_domain_set(s_MonoData->AppDomain, true);
-
-		LoadCoreAssembly("Resources/Scripts/Rose-ScriptCore.dll");
-
-		MonoGlue::RegisterComponents();
-		MonoGlue::RegisterFunctions();
-		s_MonoData->EntityClass = MonoScriptClass("Rose", "Entity", true);
 	}
 
 	void MonoScriptEngine::Shutdown()
@@ -169,7 +159,8 @@ namespace Rose {
 		s_MonoData->OldAppDomain = s_MonoData->AppDomain;
 		s_MonoData->AppDomain = mono_domain_create_appdomain("RoseScriptRuntime", nullptr);
 		mono_domain_set(s_MonoData->AppDomain, true);
-		mono_domain_unload(s_MonoData->OldAppDomain);
+		if(s_MonoData->OldAppDomain != nullptr)
+			mono_domain_unload(s_MonoData->OldAppDomain);
 
 		s_MonoData->EntityInstances.clear();
 		s_MonoData->EntityClasses.clear();

@@ -11,21 +11,11 @@ namespace Sandbox {
 		m_EditorCamera = 
 			Rose::EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 	
-		Rose::FramebufferSpecification fbSpec;
-		fbSpec.Attachments = { Rose::FramebufferTextureFormat::RGBA8, Rose::FramebufferTextureFormat::RED_INTEGER, Rose::FramebufferTextureFormat::Depth };
-		fbSpec.Width = 1280;
-		fbSpec.Height = 720;
-		fbSpec.Samples = 4;
-		m_Framebuffer = Rose::Framebuffer::Create(fbSpec);
 
 		wood = Rose::Texture2D::Create("assets/textures/WoodFloor/WoodFloor051_1K_Color.png");
-		//woodspec = Rose::Texture2D::Create("assets/textures/WoodFloor/WoodFloor051_1K_Displacement.png");
 		
 		crate = Rose::Texture2D::Create("assets/textures/Crate/container2.png");
 		cratespec = Rose::Texture2D::Create("assets/textures/Crate/container2_specular.png");
-		// 
-		//m_Lua.Init();
-		//m_Lua2.Init();
 	}
 	void MainLayer::OnDetach()
 	{
@@ -63,7 +53,7 @@ namespace Sandbox {
 			glm::mat4 transform = glm::translate(glm::mat4(1.0f), { 1.0f,3.0f,0.0f }) * glm::scale(glm::mat4(1.0f), { 0.25f, 0.25f,0.25f });
 			Rose::Renderer3D::DrawCube(transform, { 1.0f, 1.0f, 0.4f, 0.6f });
 		}
-		//Rose::Renderer2D::DrawQuad({ 0.0f, 2.0f }, { 1.0f, 1.0f }, grass);
+		Rose::Renderer2D::DrawQuad({ 0.0f, 2.0f }, { 1.0f, 1.0f }, crate);
 		Rose::Renderer::EndScene();
 		Rose::Renderer::DrawFinalFrameBuffer();
 	}

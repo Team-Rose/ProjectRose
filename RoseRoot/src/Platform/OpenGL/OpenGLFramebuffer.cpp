@@ -208,7 +208,6 @@ namespace Rose {
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
 		int pixelData = -2;
 		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
-
 		return pixelData;
 
 	}
@@ -222,19 +221,10 @@ namespace Rose {
 
 	}
 
-	void OpenGLFramebuffer::BindTexture(uint32_t attachmentIndex)
+	void OpenGLFramebuffer::BindTexture(uint32_t slot, uint32_t attachmentIndex)
 	{
 		RR_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size());
-		bool multisampled = m_Specification.Samples > 1;
-
-		if (multisampled) {
-			glBlitFramebuffer(0, 0, m_Specification.Width, m_Specification.Height, 0, 0, m_Specification.Width, m_Specification.Height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-			glBindTextureUnit(0, m_ColorAttachments[attachmentIndex]);
-		}
-		else {
-			glBindTextureUnit(0, m_ColorAttachments[attachmentIndex]);
-		}
-		
+		glBindTextureUnit(slot, m_ColorAttachments[attachmentIndex]);
 	}
 
 }
