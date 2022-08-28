@@ -189,6 +189,9 @@ namespace Rose {
 
 			instance->InvokeOnCreate();
 		}
+		else {
+			RR_CORE_ERROR("Failed to create C# entity: {} class name:{}", entity.GetName(), msc.ClassName);
+		}
 	}
 
 	void MonoScriptEngine::OnUpdateEntity(Entity entity, float ts)
@@ -199,7 +202,8 @@ namespace Rose {
 		UUID entityUUID = entity.GetUUID();
 		RR_CORE_ASSERT(s_MonoData->EntityInstances.find(entityUUID) != s_MonoData->EntityInstances.end());
 
-		s_MonoData->EntityInstances[entityUUID]->InvokeOnUpdate(ts);
+		if(s_MonoData->EntityInstances[entityUUID] != nullptr)
+			s_MonoData->EntityInstances[entityUUID]->InvokeOnUpdate(ts);
 	}
 
 	Scene* MonoScriptEngine::GetSceneContext()
@@ -276,7 +280,9 @@ namespace Rose {
 	}
 	MonoObject* MonoScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)
 	{
-		return mono_runtime_invoke(method, instance, params, nullptr);
+		if (method != nullptr)
+			return mono_runtime_invoke(method, instance, params, nullptr);
+		return nullptr;
 	}
 
 

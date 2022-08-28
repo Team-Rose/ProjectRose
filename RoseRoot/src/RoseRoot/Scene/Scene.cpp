@@ -13,6 +13,7 @@
 
 #include "Entity.h"
 
+#include <RoseRoot/Physics/2D/ContactListener.h>
 
 // Box 2D
 #include "Box2D/b2_world.h"
@@ -396,6 +397,8 @@ namespace Rose
 	void Scene::OnPhysics2DStart()
 	{
 		m_PhysicsWorld = new b2World({ m_SceneSettings.Gravity2D.x, m_SceneSettings.Gravity2D.y });
+		m_Contactlistener = new ContactListener2D();
+		m_PhysicsWorld->SetContactListener(m_Contactlistener);
 
 		auto view = m_Registry.view<Rigidbody2DComponent>();
 		for (auto e : view)
@@ -411,6 +414,7 @@ namespace Rose
 
 			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
 			body->SetFixedRotation(rb2d.FixedRotation);
+			body->GetUserData().pointer = (uintptr_t)entity.GetUUID();
 			rb2d.RuntimeBody = body;
 
 			if (entity.HasComponent<BoxCollider2DComponent>())
@@ -451,6 +455,7 @@ namespace Rose
 	void Scene::OnPhysics2DStop()
 	{
 		delete m_PhysicsWorld;
+		delete m_Contactlistener;
 		m_PhysicsWorld = nullptr;
 	}
 

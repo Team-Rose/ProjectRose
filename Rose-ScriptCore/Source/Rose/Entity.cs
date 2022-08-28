@@ -5,6 +5,9 @@ namespace Rose
 
     public class Entity
     {
+        public event Action<Entity> Collision2DBeginEvent;
+        public event Action<Entity> Collision2DEndEvent;
+
         protected Entity() { ID = 0; }
         internal Entity(ulong id)
         {
@@ -12,6 +15,12 @@ namespace Rose
         }
 
         public readonly ulong ID;
+
+        protected virtual void OnCreate() { }
+        protected virtual void OnUpdate(float ts) { }
+
+        private void OnCollision2DBeginInternal(ulong id) => Collision2DBeginEvent?.Invoke(new Entity(id));
+        private void OnCollision2DEndInternal(ulong id) => Collision2DEndEvent?.Invoke(new Entity(id));
 
         public bool HasComponent<T>() where T : Component, new()
         {

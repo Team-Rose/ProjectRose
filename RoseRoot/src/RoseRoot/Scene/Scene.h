@@ -8,11 +8,13 @@
 #include "RoseRoot/Core/Timestep.h"
 #include "RoseRoot/Renderer/EditorCamera.h"
 
+
 class b2World;
 
 namespace Rose
 {
 	class Entity;
+	class ContactListener2D;
 
 	struct SceneStats {
 		//Timers are in MS
@@ -89,7 +91,7 @@ namespace Rose
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 
 		b2World* m_PhysicsWorld = nullptr;
-
+		ContactListener2D* m_Contactlistener;
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
 
 		friend class Entity;

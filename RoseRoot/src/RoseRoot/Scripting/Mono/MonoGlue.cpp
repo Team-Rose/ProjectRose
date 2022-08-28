@@ -87,6 +87,7 @@ namespace Rose {
 	}
 #pragma endregion
 
+#pragma region  RigidBody2DComponent
 	static void RigidBody2DComponent_ApplyLinearImpulse(UUID entityID, glm::vec2* impulse, glm::vec2* point, bool wake)
 	{
 		Scene* scene = MonoScriptEngine::GetSceneContext();
@@ -109,6 +110,7 @@ namespace Rose {
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
 		body->ApplyLinearImpulseToCenter(b2Vec2(impulse->x, impulse->y), wake);
 	}
+#pragma endregion
 
 	static bool Input_IsKeyDown(KeyCode keycode)
 	{
@@ -128,7 +130,7 @@ namespace Rose {
 			MonoType* managedType = mono_reflection_type_from_name(managedTypeName.data(), MonoScriptEngine::GetCoreAssemblyImage());
 			if (!managedType)
 			{
-				RR_CORE_ERROR("Couldn't find component type {}", managedTypeName);
+				RR_CORE_ERROR("Couldn't find C# component type {}", managedTypeName);
 				return;
 			}
 			s_EntityHasComponentFuncs[managedType] = [](Entity entity) { return entity.HasComponent<Component>(); };

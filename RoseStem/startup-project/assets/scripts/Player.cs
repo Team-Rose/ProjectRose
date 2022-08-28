@@ -7,13 +7,13 @@ namespace Sandbox
     internal class Player : Entity
     {
         private TransformComponent m_Transfrom;
-        void OnCreate()
+        protected override void OnCreate()
         {
             Console.WriteLine($"Player.OnCreate - {ID}");
 
             m_Transfrom = GetComponent<TransformComponent>();
         }
-        void OnUpdate(float ts)
+        protected override void OnUpdate(float ts)
         {
             //Console.WriteLine($"Player.OnUpdate: {ts}");
 
