@@ -56,13 +56,14 @@
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Dist|x64' ">
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Source\Rose\Component.cs" />
-    <Compile Include="Source\Rose\Entity.cs" />
-    <Compile Include="Source\Rose\Input.cs" />
-    <Compile Include="Source\Rose\InternalCalls.cs" />
-    <Compile Include="Source\Rose\KeyCode.cs" />
-    <Compile Include="Source\Rose\Math.cs" />
-    <Compile Include="Source\Rose\Vector.cs" />
+    <Compile Include="Source\Rose\Core\Input.cs" />
+    <Compile Include="Source\Rose\Core\InternalCalls.cs" />
+    <Compile Include="Source\Rose\Core\KeyCode.cs" />
+    <Compile Include="Source\Rose\Math\Math.cs" />
+    <Compile Include="Source\Rose\Math\Vector.cs" />
+    <Compile Include="Source\Rose\Scene\Component.cs" />
+    <Compile Include="Source\Rose\Scene\Entity.cs" />
+    <Compile Include="Source\Rose\Scene\Scene.cs" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

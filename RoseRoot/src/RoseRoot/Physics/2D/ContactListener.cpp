@@ -5,7 +5,19 @@
 
 namespace Rose {
 	namespace Utils {
+		static void callOnCollision2DBegin(Entity entity, Entity other) {
+			if (!entity.HasComponent<MonoScriptComponent>())
+				return;
+			
+			MonoScriptEngine::OnCollision2DBeginInternal(entity, other.GetUUID());
+		}
 
+		static void callOnCollision2DEnd(Entity entity, Entity other) {
+			if (!entity.HasComponent<MonoScriptComponent>())
+				return;
+
+			MonoScriptEngine::OnCollision2DEndInternal(entity, other.GetUUID());
+		}
 	}
 
 	void ContactListener2D::BeginContact(b2Contact* contact)
@@ -17,7 +29,8 @@ namespace Rose {
 			Entity a = MonoScriptEngine::GetSceneContext()->GetEntityByUUID(IDA);
 			Entity b = MonoScriptEngine::GetSceneContext()->GetEntityByUUID(IDB);
 
-			RR_CORE_INFO("{} collided with {}", a.GetName(), b.GetName());
+			Utils::callOnCollision2DBegin(a, b);
+			Utils::callOnCollision2DBegin(b, a);
 		}
 	}
 
@@ -30,7 +43,8 @@ namespace Rose {
 			Entity a = MonoScriptEngine::GetSceneContext()->GetEntityByUUID(IDA);
 			Entity b = MonoScriptEngine::GetSceneContext()->GetEntityByUUID(IDB);
 
-			RR_CORE_INFO("{} stopped colliding with {}", a.GetName(), b.GetName());
+			Utils::callOnCollision2DEnd(a, b);
+			Utils::callOnCollision2DEnd(b, a);
 		}
 	}
 	void ContactListener2D::PreSolve(b2Contact* contact, const b2Manifold* oldManifold)

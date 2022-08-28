@@ -6,7 +6,17 @@ namespace Rose
     internal static class InternalCalls
     {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static ulong Scene_FindEntityByTag(string tag);
+
+
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool Entity_HasComponent(ulong entityID, Type componentType);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string Entity_GetTag(ulong entityID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Entity_SetTag(ulong entityID, string tag);
 
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -27,10 +37,18 @@ namespace Rose
         internal extern static void TransformComponent_SetScale(ulong entityID, ref Vector3 scale);
 
 
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_GetPosition(ulong entityID, out Vector2 position);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_SetPosition(ulong entityID, ref Vector2 position);
+
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void RigidBody2DComponent_ApplyLinearImpulse(ulong entityID, ref Vector2 impulse, ref Vector2 point, bool wake);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void RigidBody2DComponent_ApplyLinearImpulseToCenter(ulong entityID, ref Vector2 impulse, bool wake);
+
 
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]

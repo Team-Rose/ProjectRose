@@ -14,7 +14,25 @@ namespace Rose {
 	static std::unordered_map <MonoType*, std::function<bool(Entity)>> s_EntityHasComponentFuncs;
 
 #define RR_ADD_INTERNAL_CALL(Name) mono_add_internal_call("Rose.InternalCalls::" #Name, Name)
+	
+#pragma region  Scene
+	static uint64_t Scene_FindEntityByTag(MonoString* tag)
+	{
+		auto view = MonoScriptEngine::GetSceneContext()->GetAllEntitiesWith<TagComponent>();
+		for (auto e : view)
+		{
+			auto tc = view.get<TagComponent>(e);
+			char* utf8 = mono_string_to_utf8(tag);
+			if (tc.Tag == std::string(utf8)) {
+				Entity entity = Entity{ e, MonoScriptEngine::GetSceneContext() };
+				return entity.GetUUID();
+			}	
+		}
+		return 0;
+	}
+#pragma endregion
 
+#pragma region  Entity
 	static bool Entity_HasComponent(UUID entityID, MonoReflectionType* componentType)
 	{
 		Scene* scene = MonoScriptEngine::GetSceneContext();
@@ -27,6 +45,29 @@ namespace Rose {
 
 		return s_EntityHasComponentFuncs.at(managedType)(entity);
 	}
+	static MonoString* Entity_GetTag(UUID entityID, MonoString* outTag)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		std::string tag = entity.GetComponent<TagComponent>().Tag;
+		return(MonoScriptEngine::CreateMonoString(tag));
+
+	}
+	static void Entity_SetTag(UUID entityID, MonoString* tag)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		char* utf8 = mono_string_to_utf8(tag);
+		entity.GetComponent<TagComponent>().Tag = std::string(utf8);
+		mono_free(utf8);
+	}
+#pragma endregion
 
 #pragma region  TranformComponent
 	static void TransformComponent_GetTranslation(UUID entityID, glm::vec3* outTranslation)
@@ -88,6 +129,30 @@ namespace Rose {
 #pragma endregion
 
 #pragma region  RigidBody2DComponent
+	static void RigidBody2DComponent_GetPosition(UUID entityID, glm::vec2* outPosition)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		*outPosition = { body->GetPosition().x, body->GetPosition().y };
+	}
+	static void RigidBody2DComponent_SetPosition(UUID entityID, glm::vec2* position)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		//TODO fix crash if you call in rigidbody2D collide callback
+		body->SetTransform(b2Vec2(position->x, position->y), body->GetAngle());
+	}
+
 	static void RigidBody2DComponent_ApplyLinearImpulse(UUID entityID, glm::vec2* impulse, glm::vec2* point, bool wake)
 	{
 		Scene* scene = MonoScriptEngine::GetSceneContext();
@@ -151,7 +216,11 @@ namespace Rose {
 
 	void MonoGlue::RegisterFunctions()
 	{
+		RR_ADD_INTERNAL_CALL(Scene_FindEntityByTag);
+
 		RR_ADD_INTERNAL_CALL(Entity_HasComponent);
+		RR_ADD_INTERNAL_CALL(Entity_GetTag);
+		RR_ADD_INTERNAL_CALL(Entity_SetTag);
 
 		RR_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
 		RR_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);
@@ -160,6 +229,8 @@ namespace Rose {
 		RR_ADD_INTERNAL_CALL(TransformComponent_GetScale);
 		RR_ADD_INTERNAL_CALL(TransformComponent_SetScale);
 
+		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_GetPosition);
+		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_SetPosition);
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulse);
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulseToCenter);
 

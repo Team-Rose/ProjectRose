@@ -169,6 +169,11 @@ namespace Rose {
 		s_MonoData->AppAssemblyImage = nullptr;
 	}
 
+	MonoString* MonoScriptEngine::CreateMonoString(const std::string string)
+	{
+		return mono_string_new(s_MonoData->AppDomain, string.c_str());
+	}
+
 	void MonoScriptEngine::OnRuntimeStart(Scene* scene)
 	{
 		s_MonoData->SceneContext = scene;
@@ -204,6 +209,30 @@ namespace Rose {
 
 		if(s_MonoData->EntityInstances[entityUUID] != nullptr)
 			s_MonoData->EntityInstances[entityUUID]->InvokeOnUpdate(ts);
+	}
+
+	void MonoScriptEngine::OnCollision2DBeginInternal(Entity entity, UUID id)
+	{
+		if (!s_MonoData->AppAssembly)
+			return;
+
+		UUID entityUUID = entity.GetUUID();
+		RR_CORE_ASSERT(s_MonoData->EntityInstances.find(entityUUID) != s_MonoData->EntityInstances.end());
+		
+		if (s_MonoData->EntityInstances[entityUUID] != nullptr)
+			s_MonoData->EntityInstances[entityUUID]->InvokeOnCollision2DBeginInternal(id);
+	}
+
+	void MonoScriptEngine::OnCollision2DEndInternal(Entity entity, UUID id)
+	{
+		if (!s_MonoData->AppAssembly)
+			return;
+
+		UUID entityUUID = entity.GetUUID();
+		RR_CORE_ASSERT(s_MonoData->EntityInstances.find(entityUUID) != s_MonoData->EntityInstances.end());
+
+		if (s_MonoData->EntityInstances[entityUUID] != nullptr)
+			s_MonoData->EntityInstances[entityUUID]->InvokeOnCollision2DEndInternal(id);
 	}
 
 	Scene* MonoScriptEngine::GetSceneContext()
@@ -295,6 +324,8 @@ namespace Rose {
 		m_Constructor = s_MonoData->EntityClass.GetMethod(".ctor", 1);
 		m_OnCreateMethod = scriptClass->GetMethod("OnCreate", 0);
 		m_OnUpdateMethod = scriptClass->GetMethod("OnUpdate", 1);
+		m_OnCollision2DBeginInternalMethod = s_MonoData->EntityClass.GetMethod("OnCollision2DBeginInternal", 1);
+		m_OnCollision2DEndInternalMethod = s_MonoData->EntityClass.GetMethod("OnCollision2DEndInternal", 1);
 		
 		// Call Entity Constructor
 		{
@@ -312,5 +343,15 @@ namespace Rose {
 	{
 		void* param = &ts;
 		m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &param);
+	}
+	void MonoScriptInstance::InvokeOnCollision2DBeginInternal(UUID id)
+	{
+		void* param = &id;
+		m_ScriptClass->InvokeMethod(m_Instance, m_OnCollision2DBeginInternalMethod, &param);
+	}
+	void MonoScriptInstance::InvokeOnCollision2DEndInternal(UUID id)
+	{
+		void* param = &id;
+		m_ScriptClass->InvokeMethod(m_Instance, m_OnCollision2DEndInternalMethod, &param);
 	}
 }

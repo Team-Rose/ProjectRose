@@ -48,6 +48,15 @@ namespace Rose
 
     public class Rigidbody2DComponent : Component
     {
+        public void SetPosition(Vector2 position)
+        {
+            InternalCalls.RigidBody2DComponent_SetPosition(entity.ID, ref position);
+        }
+        public Vector2 GetPosition()
+        {
+            InternalCalls.RigidBody2DComponent_GetPosition(entity.ID, out Vector2 position);
+            return position;
+        }
         public void ApplyLinearImpulse(Vector2 impulse, Vector2 point, bool wake)
         {
             InternalCalls.RigidBody2DComponent_ApplyLinearImpulse(entity.ID, ref impulse, ref point, wake);
@@ -56,5 +65,6 @@ namespace Rose
         {
             InternalCalls.RigidBody2DComponent_ApplyLinearImpulseToCenter(entity.ID, ref impulse, wake);
         }
+        
     }
 }

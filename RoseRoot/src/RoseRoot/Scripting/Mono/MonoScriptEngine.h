@@ -12,6 +12,7 @@ extern "C" {
 	typedef struct _MonoMethod MonoMethod;
 	typedef struct _MonoAssembly MonoAssembly;
 	typedef struct _MonoImage MonoImage;
+	typedef struct _MonoString MonoString;
 }
 
 namespace Rose {
@@ -39,6 +40,9 @@ namespace Rose {
 
 		void InvokeOnCreate();
 		void InvokeOnUpdate(float ts);
+
+		void InvokeOnCollision2DBeginInternal(UUID id);
+		void InvokeOnCollision2DEndInternal(UUID id);
 	private:
 		Ref<MonoScriptClass> m_ScriptClass;
 
@@ -46,6 +50,9 @@ namespace Rose {
 		MonoMethod* m_Constructor = nullptr;
 		MonoMethod* m_OnCreateMethod = nullptr;
 		MonoMethod* m_OnUpdateMethod = nullptr;
+
+		MonoMethod* m_OnCollision2DBeginInternalMethod = nullptr;
+		MonoMethod* m_OnCollision2DEndInternalMethod = nullptr;
 	};
 
 	class MonoScriptEngine
@@ -61,10 +68,14 @@ namespace Rose {
 		static void ReloadAppAssembly(const std::filesystem::path& filepath);
 		static void UnloadAppAssembly();
 
+		static MonoString* CreateMonoString(const std::string string);
+
 		static void OnRuntimeStart(Scene* scene);
 		static void OnRuntimeStop();
 		static void OnCreateEntity(Entity entity);
 		static void OnUpdateEntity(Entity entity, float ts);
+		static void OnCollision2DBeginInternal(Entity entity, UUID id);
+		static void OnCollision2DEndInternal(Entity entity, UUID id);
 
 		static bool EntityClassExist(const std::string& fullClassName);
 
