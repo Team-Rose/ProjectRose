@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "RoseRoot/Scene/Components.h"
+
 #include "../Core/CommandHistory.h"
 namespace Rose {
 	static std::filesystem::path s_AssetPath;
@@ -353,7 +354,7 @@ namespace Rose {
 					ImGui::EndDragDropTarget();
 				}
 			});
-		DrawComponent<MonoScriptComponent>("Mono Script", entity, [](auto& component)
+		DrawComponent<MonoScriptComponent>("Mono Script", entity, [entity](auto& component) mutable
 			{
 				bool scriptClassExist = MonoScriptEngine::EntityClassExist(component.ClassName);
 				if (!scriptClassExist)
@@ -365,6 +366,23 @@ namespace Rose {
 				if (ImGui::InputText("Class", buffer, sizeof(buffer)))
 				{
 					component.ClassName = std::string(buffer);
+				}
+
+				//Fields
+				UUID id = entity.GetUUID();
+				Ref<MonoScriptInstance> scriptInstance = MonoScriptEngine::GetEntityMonoScriptInstance(id);
+				if (scriptInstance)
+				{
+					const auto& fields = scriptInstance->GetMonoScriptClass()->GetFields();
+					for (const auto& [name, field] : fields) {
+						if (field.Type == MonoScriptFieldType::Float) {
+							
+							float data = scriptInstance->GetFieldValue<float>(name);
+							if (ImGui::DragFloat(name.c_str(), &data)) {
+								scriptInstance->SetFieldValue<float>(name, data);
+							}
+						}
+					}
 				}
 
 				if (!scriptClassExist)

@@ -7,10 +7,34 @@
 #include "mono/metadata/assembly.h"
 #include <mono/metadata/mono-gc.h>
 #include "mono/metadata/object.h"
+#include "mono/metadata/tabledefs.h"
 #include <glm/glm.hpp>
 
 namespace Rose {
 
+	static std::unordered_map<std::string, MonoScriptFieldType> s_MonoScriptFieldTypeMap =
+	{
+		{ "System.Single", MonoScriptFieldType::Float },
+		{ "System.Double", MonoScriptFieldType::Double },
+
+		{ "System.Boolean", MonoScriptFieldType::Bool },
+		{ "System.Char", MonoScriptFieldType::Char },
+		{ "System.Int16", MonoScriptFieldType::Int16 },
+		{ "System.Int32", MonoScriptFieldType::Int32 },
+		{ "System.Int64", MonoScriptFieldType::Int64 },
+
+		{ "System.Byte", MonoScriptFieldType::Byte },
+		{ "System.UInt16", MonoScriptFieldType::UInt16 },
+		{ "System.UInt32", MonoScriptFieldType::UInt32 },
+		{ "System.UInt64", MonoScriptFieldType::UInt64 },
+
+		{ "Rose.Vector2", MonoScriptFieldType::Vector2 },
+		{ "Rose.Vector3", MonoScriptFieldType::Vector3 },
+		{ "Rose.Vector4", MonoScriptFieldType::Vector4 },
+
+		{ "Rose.Entity", MonoScriptFieldType::Entity },
+
+	};
 	namespace Utils {
 		// TODO: Move to FileSystem class
 		static char* ReadBytes(const std::filesystem::path& filepath, uint32_t* outSize)
@@ -82,6 +106,43 @@ namespace Rose {
 				const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
 				RR_CORE_TRACE("{}.{}", nameSpace, name);
 			}
+		}
+
+		MonoScriptFieldType MonoTypeToMonoScriptFieldType(MonoType* monoType)
+		{
+			std::string typeName = mono_type_get_name(monoType);
+			auto it = s_MonoScriptFieldTypeMap.find(typeName);
+			if (it == s_MonoScriptFieldTypeMap.end())
+				return MonoScriptFieldType::None;
+
+			return it->second;
+		}
+
+		const char* MonoScriptFieldTypeToString(MonoScriptFieldType type)
+		{
+			switch (type)
+			{
+			case Rose::MonoScriptFieldType::Float: return "Float";
+			case Rose::MonoScriptFieldType::Double: return "Double";
+
+			case Rose::MonoScriptFieldType::Bool: return "Bool";
+			case Rose::MonoScriptFieldType::Char: return "Char";
+			case Rose::MonoScriptFieldType::Int16: return "Int16";
+			case Rose::MonoScriptFieldType::Int32: return "Int32";
+			case Rose::MonoScriptFieldType::Int64: return "Int64";
+
+			case Rose::MonoScriptFieldType::Byte: return "Byte";
+			case Rose::MonoScriptFieldType::UInt16: return "UInt16";
+			case Rose::MonoScriptFieldType::UInt32: return "UInt32";
+			case Rose::MonoScriptFieldType::UInt64: return "UInt64";
+
+			case Rose::MonoScriptFieldType::Vector2: return "Vector2";
+			case Rose::MonoScriptFieldType::Vector3: return "Vector3";
+			case Rose::MonoScriptFieldType::Vector4: return "Vector4";
+
+			case Rose::MonoScriptFieldType::Entity: return "Entity";
+			}
+			return "<Invalid>";
 		}
 	}
 
@@ -234,12 +295,17 @@ namespace Rose {
 		if (s_MonoData->EntityInstances[entityUUID] != nullptr)
 			s_MonoData->EntityInstances[entityUUID]->InvokeOnCollision2DEndInternal(id);
 	}
-
 	Scene* MonoScriptEngine::GetSceneContext()
 	{
 		return s_MonoData->SceneContext;
 	}
-
+	Ref<MonoScriptInstance> MonoScriptEngine::GetEntityMonoScriptInstance(UUID entityID)
+	{
+		auto it = s_MonoData->EntityInstances.find(entityID);
+		if (it != s_MonoData->EntityInstances.end())
+			return it->second;
+		return nullptr;
+	}
 	bool MonoScriptEngine::EntityClassExist(const std::string& fullClassName)
 	{
 		return s_MonoData->EntityClasses.find(fullClassName) != s_MonoData->EntityClasses.end();
@@ -276,8 +342,28 @@ namespace Rose {
 			if (monoClass == entityClass)
 				continue;
 			bool isEntity = mono_class_is_subclass_of(monoClass, entityClass, false);
-			if (isEntity)
-				s_MonoData->EntityClasses[fullName] = CreateRef<MonoScriptClass>(nameSpace, name);
+			if (!isEntity)
+				continue;
+
+			Ref<MonoScriptClass> scriptClass = CreateRef<MonoScriptClass>(nameSpace, name);
+			s_MonoData->EntityClasses[fullName] = scriptClass;
+
+			// This routine is an iteraror routine for retrieving the fields in a class
+			// You must pass a gpointer that points and is treated as an opaque handle
+			// to iterate over all of the elements. When no more values are available, the return value is NULL
+			
+			void* iterator = nullptr;
+			MonoClassField* field;
+			while ((field = mono_class_get_fields(monoClass, &iterator))) {
+				const char* fieldName = mono_field_get_name(field);
+				uint32_t flags = mono_field_get_flags(field);
+				if (flags & FIELD_ATTRIBUTE_PUBLIC) {
+					MonoType* type = mono_field_get_type(field);
+					MonoScriptFieldType fieldType = Utils::MonoTypeToMonoScriptFieldType(type);
+					scriptClass->m_Fields[fieldName] = { fieldType, fieldName, field };
+				}
+					
+			}
 		}
 	}
 	MonoObject* MonoScriptEngine::InstantiateClass(MonoClass* monoClass)
@@ -354,4 +440,28 @@ namespace Rose {
 		void* param = &id;
 		m_ScriptClass->InvokeMethod(m_Instance, m_OnCollision2DEndInternalMethod, &param);
 	}
+
+	bool MonoScriptInstance::GetFieldValueInternal(const std::string& name, void* buffer)
+	{
+		const auto& fields = m_ScriptClass->GetFields();
+		auto it = fields.find(name);
+		if (it == fields.end())
+			return false;
+
+		const MonoScriptField& field = it->second;
+		mono_field_get_value(m_Instance, field.ClassField, buffer);
+		return true;
+	}
+	bool MonoScriptInstance::SetFieldValueInternal(const std::string& name, const void* value)
+	{
+		const auto& fields = m_ScriptClass->GetFields();
+		auto it = fields.find(name);
+		if (it == fields.end())
+			return false;
+
+		const MonoScriptField& field = it->second;
+		mono_field_set_value(m_Instance, field.ClassField, (void*)value);
+		return true;
+	}
+
 }

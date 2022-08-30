@@ -7,7 +7,7 @@ namespace Sandbox
     internal class Camera : Entity
     {
         private TransformComponent m_Transform;
-
+    
         private float time = 0.0f;
 
         protected override void OnCreate()

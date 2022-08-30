@@ -6,11 +6,17 @@ namespace Sandbox
 {
     internal class Balloon : Entity
     {
-        private Entity m_Camera;
+        public Entity m_Camera;
+        public float cameraSpeedBase = 1.0f;
+
+        public float floatPower = 19.0f;
+        public float windPower = 8.0f;
 
         private Rigidbody2DComponent m_RigidBody2D;
 
         private float time = 0.0f;
+        private float cameraSpeed = 0.0f;
+
         private bool shouldReset = false;
         protected override void OnCreate()
         {
@@ -36,9 +42,12 @@ namespace Sandbox
                 shouldReset = false;
             }
 
-            if (Translation.Y - m_Camera.Translation.Y > 3.0f)
-                m_Camera.Translation += new Vector3(0.0f, (Translation.Y - m_Camera.Translation.Y) * ts, 0.0f);
+            if (Translation.Y - m_Camera.Translation.Y > 2.0f)
+                 cameraSpeed = (Translation.Y - m_Camera.Translation.Y) + cameraSpeedBase;
+            else
+                cameraSpeed = cameraSpeedBase;
 
+            m_Camera.Translation += new Vector3(0.0f, cameraSpeed * ts, 0.0f);
             if (Input.IsKeyDown(KeyCode.Space))
             {
                 time += ts * 5;
@@ -47,7 +56,7 @@ namespace Sandbox
                     time = 1.0f;
                 }
 
-                m_RigidBody2D.ApplyLinearImpulse(new Vector2(0.0f, 19.0f * ts), true);
+                m_RigidBody2D.ApplyLinearImpulse(new Vector2(0.0f, floatPower * ts), true);
             }
             else
             {
@@ -60,11 +69,11 @@ namespace Sandbox
 
             if (Input.IsKeyDown(KeyCode.A))
             {
-                m_RigidBody2D.ApplyLinearImpulse(new Vector2(-8.0f * ts, 0.0f), true);
+                m_RigidBody2D.ApplyLinearImpulse(new Vector2(-windPower * ts, 0.0f), true);
             }
             if (Input.IsKeyDown(KeyCode.D))
             {
-                m_RigidBody2D.ApplyLinearImpulse(new Vector2(8.0f * ts, 0.0f), true);
+                m_RigidBody2D.ApplyLinearImpulse(new Vector2(windPower * ts, 0.0f), true);
             }
 
             float scale = Rose.Math.Lerp(1.0f, 1.1f, time);
@@ -74,7 +83,8 @@ namespace Sandbox
 
         private void OnCollision2DBegin(Entity entity)
         {
-            shouldReset = true;
+            if(entity.Name == "Danger")
+                shouldReset = true;
         }
     }
 }
