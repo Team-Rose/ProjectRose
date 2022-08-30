@@ -153,6 +153,30 @@ namespace Rose {
 		body->SetTransform(b2Vec2(position->x, position->y), body->GetAngle());
 	}
 
+	static float RigidBody2DComponent_GetRotation(UUID entityID)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->GetAngle();
+	}
+	static void RigidBody2DComponent_SetRotation(UUID entityID, float rotation)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		//TODO fix crash if you call in rigidbody2D collide callback
+		body->SetTransform(body->GetPosition(), rotation);
+	}
+
 	static void RigidBody2DComponent_ApplyLinearImpulse(UUID entityID, glm::vec2* impulse, glm::vec2* point, bool wake)
 	{
 		Scene* scene = MonoScriptEngine::GetSceneContext();
@@ -231,6 +255,8 @@ namespace Rose {
 
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_GetPosition);
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_SetPosition);
+		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_GetRotation);
+		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_SetRotation);
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulse);
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulseToCenter);
 

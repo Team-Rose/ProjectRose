@@ -1,6 +1,4 @@
 ﻿
-using Microsoft.Win32;
-
 namespace Rose
 {
     public static class Scene

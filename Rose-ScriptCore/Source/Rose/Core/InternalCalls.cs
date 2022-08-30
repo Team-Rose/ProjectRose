@@ -43,6 +43,11 @@ namespace Rose
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void RigidBody2DComponent_SetPosition(ulong entityID, ref Vector2 position);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float RigidBody2DComponent_GetRotation(ulong entityID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_SetRotation(ulong entityID, float rotation);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void RigidBody2DComponent_ApplyLinearImpulse(ulong entityID, ref Vector2 impulse, ref Vector2 point, bool wake);

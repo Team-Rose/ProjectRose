@@ -64,13 +64,13 @@ Entities:
       RestitutionThreshold: 0.5
   - Entity: 7407013679752984594
     TagComponent:
-      Tag: Wall
+      Tag: Danger
     TransformComponent:
-      Translation: [8, 36.5, -0.0500000007]
+      Translation: [9, 36.5, -0.0500000007]
       Rotation: [0, 0, 0]
       Scale: [1, 100, 1]
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
+      Color: [1, 0.227450982, 0.227450982, 1]
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false
@@ -102,13 +102,13 @@ Entities:
       RestitutionThreshold: 0.5
   - Entity: 3559097097364802603
     TagComponent:
-      Tag: Wall
+      Tag: Danger
     TransformComponent:
-      Translation: [-8, 36.5, -0.0500000007]
+      Translation: [-9, 36.5, -0.0500000007]
       Rotation: [0, 0, 0]
       Scale: [1, 100, 1]
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
+      Color: [1, 0.227848113, 0.227848113, 1]
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false

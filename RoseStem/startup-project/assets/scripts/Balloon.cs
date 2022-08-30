@@ -36,9 +36,9 @@ namespace Sandbox
             if(shouldReset)
             {
 
-                m_RigidBody2D.SetPosition(new Vector2(0.0f, 0.0f));
+                m_RigidBody2D.Position = new Vector2(0.0f, 0.0f);
                 if (m_Camera != null)
-                    m_Camera.Translation = new Vector3(0.0f, Translation.Y, 0.0f);
+                    m_Camera.Translation = new Vector3(0.0f, 0.0f, 0.0f);
                 shouldReset = false;
             }
 
