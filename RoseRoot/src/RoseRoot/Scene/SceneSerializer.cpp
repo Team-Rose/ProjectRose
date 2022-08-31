@@ -155,6 +155,19 @@ namespace Rose
 
 			out << YAML::EndMap; // TagComponent
 		}
+		if (entity.HasComponent<RelationshipComponent>())
+		{
+			auto& parent = entity.GetComponent<RelationshipComponent>().ParentHandle;
+
+			if (parent != 0) {
+				out << YAML::Key << "RelationshipComponent";
+				out << YAML::BeginMap; // RelationshipComponent
+
+				out << YAML::Key << "Parent" << YAML::Value << parent;
+
+				out << YAML::EndMap; // RelationshipComponent
+			}
+		}
 
 		if (entity.HasComponent<TransformComponent>())
 		{
@@ -362,6 +375,8 @@ namespace Rose
 		auto entities = data["Entities"];
 		if (entities)
 		{
+			std::unordered_map<UUID, std::vector<UUID>> parentsToChildren;
+
 			for (auto entity : entities)
 			{
 				uint64_t uuid = entity["Entity"].as<uint64_t>();
@@ -385,6 +400,19 @@ namespace Rose
 					tc.Scale = transformComponent["Scale"].as<glm::vec3>();
 				}
 
+				auto relationshipComponent = entity["RelationshipComponent"];
+				if (relationshipComponent)
+				{
+					UUID parentID = (UUID)relationshipComponent["Parent"].as<uint64_t>();
+					if (parentID != 0) {
+						if (parentsToChildren.find(parentID) == parentsToChildren.end()) {
+							parentsToChildren[parentID] = std::vector<UUID>();
+						}
+						parentsToChildren[parentID].push_back(deserializedEntity.GetUUID());
+					}
+				}
+
+#pragma region OptionalComponents
 				auto cameraComponent = entity["CameraComponent"];
 				if (cameraComponent)
 				{
@@ -473,6 +501,15 @@ namespace Rose
 				{
 					auto& lsc = deserializedEntity.AddComponent<MonoScriptComponent>();
 					lsc.ClassName = monoScriptComponent["ClassName"].as<std::string>();
+				}
+#pragma endregion
+
+			}
+
+			for (auto& [parentID, children] : parentsToChildren) {
+				Entity parent = m_Scene->GetEntityByUUID(parentID);
+				for (auto& childID : children) {
+					m_Scene->ParentEntity(m_Scene->GetEntityByUUID(childID), parent);
 				}
 			}
 		}

@@ -112,6 +112,11 @@ namespace Rose {
 			entityDeleted = true;
 		if (ImGui::BeginPopupContextItem())
 		{
+			if (ImGui::MenuItem("Create Entity")) {
+				Entity newEntity = m_Context->CreateEntity("Empty Entity");
+				m_Context->ParentEntity(newEntity, entity);
+			}
+
 			if (ImGui::MenuItem("Delete Entity"))
 				entityDeleted = true;
 
@@ -129,9 +134,9 @@ namespace Rose {
 
 		if (entityDeleted)
 		{
+			//TODO only clear selection if the the deleted entity is selelected
+			m_SelectionContext = {};
 			CommandHistory::Execute(CreateRef<DeleteEntityCommand>(m_Context, entity));
-			if (m_SelectionContext == entity)
-				m_SelectionContext = {};
 		}
 	}
 

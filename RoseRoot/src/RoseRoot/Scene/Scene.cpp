@@ -152,6 +152,15 @@ namespace Rose
 
 	void Scene::DestroyEntity(Entity entity)
 	{
+		UnparentEntity(entity);
+
+		auto& children = entity.GetComponent<RelationshipComponent>().Children;
+		for (auto& childID : children) {
+			if (Entity child = GetEntityByUUID(childID)) {
+				DestroyEntity(child);
+			}
+		}
+
 		m_EntityMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
 	}
@@ -179,7 +188,9 @@ namespace Rose
 			UnparentEntity(entity);
 			return;
 		}
-		
+		if(rc.ParentHandle != 0)
+			UnparentEntity(entity);
+
 		RelationshipComponent& parentRc = parent.GetComponent<RelationshipComponent>();
 		parentRc.Children.push_back(entity.GetUUID());
 
@@ -189,6 +200,9 @@ namespace Rose
 	void Scene::UnparentEntity(Entity entity)
 	{
 		RelationshipComponent& rc = entity.GetComponent<RelationshipComponent>();
+		if (rc.ParentHandle == 0)
+			return;
+
 		Entity parent = GetEntityByUUID(rc.ParentHandle);
 		if (!parent)
 			return;
@@ -446,10 +460,9 @@ namespace Rose
 			for (auto& childId : rc.Children) {
 				if (entity.GetScene()) {
 					Entity childEntity = entity.GetScene()->GetEntityByUUID(childId);
-					if (childEntity.GetScene()) {
-						Entity newChildEntity = DuplicateEntity(childEntity);
-						newRc.Children.push_back(newChildEntity.GetUUID());
-					}
+
+					Entity newChildEntity = DuplicateEntity(childEntity);
+					ParentEntity(newChildEntity, newEntity);
 				}
 			}
 		}

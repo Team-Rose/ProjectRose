@@ -184,7 +184,7 @@ namespace Rose {
 	};
 
 	using AllComponents =
-		ComponentGroup<TransformComponent, SpriteRendererComponent,CircleRendererComponent, CameraComponent,
+		ComponentGroup<TransformComponent, RelationshipComponent, SpriteRendererComponent,CircleRendererComponent, CameraComponent,
 		LuaScriptComponent, MonoScriptComponent, NativeScriptComponent, 
 		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent>;
 }

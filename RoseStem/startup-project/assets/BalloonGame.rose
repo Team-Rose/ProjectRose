@@ -2,6 +2,13 @@ Scene: BalloonGame
 Scene Settings:
   Gravity2D: [0, -9.80000019]
 Entities:
+  - Entity: 8396089185389506980
+    TagComponent:
+      Tag: DangerEntities
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
   - Entity: 16607459281093730203
     TagComponent:
       Tag: Camera
@@ -46,6 +53,8 @@ Entities:
   - Entity: 4143827994288836076
     TagComponent:
       Tag: Stone
+    RelationshipComponent:
+      Parent: 3559097097364802603
     TransformComponent:
       Translation: [0, -7.5, 0]
       Rotation: [0, 0, 0]
@@ -65,6 +74,8 @@ Entities:
   - Entity: 7407013679752984594
     TagComponent:
       Tag: Danger
+    RelationshipComponent:
+      Parent: 8396089185389506980
     TransformComponent:
       Translation: [9, 36.5, -0.0500000007]
       Rotation: [0, 0, 0]
@@ -84,6 +95,8 @@ Entities:
   - Entity: 16246588422540659078
     TagComponent:
       Tag: Floor
+    RelationshipComponent:
+      Parent: 4143827994288836076
     TransformComponent:
       Translation: [0, -1, 0]
       Rotation: [0, 0, 0]
@@ -103,6 +116,8 @@ Entities:
   - Entity: 3559097097364802603
     TagComponent:
       Tag: Danger
+    RelationshipComponent:
+      Parent: 8396089185389506980
     TransformComponent:
       Translation: [-9, 36.5, -0.0500000007]
       Rotation: [0, 0, 0]
