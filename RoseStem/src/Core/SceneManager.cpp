@@ -294,6 +294,6 @@ namespace Rose {
 			return;
 
 		if (m_SceneHierarchyPanel.GetSelectedEntity())
-			m_EditorScene->DuplicateEntity(m_SceneHierarchyPanel.GetSelectedEntity());
+			m_SceneHierarchyPanel.SetSelectedEntity(m_EditorScene->DuplicateEntity(m_SceneHierarchyPanel.GetSelectedEntity()));
 	}
 }

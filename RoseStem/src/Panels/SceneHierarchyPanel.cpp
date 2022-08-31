@@ -33,7 +33,8 @@ namespace Rose {
 			m_Context->m_Registry.each([&](auto entityID)
 				{
 					Entity entity{ entityID, m_Context.get() };
-					DrawEntityNode(entity);
+					if(entity.GetComponent<RelationshipComponent>().ParentHandle == 0)
+						DrawEntityNode(entity);
 				});
 
 
@@ -77,10 +78,33 @@ namespace Rose {
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
+
+
+
+		if (ImGui::BeginDragDropSource())
+		{
+			UUID entityID = entity.GetUUID();
+			ImGui::SetDragDropPayload("ENTITY", &entityID, 1 * sizeof(UUID));
+			ImGui::EndDragDropSource();
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY"))
+			{
+				UUID droppedID = *((UUID*)payload->Data);
+				if (Entity droppedEntity = m_Context->GetEntityByUUID(droppedID)) {
+					m_Context->ParentEntity(droppedEntity, entity);
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+
 		if(ImGui::IsItemClicked())
 		{ 
 			m_SelectionContext = entity;
 		}
+		
 
 		bool entityDeleted = false;
 
@@ -96,7 +120,10 @@ namespace Rose {
 
 		if (opened)
 		{
-
+			for (UUID& childID : entity.GetComponent<RelationshipComponent>().Children) {
+				if(Entity childEntity = m_Context->GetEntityByUUID(childID))
+					DrawEntityNode(childEntity);
+			}
 			ImGui::TreePop();
 		}
 

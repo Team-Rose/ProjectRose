@@ -37,6 +37,9 @@ namespace Rose
 		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
 		void DestroyEntity(Entity entity);
 
+		void ParentEntity(Entity entity, Entity parent);
+		void UnparentEntity(Entity entity);
+
 		void OnRuntimeStart(const std::string& assetPath);
 		void OnRuntimeStop();
 

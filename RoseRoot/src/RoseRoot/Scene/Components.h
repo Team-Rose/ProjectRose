@@ -30,6 +30,17 @@ namespace Rose {
 			: Tag(tag) {}
 	};
 
+	struct RelationshipComponent
+	{
+		UUID ParentHandle = 0;
+		std::vector<UUID> Children;
+
+		RelationshipComponent() = default;
+		RelationshipComponent(const RelationshipComponent& other) = default;
+		RelationshipComponent(UUID parent)
+			: ParentHandle(parent) {}
+	};
+
 	struct TransformComponent
 	{
 		glm::vec3 Translation = { 0.f,0.f,0.f };

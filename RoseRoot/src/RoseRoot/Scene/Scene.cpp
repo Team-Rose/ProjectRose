@@ -25,7 +25,29 @@
 
 namespace Rose
  {
+	namespace Utils {
+		static bool EntityIsAncestorOfOther(Entity entity, Entity other) {
+			if (!entity.GetScene())
+				return false;
 
+			if (other.HasComponent<RelationshipComponent>() 
+				&& entity.HasComponent<RelationshipComponent>()) {
+
+				for (auto &childID : other.GetComponent<RelationshipComponent>().Children) {
+					if (childID == entity.GetUUID())
+						return true;
+
+					Entity child = entity.GetScene()->GetEntityByUUID(childID);
+
+					//TODO Maybe make this go one layer at at time to avoid getting stuck in complex child structures
+					if (EntityIsAncestorOfOther(entity, child))
+						return true;
+				}
+			}
+
+			return false;
+		}
+	}
 	static b2BodyType Rigidbody2DTypeToBox2DBody(Rigidbody2DComponent::BodyType bodyType) 
 	{
 		switch (bodyType)
@@ -120,6 +142,10 @@ namespace Rose
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
 
+		//TODO Maybe take in a optional entity parent
+		auto& rc = entity.AddComponent <RelationshipComponent>();
+		rc.Children.clear();
+
 		m_EntityMap[uuid] = entity;
 		return entity;
 	}
@@ -128,6 +154,48 @@ namespace Rose
 	{
 		m_EntityMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
+	}
+
+	void Scene::ParentEntity(Entity entity, Entity parent)
+	{
+		if (!GetEntityByUUID(entity.GetUUID()))
+			return;
+		if (!GetEntityByUUID(parent.GetUUID()))
+			return;
+
+		if (!entity.HasComponent<RelationshipComponent>() || !parent.HasComponent<RelationshipComponent>())
+			return;	
+
+		if (entity == parent) {
+			UnparentEntity(entity);
+			return;
+		}
+		
+		if(Utils::EntityIsAncestorOfOther(parent, entity))
+			return;
+
+		RelationshipComponent& rc = entity.GetComponent<RelationshipComponent>();
+		if (parent.GetUUID() == rc.ParentHandle) {
+			UnparentEntity(entity);
+			return;
+		}
+		
+		RelationshipComponent& parentRc = parent.GetComponent<RelationshipComponent>();
+		parentRc.Children.push_back(entity.GetUUID());
+
+		rc.ParentHandle = parent.GetUUID();
+	}
+
+	void Scene::UnparentEntity(Entity entity)
+	{
+		RelationshipComponent& rc = entity.GetComponent<RelationshipComponent>();
+		Entity parent = GetEntityByUUID(rc.ParentHandle);
+		if (!parent)
+			return;
+
+		std::vector<UUID>& parentChildren = parent.GetComponent<RelationshipComponent>().Children;
+		parentChildren.erase(std::remove(parentChildren.begin(), parentChildren.end(), entity.GetUUID()), parentChildren.end());
+		rc.ParentHandle = 0;
 	}
 
 	void Scene::OnRuntimeStart(const std::string& assetPath)
@@ -370,6 +438,22 @@ namespace Rose
 		CopyComponentIfExists<CircleCollider2DComponent>(newEntity, entity);
 		CopyComponentIfExists<LuaScriptComponent>(newEntity, entity);
 
+		if (entity.HasComponent<RelationshipComponent>()) {
+			RelationshipComponent newRc = newEntity.GetComponent<RelationshipComponent>();
+			RelationshipComponent rc = entity.GetComponent<RelationshipComponent>();
+			newRc.ParentHandle = rc.ParentHandle;
+
+			for (auto& childId : rc.Children) {
+				if (entity.GetScene()) {
+					Entity childEntity = entity.GetScene()->GetEntityByUUID(childId);
+					if (childEntity.GetScene()) {
+						Entity newChildEntity = DuplicateEntity(childEntity);
+						newRc.Children.push_back(newChildEntity.GetUUID());
+					}
+				}
+			}
+		}
+
 		return newEntity;
 	}
 
@@ -493,11 +577,17 @@ namespace Rose
 	template<typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component)
 	{
-		static_assert(false);
+		RR_CORE_ERROR("Attempted to add unknown commponent ({}) to entity ({})", typeid(T)::name(), entity.GetUUID());
+		RR_CORE_ASSERT();
 	}
 
 	template<>
 	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<RelationshipComponent>(Entity entity, RelationshipComponent& component)
 	{
 	}
 
