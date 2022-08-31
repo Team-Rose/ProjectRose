@@ -11,6 +11,7 @@
 #include "../Core/CommandHistory.h"
 namespace Rose {
 	static std::filesystem::path s_AssetPath;
+	static Ref<DeleteEntityCommand> s_DeletedCommand;
 
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
 	{
@@ -33,11 +34,14 @@ namespace Rose {
 			m_Context->m_Registry.each([&](auto entityID)
 				{
 					Entity entity{ entityID, m_Context.get() };
-					if(entity.GetComponent<RelationshipComponent>().ParentHandle == 0)
+					if (entity.GetComponent<RelationshipComponent>().ParentHandle == 0)
 						DrawEntityNode(entity);
 				});
 
+			if (s_DeletedCommand != nullptr)
+				CommandHistory::Execute(s_DeletedCommand);
 
+			s_DeletedCommand = nullptr;
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 				m_SelectionContext = {};
 
@@ -112,13 +116,13 @@ namespace Rose {
 			entityDeleted = true;
 		if (ImGui::BeginPopupContextItem())
 		{
-			if (ImGui::MenuItem("Create Entity")) {
+			if (ImGui::MenuItem("Delete Entity"))
+				entityDeleted = true;
+
+			if (ImGui::MenuItem("Create Empty Entity")) {
 				Entity newEntity = m_Context->CreateEntity("Empty Entity");
 				m_Context->ParentEntity(newEntity, entity);
 			}
-
-			if (ImGui::MenuItem("Delete Entity"))
-				entityDeleted = true;
 
 			ImGui::EndPopup();
 		}
@@ -136,7 +140,7 @@ namespace Rose {
 		{
 			//TODO only clear selection if the the deleted entity is selelected
 			m_SelectionContext = {};
-			CommandHistory::Execute(CreateRef<DeleteEntityCommand>(m_Context, entity));
+			s_DeletedCommand = CreateRef<DeleteEntityCommand>(m_Context, entity);
 		}
 	}
 

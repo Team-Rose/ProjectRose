@@ -62,6 +62,7 @@ namespace Rose
 	}
 
 	Scene::Scene()
+		: m_Contactlistener()
 	{
 	}
 
@@ -142,7 +143,6 @@ namespace Rose
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
 
-		//TODO Maybe take in a optional entity parent
 		auto& rc = entity.AddComponent <RelationshipComponent>();
 		rc.Children.clear();
 
@@ -453,16 +453,17 @@ namespace Rose
 		CopyComponentIfExists<LuaScriptComponent>(newEntity, entity);
 
 		if (entity.HasComponent<RelationshipComponent>()) {
-			RelationshipComponent newRc = newEntity.GetComponent<RelationshipComponent>();
 			RelationshipComponent rc = entity.GetComponent<RelationshipComponent>();
-			newRc.ParentHandle = rc.ParentHandle;
-
+			
+			if (newEntity.GetScene() == entity.GetScene()) 
+				newEntity.GetScene()->ParentEntity(newEntity, newEntity.GetScene()->GetEntityByUUID(rc.ParentHandle));
+			
 			for (auto& childId : rc.Children) {
 				if (entity.GetScene()) {
 					Entity childEntity = entity.GetScene()->GetEntityByUUID(childId);
 
 					Entity newChildEntity = DuplicateEntity(childEntity);
-					ParentEntity(newChildEntity, newEntity);
+					newEntity.GetScene()->ParentEntity(newChildEntity, newEntity);
 				}
 			}
 		}

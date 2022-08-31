@@ -18,23 +18,28 @@ namespace Rose {
 	public:
 		DeleteEntityCommand(const Ref<Scene>& editorScene, Entity entity)
 		: m_Context(editorScene), m_DeletedEntity(entity)
-		{
-			m_Scene = CreateRef<Scene>();
-			m_CopyEntity = m_Scene->DuplicateEntity(m_DeletedEntity);
-		}
+		{}
 		virtual ~DeleteEntityCommand() = default;
 
 		virtual void Execute() override {
+			m_Scene = CreateRef<Scene>();
+			m_CopyEntity = m_Scene->DuplicateEntity(m_DeletedEntity);
+			m_ParentHandle = m_DeletedEntity.GetComponent<RelationshipComponent>().ParentHandle;
+
 			m_Context->DestroyEntity(m_DeletedEntity);
 		}
 		virtual void Undo() override {
-			m_Context->DuplicateEntity(m_CopyEntity);
+			Entity entity = m_Context->DuplicateEntity(m_CopyEntity);
+			if (Entity parentEntity = m_Context->GetEntityByUUID(m_ParentHandle))
+				m_Context->ParentEntity(entity, parentEntity);
 		}
 		virtual void Lock() override {}
 		virtual bool IsLocked() override { return true; }
 	private:
 		Entity m_DeletedEntity;
 		Entity m_CopyEntity;
+		UUID m_ParentHandle;
+
 		Ref<Scene> m_Scene;
 		Ref<Scene> m_Context;
 	};
@@ -43,7 +48,9 @@ namespace Rose {
 	class ChangeValueCommand : public Command{
 	public:
 		ChangeValueCommand(T& valToChange, T newVal)
-			: m_ValToChange(valToChange), m_NewVal(newVal) {}
+			: m_ValToChange(valToChange), m_NewVal(newVal) {
+			m_OldVal = m_ValToChange;
+		}
 		virtual ~ChangeValueCommand() = default;
 
 		virtual void Execute() override {
