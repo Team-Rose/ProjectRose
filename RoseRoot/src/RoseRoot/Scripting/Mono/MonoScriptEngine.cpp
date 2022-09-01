@@ -229,6 +229,10 @@ namespace Rose {
 		s_MonoData->AppAssembly = nullptr;
 		s_MonoData->AppAssemblyImage = nullptr;
 	}
+	MonoDomain* MonoScriptEngine::GetAppDomain()
+	{
+		return s_MonoData->AppDomain;
+	}
 
 	MonoString* MonoScriptEngine::CreateMonoString(const std::string string)
 	{

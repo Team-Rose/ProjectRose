@@ -8,13 +8,21 @@
 #include "mono/metadata/reflection.h"
 #include <glm/glm.hpp>
 #include <box2d/b2_body.h>
+#include <mono/metadata/appdomain.h>
 
 namespace Rose {
 
 	static std::unordered_map <MonoType*, std::function<bool(Entity)>> s_EntityHasComponentFuncs;
 
 #define RR_ADD_INTERNAL_CALL(Name) mono_add_internal_call("Rose.InternalCalls::" #Name, Name)
-	
+
+#pragma region  Input
+	static bool Input_IsKeyDown(KeyCode keycode)
+	{
+		return Input::IsKeyPressed(keycode);
+	}
+#pragma endregion
+
 #pragma region  Scene
 	static uint64_t Scene_FindEntityByTag(MonoString* tag)
 	{
@@ -26,13 +34,58 @@ namespace Rose {
 			if (tc.Tag == std::string(utf8)) {
 				Entity entity = Entity{ e, MonoScriptEngine::GetSceneContext() };
 				return entity.GetUUID();
-			}	
+			}
 		}
 		return 0;
 	}
 #pragma endregion
 
 #pragma region  Entity
+	static uint64_t Entity_GetParent(UUID entityID) {
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		if (entity.HasComponent<RelationshipComponent>())
+			return entity.GetComponent<RelationshipComponent>().ParentHandle;
+
+		return 0;
+	}
+
+	static void Entity_SetParent(UUID entityID, UUID parentID) {
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+		Entity parent = scene->GetEntityByUUID(parentID);
+		RR_CORE_ASSERT(parent);
+
+		scene->ParentEntity(entity, parent);
+	}
+
+	static MonoArray* Entity_GetChildren(UUID entityID) {
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		MonoClass* uint64class = mono_class_from_name(mono_get_corlib(), "System", "UInt64");
+		RR_CORE_ASSERT(uint64class);
+
+		if (!entity.HasComponent<RelationshipComponent>())
+			return mono_array_new(MonoScriptEngine::GetAppDomain(), uint64class, 0);
+
+		const auto& children = entity.GetComponent<RelationshipComponent>().Children;
+		MonoArray* arr = mono_array_new(MonoScriptEngine::GetAppDomain(), uint64class, children.size());
+
+		for (uint32_t i = 0; i < children.size(); i++) {
+			mono_array_set(arr, int64_t, i, children[i]);
+		}
+		return arr;
+	}
+
+
 	static bool Entity_HasComponent(UUID entityID, MonoReflectionType* componentType)
 	{
 		Scene* scene = MonoScriptEngine::GetSceneContext();
@@ -201,11 +254,6 @@ namespace Rose {
 	}
 #pragma endregion
 
-	static bool Input_IsKeyDown(KeyCode keycode)
-	{
-		return Input::IsKeyPressed(keycode);
-	}
-
 	template<typename ... Component>
 	static void RegisterComponent()
 	{
@@ -242,6 +290,9 @@ namespace Rose {
 	{
 		RR_ADD_INTERNAL_CALL(Scene_FindEntityByTag);
 
+		RR_ADD_INTERNAL_CALL(Entity_GetParent);
+		RR_ADD_INTERNAL_CALL(Entity_SetParent);
+		RR_ADD_INTERNAL_CALL(Entity_GetChildren);
 		RR_ADD_INTERNAL_CALL(Entity_HasComponent);
 		RR_ADD_INTERNAL_CALL(Entity_GetTag);
 		RR_ADD_INTERNAL_CALL(Entity_SetTag);

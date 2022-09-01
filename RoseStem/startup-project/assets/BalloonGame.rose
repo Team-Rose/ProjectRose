@@ -16,6 +16,8 @@ Entities:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
+    MonoScriptComponent:
+      ClassName: Sandbox.GetChildren
   - Entity: 16607459281093730203
     TagComponent:
       Tag: Camera

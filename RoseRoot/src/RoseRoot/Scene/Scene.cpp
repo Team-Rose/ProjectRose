@@ -123,7 +123,8 @@ namespace Rose
 			Entity newEntity = newScene->CreateEntityWithUUID(uuid, name);
 			enttMap[uuid] = (entt::entity)newEntity;
 		}
-
+		//Not included in all components sense you are not aloud to access directly from the C# or LUA api
+		CopyComponent(ComponentGroup<RelationshipComponent>{}, dstSceneRegistry, srcSceneRegistry, enttMap);
 		// Copy components (except IDComponent and TagComponent)
 		CopyComponent(AllComponents{}, dstSceneRegistry, srcSceneRegistry, enttMap);
 

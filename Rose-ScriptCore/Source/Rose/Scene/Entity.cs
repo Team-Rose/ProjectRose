@@ -62,6 +62,32 @@ namespace Rose
             }
         }
 
+        public Entity Parent
+        {
+            get
+            {
+                return new Entity(InternalCalls.Entity_GetParent(ID));
+            }
+            set
+            {
+                InternalCalls.Entity_SetParent(ID, value.ID);
+            }
+        }
+        public Entity[] Children
+        {
+            get
+            {
+                ulong[] Ids = InternalCalls.Entity_GetChildren(ID);
+                Entity[] Entities = new Entity[Ids.Length];
+
+                for(int i = 0; i < Ids.Length; i++)
+                {
+                    Entities[i] = new Entity(Ids[i]);
+                }
+                return Entities;
+            }
+        }
+
         public Vector3 Translation
         {
             get

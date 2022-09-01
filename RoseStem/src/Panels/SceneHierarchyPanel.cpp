@@ -54,7 +54,11 @@ namespace Rose {
 				ImGui::EndPopup();
 			}
 		}
+
+		
+
 		ImGui::End();
+
 
 		ImGui::Begin("Properties");
 		if (m_SelectionContext)
@@ -79,11 +83,13 @@ namespace Rose {
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 		
-		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
-		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0);
+		flags |= ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen;
+		if (entity.GetComponent<RelationshipComponent>().Children.empty())
+			flags |= ImGuiTreeNodeFlags_Leaf;
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
-
-
+		
+		
 
 		if (ImGui::BeginDragDropSource())
 		{

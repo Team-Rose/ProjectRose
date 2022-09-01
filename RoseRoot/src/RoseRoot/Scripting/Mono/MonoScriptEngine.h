@@ -15,6 +15,7 @@ extern "C" {
 	typedef struct _MonoImage MonoImage;
 	typedef struct _MonoString MonoString;
 	typedef struct _MonoClassField MonoClassField;
+	typedef struct _MonoDomain MonoDomain;
 }
 
 namespace Rose {
@@ -114,6 +115,7 @@ namespace Rose {
 		static void ReloadAppAssembly(const std::filesystem::path& filepath);
 		static void UnloadAppAssembly();
 
+		static MonoDomain* GetAppDomain();
 		static MonoString* CreateMonoString(const std::string string);
 
 		static void OnRuntimeStart(Scene* scene);
