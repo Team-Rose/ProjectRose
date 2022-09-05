@@ -29,7 +29,7 @@ namespace Rose
 		return nullptr;
 	}
 
-
+#if 0
 	void ShaderLibrary::Add(const std::string& name, const Ref<Shader>& shader)
 	{
 		RR_CORE_ASSERT(!Exist(name), "Shader already exist!");
@@ -43,21 +43,21 @@ namespace Rose
 		Add(name, shader);
 	}
 
-	Ref<Rose::Shader> ShaderLibrary::Load(const std::string& filepath)
+	Ref<Shader> ShaderLibrary::Load(const std::string& filepath)
 	{
 		auto shader = Shader::Create(filepath);
 		Add(shader);
 		return shader;
 	}
 
-	Ref<Rose::Shader> ShaderLibrary::Load(const std::string& name, const std::string& filepath)
+	Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::string& filepath)
 	{
 		auto shader = Shader::Create(filepath);
 		Add(name, shader);
 		return shader;
 	}
 
-	Ref<Rose::Shader> ShaderLibrary::Get(const std::string& name)
+	Ref<Shader> ShaderLibrary::Get(const std::string& name)
 	{
 		RR_CORE_ASSERT(Exist(name), "Shader not found");
 		return m_Shaders[name];
@@ -67,4 +67,5 @@ namespace Rose
 	{
 		return m_Shaders.find(name) != m_Shaders.end();
 	}
+#endif
 }

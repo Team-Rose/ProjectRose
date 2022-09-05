@@ -396,7 +396,7 @@ namespace Rose {
 					ImGui::EndDragDropTarget();
 				}
 			});
-		DrawComponent<MonoScriptComponent>("Mono Script", entity, [entity](auto& component) mutable
+		DrawComponent<MonoScriptComponent>("Mono Script", entity, [entity, scene = m_Context](auto& component) mutable
 			{
 				bool scriptClassExist = MonoScriptEngine::EntityClassExist(component.ClassName);
 				if (!scriptClassExist)
@@ -408,20 +408,63 @@ namespace Rose {
 				if (ImGui::InputText("Class", buffer, sizeof(buffer)))
 				{
 					component.ClassName = std::string(buffer);
+					
 				}
 
 				//Fields
 				UUID id = entity.GetUUID();
-				Ref<MonoScriptInstance> scriptInstance = MonoScriptEngine::GetEntityMonoScriptInstance(id);
-				if (scriptInstance)
+				bool sceneIsRunning = scene->IsRunning();
+
+				if (sceneIsRunning) {
+					Ref<MonoScriptInstance> scriptInstance = MonoScriptEngine::GetEntityMonoScriptInstance(id);
+					if (scriptInstance)
+					{
+						const auto& fields = scriptInstance->GetMonoScriptClass()->GetFields();
+						for (const auto& [name, field] : fields) {
+							if (field.Type == MonoScriptFieldType::Float) {
+
+								float data = scriptInstance->GetFieldValue<float>(name);
+								if (ImGui::DragFloat(name.c_str(), &data)) {
+									scriptInstance->SetFieldValue<float>(name, data);
+								}
+							}
+						}
+					}
+				}
+				else
 				{
-					const auto& fields = scriptInstance->GetMonoScriptClass()->GetFields();
-					for (const auto& [name, field] : fields) {
-						if (field.Type == MonoScriptFieldType::Float) {
-							
-							float data = scriptInstance->GetFieldValue<float>(name);
-							if (ImGui::DragFloat(name.c_str(), &data)) {
-								scriptInstance->SetFieldValue<float>(name, data);
+					if (scriptClassExist)
+					{
+						Ref<MonoScriptClass> entityClass = MonoScriptEngine::GetEntityClass(component.ClassName);
+						if (entityClass) {
+							const auto& fields = entityClass->GetFields();
+							auto& entityFields = MonoScriptEngine::GetScriptFieldMap(entity.GetUUID());
+
+							for (const auto& [name, field] : fields) {
+								// Field has been set in editor
+								if (entityFields.find(name) != entityFields.end()) {
+									MonoScriptFieldInstance& scriptFieldInstance = entityFields.at(name);
+									if (field.Type == MonoScriptFieldType::Float) {
+										float data = scriptFieldInstance.GetValue<float>();
+										if (ImGui::DragFloat(name.c_str(), &data)) {
+											scriptFieldInstance.SetValue<float>(data);
+										}
+									}
+								}
+								else
+								{
+									// Display control to set it maybe
+									if (field.Type == MonoScriptFieldType::Float) {
+
+										//TODO Proper default value (match to C#)
+										float data = 0.0f;
+										if (ImGui::DragFloat(name.c_str(), &data)) {
+											MonoScriptFieldInstance& fieldInstance = entityFields[name];
+											fieldInstance.Field = field;
+											fieldInstance.SetValue<float>(data);
+										}
+									}
+								}
 							}
 						}
 					}

@@ -33,6 +33,8 @@ namespace Rose {
 
 		LuaRigidBody2D(Entity* ent) :entity(ent) { }
 
+		void SetTransform(Vec2 pos, float rotation);
+
 		void SetLinearVelocity(Vec2 vel);
 		Vec2 GetLinearVelocity();
 		void SetAnglearVelocity(float vel);
@@ -68,6 +70,13 @@ namespace Rose {
 
 		}
 
+		bool HasComponent(const std::string& component) {
+			if (component == "Rigidbody2DComponent" || component == "Rigidbody2D")
+				return entity.HasComponent<Rigidbody2DComponent>();
+
+			RR_ERROR("Invalid Component: {}", component);
+			return false;
+		}
 		LuaRigidBody2D GetRigidBody2D() {
 			if (entity.HasComponent<Rigidbody2DComponent>()) {
 				return LuaRigidBody2D(&entity);

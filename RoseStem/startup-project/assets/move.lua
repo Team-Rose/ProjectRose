@@ -4,8 +4,14 @@ rotspeed = 2
 vel = Vec2.new()
 ang = 0
 
+if rself:HasComponent("Rigidbody2DComponent") then
+	log("Epic!")
+end
+if rself:HasComponent("This is not a valid entity") then
+	log("Oh no...")
+end
+
 rself:GetRigidBody2D():SetGravityScale(0)
-log(Key.left)
 
 function Update(ts)
 	if Input.IsKeyPressed(Key.d) then

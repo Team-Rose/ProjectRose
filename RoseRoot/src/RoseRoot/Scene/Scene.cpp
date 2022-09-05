@@ -217,6 +217,7 @@ namespace Rose
 	{
 		RR_PROFILE_FUNCTION();
 		RR_CORE_TRACE("-----Runtime Scene Started-----");
+		m_IsRunning = true;
 		OnPhysics2DStart();
 
 		MonoScriptEngine::OnRuntimeStart(this); 
@@ -237,6 +238,7 @@ namespace Rose
 		OnPhysics2DStop();
 		MonoScriptEngine::OnRuntimeStop();
 		m_SceneStats = {};
+		m_IsRunning = false;
 		RR_CORE_TRACE("-----Runtime Scene Stopped-----");
 	}
 

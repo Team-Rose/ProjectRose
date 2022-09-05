@@ -38,6 +38,8 @@ namespace Rose {
 
 		void SetAssetPath(const std::filesystem::path& path) { m_AssetPath = path; }
 		void SetAppAssemblyPath(const std::filesystem::path& path) { m_AppAssemblyPath = path; }
+
+	//TODO make these protected or private
 	public:
 		
 		//Panels

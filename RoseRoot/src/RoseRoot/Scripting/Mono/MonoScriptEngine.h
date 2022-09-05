@@ -1,5 +1,6 @@
 #pragma once
 
+//#include <memory.h>
 #include <map>
 #include <filesystem>
 #include <string>
@@ -39,6 +40,36 @@ namespace Rose {
 
 		MonoClassField* ClassField;
 	};
+
+	//MonoScriptField + data storage
+	struct MonoScriptFieldInstance
+	{
+		MonoScriptField Field;
+
+		MonoScriptFieldInstance()
+		{
+			memset(m_Buffer, 0, sizeof(m_Buffer));
+		}
+		//TODO Allow for larger data types!
+		template<typename T>
+		T GetValue() {
+			static_assert(sizeof(T) <= 8, "Type to large!");
+
+			return *(T*)m_Buffer;
+		}
+
+		template<typename T>
+		void SetValue(T value) {
+			static_assert(sizeof(T) <= 8, "Type to large!");
+			memcpy(m_Buffer, &value, sizeof(T));
+		}
+	private:
+		uint8_t m_Buffer[8];
+
+		friend class MonoScriptEngine;
+	};
+	using MonoScriptFieldMap = std::unordered_map<std::string, MonoScriptFieldInstance>;
+
 	class MonoScriptClass
 	{
 	public:
@@ -100,6 +131,8 @@ namespace Rose {
 		MonoMethod* m_OnCollision2DEndInternalMethod = nullptr;
 
 		inline static char s_FieldValueBuffer[8];
+
+		friend class MonoScriptEngine;
 	};
 
 	class MonoScriptEngine
@@ -130,14 +163,17 @@ namespace Rose {
 		static Scene* GetSceneContext();
 		static Ref<MonoScriptInstance> GetEntityMonoScriptInstance(UUID entityID);
 
+		static Ref<MonoScriptClass> GetEntityClass(const std::string& name);
 		static std::unordered_map<std::string, Ref<MonoScriptClass>> GetEntityClasses();
+		static MonoScriptFieldMap& GetScriptFieldMap(UUID entityID);
 
 		static MonoImage* GetCoreAssemblyImage();
 	private:
 		static void LoadAssemblyClasses(MonoAssembly* assembly);
 		static MonoObject* InstantiateClass(MonoClass* monoClass);
 
-
+		friend struct MonoScriptField;
+		friend struct MonoScriptFieldInstance;
 		friend class MonoScriptClass;
 		friend class MonoGlue;
 	};

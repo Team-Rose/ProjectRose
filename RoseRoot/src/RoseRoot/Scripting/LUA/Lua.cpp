@@ -41,6 +41,7 @@ namespace Rose {
 		m_LuaState.new_usertype<Color>("Color","r",&Color::r, "g",&Color::g, "b",&Color::b, "a",&Color::a);
 
 		m_LuaState.new_usertype<LuaRigidBody2D>("RigidBody2D",
+			"SetTransform", &LuaRigidBody2D::SetTransform,
 			"SetLinearVelocity", &LuaRigidBody2D::SetLinearVelocity,
 			"GetLinearVelocity", &LuaRigidBody2D::GetLinearVelocity,
 			"SetAnglearVelocity", &LuaRigidBody2D::SetAnglearVelocity,
@@ -54,6 +55,7 @@ namespace Rose {
 											"position",&LuaEntity::position,
 											"rotation",&LuaEntity::rotation,
 											"size",&LuaEntity::size,
+											"HasComponent",&LuaEntity::HasComponent,
 											"GetRigidBody2D",&LuaEntity::GetRigidBody2D
 										  );
 		//Register Util/Core Functions

@@ -32,6 +32,7 @@ namespace Rose
 		static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 	};
 
+#if 0
 	class ShaderLibrary
 	{
 	public:
@@ -46,4 +47,5 @@ namespace Rose
 	private:
 		std::unordered_map<std::string, Ref<Shader>> m_Shaders;
 	};
+#endif
 }

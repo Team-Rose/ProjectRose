@@ -162,6 +162,7 @@ namespace Rose {
 
 		std::unordered_map<std::string, Ref<MonoScriptClass>> EntityClasses;
 		std::unordered_map<UUID, Ref<MonoScriptInstance>> EntityInstances;
+		std::unordered_map<UUID, MonoScriptFieldMap> EntityScriptFields;
 		
 		Scene* SceneContext;
 	};
@@ -254,9 +255,18 @@ namespace Rose {
 	{
 		const MonoScriptComponent& msc = entity.GetComponent<MonoScriptComponent>();
 		if (MonoScriptEngine::EntityClassExist(msc.ClassName)) {
+			UUID entityID = entity.GetUUID();
 			Ref<MonoScriptInstance> instance = CreateRef<MonoScriptInstance>(s_MonoData->EntityClasses[msc.ClassName], entity);
-			s_MonoData->EntityInstances[entity.GetUUID()] = instance;
+			s_MonoData->EntityInstances[entityID] = instance;
 
+			//Copy field values
+			if (s_MonoData->EntityScriptFields.find(entityID) != s_MonoData->EntityScriptFields.end()) {
+				const MonoScriptFieldMap& fieldMap = s_MonoData->EntityScriptFields.at(entityID);
+				for (const auto& [name, fieldInstane] : fieldMap) {
+					instance->SetFieldValueInternal(name, fieldInstane.m_Buffer);
+				}
+			}
+			
 			instance->InvokeOnCreate();
 		}
 		else {
@@ -310,14 +320,27 @@ namespace Rose {
 			return it->second;
 		return nullptr;
 	}
+	
 	bool MonoScriptEngine::EntityClassExist(const std::string& fullClassName)
 	{
 		return s_MonoData->EntityClasses.find(fullClassName) != s_MonoData->EntityClasses.end();
 	}
 
+	Ref<MonoScriptClass> MonoScriptEngine::GetEntityClass(const std::string& name)
+	{
+		auto it = s_MonoData->EntityClasses.find(name);
+		if (it != s_MonoData->EntityClasses.end())
+			return it->second;
+		return nullptr;
+	}
 	std::unordered_map<std::string, Ref<MonoScriptClass>> MonoScriptEngine::GetEntityClasses()
 	{
 		return s_MonoData->EntityClasses;
+	}
+	MonoScriptFieldMap& MonoScriptEngine::GetScriptFieldMap(UUID entityID) {
+		RR_CORE_ASSERT(entity);
+		//RR_CORE_ASSERT(s_MonoData->EntityScriptFields.find(entityID) != s_MonoData->EntityScriptFields.end());
+		return s_MonoData->EntityScriptFields[entityID];
 	}
 
 	void MonoScriptEngine::LoadAssemblyClasses(MonoAssembly* assembly)
@@ -467,5 +490,4 @@ namespace Rose {
 		mono_field_set_value(m_Instance, field.ClassField, (void*)value);
 		return true;
 	}
-
 }

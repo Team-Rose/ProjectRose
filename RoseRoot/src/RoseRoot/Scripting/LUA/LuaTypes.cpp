@@ -15,6 +15,17 @@ namespace Rose {
 		}
 	}
 
+	void LuaRigidBody2D::SetTransform(Vec2 pos, float rotation)
+	{
+		if (entity->HasComponent<Rigidbody2DComponent>()) {
+			auto& rb2d = entity->GetComponent<Rigidbody2DComponent>();
+
+			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			body->SetTransform({ pos.x, pos.y }, rotation);
+			body->SetAwake(true);
+		}
+	}
+
 	Vec2 LuaRigidBody2D::GetLinearVelocity()
 	{
 		if (entity->HasComponent<Rigidbody2DComponent>()) {
@@ -68,18 +79,9 @@ namespace Rose {
 		{entity.GetComponent<TagComponent>().Tag = Name; }
 		{
 			TransformComponent tc = entity.GetComponent<TransformComponent>();
-			entity.GetComponent<TransformComponent>().Translation = { position.x , position.y, position.z };
-			entity.GetComponent<TransformComponent>().Rotation = { rotation.x, rotation.y, rotation.z };
-			entity.GetComponent<TransformComponent>().Scale = { size.x, size.y, size.z };
-		}
-		{
-			if (entity.HasComponent<Rigidbody2DComponent>()) {
-				auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
-
-				b2Body* body = (b2Body*)rb2d.RuntimeBody;
-				body->SetTransform({ position.x, position.y }, rotation.z);
-				body->SetAwake(true);
-			}
+			tc.Translation = { position.x , position.y, position.z };
+			tc.Rotation = { rotation.x, rotation.y, rotation.z };
+			tc.Scale = { size.x, size.y, size.z };
 		}
 	}
 }

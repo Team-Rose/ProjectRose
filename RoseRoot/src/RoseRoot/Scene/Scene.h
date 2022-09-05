@@ -42,6 +42,7 @@ namespace Rose
 
 		void OnRuntimeStart(const std::string& assetPath);
 		void OnRuntimeStop();
+		const bool IsRunning() { return m_IsRunning; }
 
 		void OnSimulationStart(const std::string& assetPath);
 		void OnSimulationStop();
@@ -95,6 +96,8 @@ namespace Rose
 
 		b2World* m_PhysicsWorld = nullptr;
 		ContactListener2D* m_Contactlistener;
+		bool m_IsRunning = false;
+
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
 
 		friend class Entity;
