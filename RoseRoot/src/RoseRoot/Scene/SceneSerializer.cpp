@@ -3,6 +3,7 @@
 
 #include "Entity.h"
 #include "Components.h"
+#include "RoseRoot/Assets/AssetManager.h"
 
 #include <fstream>
 #include <yaml-cpp/yaml.h>
@@ -440,6 +441,8 @@ namespace Rose
 					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
 					if (spriteRendererComponent["Path"] && spriteRendererComponent["Path"].as<std::string>() != "no_texture") {
 						src.Path = spriteRendererComponent["Path"].as<std::string>();
+						if (Ref<Texture2D> texture = AssetManager::GetOrLoadTexture(src.Path))
+							src.Texture = texture;
 					}
 				}
 

@@ -546,6 +546,8 @@ namespace Rose {
 						const wchar_t* path = (const wchar_t*)payload->Data;
 						std::filesystem::path texturePath = path;
 						component.Path = (s_AssetPath.string() + "\\" + texturePath.string());
+						if (Ref<Texture2D> texture = AssetManager::GetOrLoadTexture(component.Path))
+							component.Texture = texture;
 					}
 					ImGui::EndDragDropTarget();
 				}

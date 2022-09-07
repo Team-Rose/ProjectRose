@@ -466,8 +466,8 @@ namespace Rose
 
 	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID)
 	{
-		if (Ref<Texture2D> texture = AssetManager::GetOrLoadTexture(src.Path))
-			DrawQuad(transform, texture, src.TilingFactor, src.Color, entityID);
+		if (src.Texture)
+			DrawQuad(transform, src.Texture, src.TilingFactor, src.Color, entityID);
 		else
 			DrawQuad(transform, src.Color, entityID);
 	}
