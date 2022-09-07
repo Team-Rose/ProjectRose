@@ -22,7 +22,6 @@ namespace Rose {
 		RR_PROFILE_FUNCTION();
 		Application::Get().GetWindow().SetWindowIcon("Resources/icon.png");
 		CommandHistory::Init();
-
 		auto commandLineArgs = Application::Get().GetCommandLineArgs();
 		if (commandLineArgs.Count > 1)
 		{

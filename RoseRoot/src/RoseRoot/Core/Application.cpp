@@ -2,6 +2,7 @@
 #include "Application.h"
 
 #include "RoseRoot/Core/Log.h"
+#include "RoseRoot/Assets/AssetManager.h"
 
 #include "RoseRoot/Renderer/Renderer.h"
 #include "RoseRoot/Scripting/Mono/MonoScriptEngine.h"
@@ -28,6 +29,7 @@ namespace Rose {
 		m_Window->SetVSync(false);
 		m_Window->SetCapturesMouse(false);
 
+		AssetManager::Init();
 		Renderer::Init();
 		MonoScriptEngine::Init();
 
@@ -41,6 +43,7 @@ namespace Rose {
 
 		MonoScriptEngine::Shutdown();
 		Renderer::Shutdown();
+		AssetManager::ShutDown();
 	}
 
 	void Application::PushLayer(Layer* layer)
@@ -106,6 +109,7 @@ namespace Rose {
 			m_ImGuiLayer->End();
 
 			m_Window->OnUpdate();
+			//AssetManager::CollectUnused();
 		}
 	}
 

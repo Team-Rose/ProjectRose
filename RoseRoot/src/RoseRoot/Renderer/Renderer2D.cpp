@@ -1,4 +1,5 @@
 #include "rrpch.h"
+#include "RoseRoot/Assets/AssetManager.h"
 #include "RoseRoot/Renderer/Renderer2D.h"
 
 #include "RoseRoot/Renderer/VertexArray.h"
@@ -465,8 +466,8 @@ namespace Rose
 
 	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID)
 	{
-		if (src.Texture)
-			DrawQuad(transform, src.Texture, src.TilingFactor, src.Color, entityID);
+		if (Ref<Texture2D> texture = AssetManager::GetOrLoadTexture(src.Path))
+			DrawQuad(transform, texture, src.TilingFactor, src.Color, entityID);
 		else
 			DrawQuad(transform, src.Color, entityID);
 	}

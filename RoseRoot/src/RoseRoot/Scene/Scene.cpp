@@ -458,7 +458,7 @@ namespace Rose
 		if (entity.HasComponent<RelationshipComponent>()) {
 			RelationshipComponent rc = entity.GetComponent<RelationshipComponent>();
 			
-			if (newEntity.GetScene() == entity.GetScene()) 
+			if (newEntity.GetScene() == entity.GetScene() && newEntity.GetScene()->GetEntityByUUID(rc.ParentHandle))
 				newEntity.GetScene()->ParentEntity(newEntity, newEntity.GetScene()->GetEntityByUUID(rc.ParentHandle));
 			
 			for (auto& childId : rc.Children) {
