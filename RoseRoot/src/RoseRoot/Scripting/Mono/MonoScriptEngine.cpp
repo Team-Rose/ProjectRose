@@ -338,8 +338,6 @@ namespace Rose {
 		return s_MonoData->EntityClasses;
 	}
 	MonoScriptFieldMap& MonoScriptEngine::GetScriptFieldMap(UUID entityID) {
-		RR_CORE_ASSERT(entity);
-		//RR_CORE_ASSERT(s_MonoData->EntityScriptFields.find(entityID) != s_MonoData->EntityScriptFields.end());
 		return s_MonoData->EntityScriptFields[entityID];
 	}
 

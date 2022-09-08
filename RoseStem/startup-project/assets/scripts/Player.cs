@@ -7,30 +7,26 @@ namespace Sandbox
     internal class Player : Entity
     {
         private TransformComponent m_Transfrom;
+        private SpriteRendererComponent m_Sprite;
         protected override void OnCreate()
         {
             Console.WriteLine($"Player.OnCreate - {ID}");
 
             m_Transfrom = GetComponent<TransformComponent>();
+
+            m_Sprite = GetComponent<SpriteRendererComponent>();
+
+            m_Sprite.Texture = new Texture2D("textures/Stone");
+            if (m_Sprite.Texture == null)
+                Console.WriteLine("Oh no the texture isn't valid");
+
+            m_Sprite.Texture = new Texture2D("textures/Stone.png");
+            if (m_Sprite.Texture != null)
+                Console.WriteLine("Hey it works!");
         }
         protected override void OnUpdate(float ts)
         {
-            //Console.WriteLine($"Player.OnUpdate: {ts}");
-
-            Vector3 vel = Vector3.Zero;
-            float speed = 4.0f;
-
-            if (Input.IsKeyDown(KeyCode.Up))
-                vel.Y += 1.0f;
-            if (Input.IsKeyDown(KeyCode.Down))
-                vel.Y += -1.0f;
-
-            if (Input.IsKeyDown(KeyCode.Left))
-                vel.X += -1.0f;
-            if (Input.IsKeyDown(KeyCode.Right))
-                vel.X += 1.0f;
-
-            m_Transfrom.Translation += (vel * speed) * ts;
+            
         }
     }
 }

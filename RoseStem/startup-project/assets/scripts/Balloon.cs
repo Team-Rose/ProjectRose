@@ -21,7 +21,7 @@ namespace Sandbox
         protected override void OnCreate()
         {
             Console.WriteLine($"Balloon.OnCreate - {Tag} - {ID}");
-             
+
             m_RigidBody2D = GetComponent<Rigidbody2DComponent>();
 
             m_Camera = Scene.FindEntityByTag("Camera");

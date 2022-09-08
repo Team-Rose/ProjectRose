@@ -29,6 +29,9 @@ namespace Rose {
 			m_Project = Project(projectFilePath);
 		}
 
+		AssetManager::SetAssetPath(m_Project.GetAssetPath().string());
+
+		//TODO Switch these to use the asset manager path
 		m_SceneManager.m_ContentBrowserPanel.SetAssetPath(m_Project.GetAssetPath());
 		m_SceneManager.m_SceneHierarchyPanel.SetAssetPath(m_Project.GetAssetPath());
 		m_SceneManager.SetAssetPath(m_Project.GetAssetPath());

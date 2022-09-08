@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 #include <box2d/b2_body.h>
 #include <mono/metadata/appdomain.h>
+#include <RoseRoot/Assets/AssetManager.h>
 
 namespace Rose {
 
@@ -23,15 +24,37 @@ namespace Rose {
 	}
 #pragma endregion
 
+#pragma region  Asset
+	static bool Asset_GetOrLoadTexture2D(MonoString* path)
+	{
+		char* utf8 = mono_string_to_utf8(path);
+		std::string string = std::string(utf8);
+
+		if (AssetManager::GetOrLoadTexture(AssetManager::GetAssetPath() + "\\" + string))
+			return true;
+		return false;
+	}
+	static bool Asset_GetTexture2D(MonoString* path)
+	{
+		char* utf8 = mono_string_to_utf8(path);
+		std::string string = std::string(utf8);
+
+		if (AssetManager::GetTexture(AssetManager::GetAssetPath() + "\\" + string))
+			return true;
+		return false;
+	}
+#pragma endregion
+
 #pragma region  Scene
 	static uint64_t Scene_FindEntityByTag(MonoString* tag)
 	{
 		auto view = MonoScriptEngine::GetSceneContext()->GetAllEntitiesWith<TagComponent>();
+		char* utf8 = mono_string_to_utf8(tag);
+		std::string string = std::string(utf8);
 		for (auto e : view)
 		{
 			auto tc = view.get<TagComponent>(e);
-			char* utf8 = mono_string_to_utf8(tag);
-			if (tc.Tag == std::string(utf8)) {
+			if (tc.Tag == string) {
 				Entity entity = Entity{ e, MonoScriptEngine::GetSceneContext() };
 				return entity.GetUUID();
 			}
@@ -181,6 +204,34 @@ namespace Rose {
 	}
 #pragma endregion
 
+#pragma region  SpriteRendererComponent
+	static void SpriteRendererComponent_SetTexture2D(UUID entityID, MonoString* path)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+		auto& src = entity.GetComponent<SpriteRendererComponent>();
+		char* utf8 = mono_string_to_utf8(path);
+		RR_CORE_ASSERT(utf8 != nullptr);
+		std::string string = std::string(utf8);
+		src.Path = (AssetManager::GetAssetPath() + "/" + string);
+		src.Texture = AssetManager::GetOrLoadTexture(src.Path);
+	}
+	static MonoString* SpriteRendererComponent_GetTexture2D(UUID entityID)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+		auto& src = entity.GetComponent<SpriteRendererComponent>();
+		std::string copy = src.Path;
+		size_t pos = copy.find_last_of("\\");
+		RR_CORE_TRACE(copy.substr(pos + 1));
+		return mono_string_new(MonoScriptEngine::GetAppDomain(), copy.substr(pos + 1).c_str());
+	}
+#pragma endregion
+
 #pragma region  RigidBody2DComponent
 	static void RigidBody2DComponent_GetPosition(UUID entityID, glm::vec2* outPosition)
 	{
@@ -288,6 +339,9 @@ namespace Rose {
 
 	void MonoGlue::RegisterFunctions()
 	{
+		RR_ADD_INTERNAL_CALL(Asset_GetOrLoadTexture2D);
+		RR_ADD_INTERNAL_CALL(Asset_GetTexture2D);
+
 		RR_ADD_INTERNAL_CALL(Scene_FindEntityByTag);
 
 		RR_ADD_INTERNAL_CALL(Entity_GetParent);
@@ -303,6 +357,9 @@ namespace Rose {
 		RR_ADD_INTERNAL_CALL(TransformComponent_SetRotation);
 		RR_ADD_INTERNAL_CALL(TransformComponent_GetScale);
 		RR_ADD_INTERNAL_CALL(TransformComponent_SetScale);
+
+		RR_ADD_INTERNAL_CALL(SpriteRendererComponent_SetTexture2D);
+		RR_ADD_INTERNAL_CALL(SpriteRendererComponent_GetTexture2D);
 
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_GetPosition);
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_SetPosition);

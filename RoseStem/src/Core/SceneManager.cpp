@@ -162,6 +162,7 @@ namespace Rose {
 		}
 
 		Ref<Scene> newScene = CreateRef<Scene>();
+		AssetManager::UnloadAssets();
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(path.string(), m_AssetPath.string()))
 		{

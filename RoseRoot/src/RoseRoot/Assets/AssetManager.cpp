@@ -4,6 +4,7 @@
 namespace Rose {
 	struct AssetManagerData
 	{
+		std::string AssetPath;
 		std::unordered_map<std::string, Ref<Texture2D>> Textures;
 	};
 
@@ -17,12 +18,9 @@ namespace Rose {
 	{
 		s_Data = AssetManagerData{};
 	}
-	void AssetManager::CollectUnused()
+	void AssetManager::UnloadAssets()
 	{
-		for (auto& [path, texture] : s_Data.Textures) {
-			if(texture.use_count() == 1)
-				s_Data.Textures.erase(path);
-		}
+		s_Data.Textures.clear();
 	}
 	void AssetManager::ReloadAssets()
 	{
@@ -31,6 +29,15 @@ namespace Rose {
 				s_Data.Textures.erase(path);
 		}
 	}
+	void AssetManager::SetAssetPath(const std::string& path)
+	{
+		s_Data.AssetPath = path;
+	}
+	const std::string& AssetManager::GetAssetPath()
+	{
+		return s_Data.AssetPath;
+	}
+
 	bool AssetManager::LoadTexture(const std::string& path)
 	{
 		Ref<Texture2D> loadedtexture = Texture2D::Create(path);

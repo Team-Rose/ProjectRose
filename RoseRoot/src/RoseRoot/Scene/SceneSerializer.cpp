@@ -215,6 +215,7 @@ namespace Rose
 
 			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
+			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
 			if (spriteRendererComponent.Path != "no_texture") {
 				out << YAML::Key << "Path" << YAML::Value << spriteRendererComponent.Path;
 			}
@@ -439,6 +440,9 @@ namespace Rose
 				{
 					auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
 					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
+					if (spriteRendererComponent["TilingFactor"]) {
+						src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
+					}
 					if (spriteRendererComponent["Path"] && spriteRendererComponent["Path"].as<std::string>() != "no_texture") {
 						src.Path = spriteRendererComponent["Path"].as<std::string>();
 						if (Ref<Texture2D> texture = AssetManager::GetOrLoadTexture(src.Path))

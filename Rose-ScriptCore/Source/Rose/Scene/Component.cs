@@ -46,6 +46,28 @@ namespace Rose
         }
     }
 
+    public class SpriteRendererComponent : Component
+    {
+        public Texture2D Texture
+        {
+            get
+            {
+                Texture2D texture = new Texture2D(InternalCalls.SpriteRendererComponent_GetTexture2D(entity.ID));
+                if (!texture.IsLoaded)
+                    return null;
+
+                return texture;
+            }
+            set
+            {
+                if(value.m_Path != null)
+                    InternalCalls.SpriteRendererComponent_SetTexture2D(entity.ID, value.m_Path);
+            }
+
+        }
+
+    }
+
     public class Rigidbody2DComponent : Component
     {
         public Vector2 Position

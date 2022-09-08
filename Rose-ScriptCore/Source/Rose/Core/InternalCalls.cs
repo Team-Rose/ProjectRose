@@ -10,6 +10,13 @@ namespace Rose
         internal extern static bool Input_IsKeyDown(KeyCode keycode);
         #endregion
 
+        #region Asset
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Asset_GetOrLoadTexture2D(string path);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Asset_GetTexture2D(string path);
+        #endregion
+
         #region Scene
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static ulong Scene_FindEntityByTag(string tag);
@@ -52,6 +59,13 @@ namespace Rose
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void TransformComponent_SetScale(ulong entityID, ref Vector3 scale);
+        #endregion
+
+        #region SpriteRendererComponent
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void SpriteRendererComponent_SetTexture2D(ulong entityID, string path);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string SpriteRendererComponent_GetTexture2D(ulong entityID);
         #endregion
 
         #region RigidBody2DComponent
