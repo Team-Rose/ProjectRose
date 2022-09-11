@@ -63,6 +63,17 @@ namespace Rose
 
         #region SpriteRendererComponent
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float SpriteRendererComponent_GetTileFactor (ulong entityID);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void SpriteRendererComponent_SetTileFactor(ulong entityID, float tileFactor);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void SpriteRendererComponent_GetColor(ulong entityID, out Vector4 color);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void SpriteRendererComponent_SetColor(ulong entityID, ref Vector4 color);
+
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void SpriteRendererComponent_SetTexture2D(ulong entityID, string path);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static string SpriteRendererComponent_GetTexture2D(ulong entityID);

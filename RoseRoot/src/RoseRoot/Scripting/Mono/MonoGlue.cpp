@@ -205,6 +205,42 @@ namespace Rose {
 #pragma endregion
 
 #pragma region  SpriteRendererComponent
+	static void SpriteRendererComponent_GetColor(UUID entityID, glm::vec4* outColor)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		*outColor = entity.GetComponent<SpriteRendererComponent>().Color;
+	}
+	static void SpriteRendererComponent_SetColor(UUID entityID, glm::vec4* color)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		entity.GetComponent<SpriteRendererComponent>().Color = *color;
+	}
+
+	static float SpriteRendererComponent_GetTileFactor(UUID entityID) {
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		return entity.GetComponent<SpriteRendererComponent>().TilingFactor;
+	}
+	static void SpriteRendererComponent_SetTileFactor(UUID entityID, float tileFactor) {
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		entity.GetComponent<SpriteRendererComponent>().TilingFactor = tileFactor;
+	}
+
 	static void SpriteRendererComponent_SetTexture2D(UUID entityID, MonoString* path)
 	{
 		Scene* scene = MonoScriptEngine::GetSceneContext();
@@ -358,6 +394,10 @@ namespace Rose {
 		RR_ADD_INTERNAL_CALL(TransformComponent_GetScale);
 		RR_ADD_INTERNAL_CALL(TransformComponent_SetScale);
 
+		RR_ADD_INTERNAL_CALL(SpriteRendererComponent_GetColor);
+		RR_ADD_INTERNAL_CALL(SpriteRendererComponent_SetColor);
+		RR_ADD_INTERNAL_CALL(SpriteRendererComponent_GetTileFactor);
+		RR_ADD_INTERNAL_CALL(SpriteRendererComponent_SetTileFactor);
 		RR_ADD_INTERNAL_CALL(SpriteRendererComponent_SetTexture2D);
 		RR_ADD_INTERNAL_CALL(SpriteRendererComponent_GetTexture2D);
 

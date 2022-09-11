@@ -48,6 +48,30 @@ namespace Rose
 
     public class SpriteRendererComponent : Component
     {
+        public Vector4 Color
+        {
+            get
+            {
+                InternalCalls.SpriteRendererComponent_GetColor(entity.ID, out Vector4 color);
+                return color;
+            }
+            set
+            {
+                InternalCalls.SpriteRendererComponent_SetColor(entity.ID, ref value);
+            }
+        }
+        public float TileFactor
+        {
+            get
+            {
+                return InternalCalls.SpriteRendererComponent_GetTileFactor(entity.ID);
+            }
+            set
+            {
+                InternalCalls.SpriteRendererComponent_SetTileFactor(entity.ID, value);
+            }
+        }
+
         public Texture2D Texture
         {
             get
