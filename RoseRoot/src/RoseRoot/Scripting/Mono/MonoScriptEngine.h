@@ -26,8 +26,9 @@ namespace Rose {
 		None = 0,
 
 		Float, Double,
-		Bool, Char, Int16, Int32, Int64,
-		Byte, UInt16, UInt32, UInt64,
+		Bool, Char, 
+		Byte, Short, Int, Long,
+		UByte, UInt16, UInt32, UInt64,
 
 		Vector2, Vector3, Vector4,
 		Entity
@@ -53,18 +54,18 @@ namespace Rose {
 		//TODO Allow for larger data types!
 		template<typename T>
 		T GetValue() {
-			static_assert(sizeof(T) <= 8, "Type to large!");
+			static_assert(sizeof(T) <= 16, "Type to large!");
 
 			return *(T*)m_Buffer;
 		}
 
 		template<typename T>
 		void SetValue(T value) {
-			static_assert(sizeof(T) <= 8, "Type to large!");
+			static_assert(sizeof(T) <= 16, "Type to large!");
 			memcpy(m_Buffer, &value, sizeof(T));
 		}
 	private:
-		uint8_t m_Buffer[8];
+		uint8_t m_Buffer[16];
 
 		friend class MonoScriptEngine;
 	};
@@ -130,7 +131,7 @@ namespace Rose {
 		MonoMethod* m_OnCollision2DBeginInternalMethod = nullptr;
 		MonoMethod* m_OnCollision2DEndInternalMethod = nullptr;
 
-		inline static char s_FieldValueBuffer[8];
+		inline static char s_FieldValueBuffer[16];
 
 		friend class MonoScriptEngine;
 	};
@@ -177,4 +178,63 @@ namespace Rose {
 		friend class MonoScriptClass;
 		friend class MonoGlue;
 	};
+
+	namespace Utils {
+		inline const char* MonoScriptFieldTypeToString(MonoScriptFieldType type)
+		{
+			switch (type)
+			{
+			case MonoScriptFieldType::None: return "None";
+			case MonoScriptFieldType::Float: return "Float";
+			case MonoScriptFieldType::Double: return "Double";
+
+			case MonoScriptFieldType::Bool: return "Bool";
+			case MonoScriptFieldType::Char: return "Char";
+						  
+			case MonoScriptFieldType::Byte: return "Byte";
+			case MonoScriptFieldType::Short: return "Short";
+			case MonoScriptFieldType::Int: return "Int";
+			case MonoScriptFieldType::Long: return "Long";
+
+			case MonoScriptFieldType::UByte: return "UByte";
+			case MonoScriptFieldType::UInt16: return "UInt16";
+			case MonoScriptFieldType::UInt32: return "UInt32";
+			case MonoScriptFieldType::UInt64: return "UInt64";
+
+			case MonoScriptFieldType::Vector2: return "Vector2";
+			case MonoScriptFieldType::Vector3: return "Vector3";
+			case MonoScriptFieldType::Vector4: return "Vector4";
+
+			case MonoScriptFieldType::Entity: return "Entity";
+			}
+			RR_CORE_ASSERT(false, "Unknown field type!");
+			return "<Invalid>";
+		}
+
+		inline MonoScriptFieldType StringToMonoScriptFieldType(std::string_view fieldType)
+		{
+			if (fieldType == "None")    return MonoScriptFieldType::None;
+			if (fieldType == "Float")   return MonoScriptFieldType::Float;
+			if (fieldType == "Double")  return MonoScriptFieldType::Double;
+
+			if (fieldType == "Bool")    return MonoScriptFieldType::Bool;
+			if (fieldType == "Char")    return MonoScriptFieldType::Char;
+
+			if (fieldType == "Byte")    return MonoScriptFieldType::Byte;
+			if (fieldType == "Short")    return MonoScriptFieldType::Short;
+			if (fieldType == "Int")    return MonoScriptFieldType::Int;
+			if (fieldType == "Long")    return MonoScriptFieldType::Long;
+
+			if (fieldType == "UByte")	return MonoScriptFieldType::UByte;
+			if (fieldType == "UInt16")  return MonoScriptFieldType::UInt16;
+			if (fieldType == "UInt32")  return MonoScriptFieldType::UInt32;
+			if (fieldType == "UInt64")  return MonoScriptFieldType::UInt64;
+
+			if (fieldType == "Vector2") return MonoScriptFieldType::Vector2;
+			if (fieldType == "Vector3") return MonoScriptFieldType::Vector3;
+			if (fieldType == "Vector4") return MonoScriptFieldType::Vector4;
+
+			if (fieldType == "Entity")  return MonoScriptFieldType::Entity;
+		}
+	}
 }

@@ -19,11 +19,13 @@ namespace Rose {
 
 		{ "System.Boolean", MonoScriptFieldType::Bool },
 		{ "System.Char", MonoScriptFieldType::Char },
-		{ "System.Int16", MonoScriptFieldType::Int16 },
-		{ "System.Int32", MonoScriptFieldType::Int32 },
-		{ "System.Int64", MonoScriptFieldType::Int64 },
 
 		{ "System.Byte", MonoScriptFieldType::Byte },
+		{ "System.Int16", MonoScriptFieldType::Short },
+		{ "System.Int32", MonoScriptFieldType::Int },
+		{ "System.Int64", MonoScriptFieldType::Long },
+
+		{ "System.UByte", MonoScriptFieldType::UByte },
 		{ "System.UInt16", MonoScriptFieldType::UInt16 },
 		{ "System.UInt32", MonoScriptFieldType::UInt32 },
 		{ "System.UInt64", MonoScriptFieldType::UInt64 },
@@ -116,33 +118,6 @@ namespace Rose {
 				return MonoScriptFieldType::None;
 
 			return it->second;
-		}
-
-		const char* MonoScriptFieldTypeToString(MonoScriptFieldType type)
-		{
-			switch (type)
-			{
-			case Rose::MonoScriptFieldType::Float: return "Float";
-			case Rose::MonoScriptFieldType::Double: return "Double";
-
-			case Rose::MonoScriptFieldType::Bool: return "Bool";
-			case Rose::MonoScriptFieldType::Char: return "Char";
-			case Rose::MonoScriptFieldType::Int16: return "Int16";
-			case Rose::MonoScriptFieldType::Int32: return "Int32";
-			case Rose::MonoScriptFieldType::Int64: return "Int64";
-
-			case Rose::MonoScriptFieldType::Byte: return "Byte";
-			case Rose::MonoScriptFieldType::UInt16: return "UInt16";
-			case Rose::MonoScriptFieldType::UInt32: return "UInt32";
-			case Rose::MonoScriptFieldType::UInt64: return "UInt64";
-
-			case Rose::MonoScriptFieldType::Vector2: return "Vector2";
-			case Rose::MonoScriptFieldType::Vector3: return "Vector3";
-			case Rose::MonoScriptFieldType::Vector4: return "Vector4";
-
-			case Rose::MonoScriptFieldType::Entity: return "Entity";
-			}
-			return "<Invalid>";
 		}
 	}
 

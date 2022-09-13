@@ -25,7 +25,7 @@ namespace Sandbox
                 Console.WriteLine("Hey it works!");
 
             m_Sprite.Color = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-            m_Sprite.TileFactor = 1.0f;
+            m_Sprite.TileFactor = 20.0f;
         }
         protected override void OnUpdate(float ts)
         {

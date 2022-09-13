@@ -4,11 +4,30 @@
 #include "Entity.h"
 #include "Components.h"
 #include "RoseRoot/Assets/AssetManager.h"
+#include "RoseRoot/Scripting/Mono/MonoScriptEngine.h"
 
 #include <fstream>
 #include <yaml-cpp/yaml.h>
 
 namespace YAML {
+
+	template<>
+	struct convert<Rose::UUID>
+	{
+		static Node encode(const Rose::UUID& uuid)
+		{
+			Node node;
+			node.push_back((uint64_t)uuid);
+			node.SetStyle(EmitterStyle::Flow);
+			return node;
+		}
+
+		static bool decode(const Node& node, Rose::UUID& uuid)
+		{
+			uuid = (Rose::UUID)node[0].as<uint64_t>();
+			return true;
+		}
+	};
 
 	template<>
 	struct convert<glm::vec2>
@@ -297,6 +316,63 @@ namespace Rose
 			auto& monoComponent = entity.GetComponent<MonoScriptComponent>();
 			out << YAML::Key << "ClassName" << YAML::Value << monoComponent.ClassName;
 
+			// Fields
+			Ref<MonoScriptClass> entityClass = MonoScriptEngine::GetEntityClass(monoComponent.ClassName);
+			const auto& fields = entityClass->GetFields();
+			auto& entityFields = MonoScriptEngine::GetScriptFieldMap(entity.GetUUID());
+
+			if (entityFields.size() != 0) {
+				out << YAML::Key << "ScriptFields" << YAML::Value;
+				out << YAML::BeginSeq; // MonoScriptFields
+
+				for (const auto& [name, field] : fields) {
+					// Field has been set in editor
+					if (entityFields.find(name) != entityFields.end()) {
+
+						out << YAML::BeginMap;
+						out << YAML::Key << "Name" << YAML::Value << name;
+						out << YAML::Key << "Type" << YAML::Value << Utils::MonoScriptFieldTypeToString(field.Type);
+
+						MonoScriptFieldInstance& scriptFieldInstance = entityFields.at(name);
+
+#define FIELD_TYPE(FieldType, Type)\
+					case FieldType:		\
+						out << YAML::Key << "Data" << YAML::Value << scriptFieldInstance.GetValue<Type>();		\
+						break;
+
+						switch (field.Type)
+						{
+							FIELD_TYPE(MonoScriptFieldType::Float,	 float    );
+							FIELD_TYPE(MonoScriptFieldType::Double,  double	  );
+																	 
+							FIELD_TYPE(MonoScriptFieldType::Bool,	 bool	  );
+							FIELD_TYPE(MonoScriptFieldType::Char,	 char	  );
+																	 
+							FIELD_TYPE(MonoScriptFieldType::Byte,	 int8_t   );
+							FIELD_TYPE(MonoScriptFieldType::Short,   int16_t  );
+							FIELD_TYPE(MonoScriptFieldType::Int,	 int	  );
+							FIELD_TYPE(MonoScriptFieldType::Long,    int64_t  );
+																	 
+							FIELD_TYPE(MonoScriptFieldType::UByte,   uint8_t  );
+							FIELD_TYPE(MonoScriptFieldType::UInt16,  uint16_t );
+							FIELD_TYPE(MonoScriptFieldType::UInt32,  uint32_t );
+							FIELD_TYPE(MonoScriptFieldType::UInt64,  uint64_t );
+																	 
+							FIELD_TYPE(MonoScriptFieldType::Vector2, glm::vec2);
+							FIELD_TYPE(MonoScriptFieldType::Vector3, glm::vec3);
+							FIELD_TYPE(MonoScriptFieldType::Vector4, glm::vec4);
+
+							FIELD_TYPE(MonoScriptFieldType::Entity,	 UUID	  );
+							
+						}
+#undef FIELD_TYPE
+						out << YAML::EndMap;
+					}
+				}
+
+				out << YAML::EndSeq; // MonoScriptFields
+			}
+
 			out << YAML::EndMap; // MonoScriptComponent
 		}
 		out << YAML::EndMap; // Entity
@@ -500,8 +576,65 @@ namespace Rose
 				auto monoScriptComponent = entity["MonoScriptComponent"];
 				if (monoScriptComponent)
 				{
-					auto& lsc = deserializedEntity.AddComponent<MonoScriptComponent>();
-					lsc.ClassName = monoScriptComponent["ClassName"].as<std::string>();
+					auto& msc = deserializedEntity.AddComponent<MonoScriptComponent>();
+					msc.ClassName = monoScriptComponent["ClassName"].as<std::string>();
+
+					auto scriptFields = monoScriptComponent["ScriptFields"];
+					if (scriptFields)
+					{
+						Ref<MonoScriptClass> entityClass = MonoScriptEngine::GetEntityClass(msc.ClassName);
+						RR_CORE_ASSERT(entityClass);
+						const auto& fields = entityClass->GetFields();
+						auto& entityFields = MonoScriptEngine::GetScriptFieldMap(deserializedEntity.GetUUID());
+
+#define READ_FIELD_TYPE(FieldType, Type)	\
+							case FieldType:		\
+							{ Type data = scriptField["Data"].as<Type>(); \
+							fieldInstance.SetValue(data); }	\
+							break; 
+
+						for (auto scriptField : scriptFields)
+						{
+							std::string name = scriptField["Name"].as<std::string>();
+							std::string typeString = scriptField["Type"].as<std::string>();
+							MonoScriptFieldType type = Utils::StringToMonoScriptFieldType(typeString);
+							
+							// TODO(Sam): turn this assert into RoseStem log warning
+							RR_CORE_ASSERT(fields.find(name) != fields.end());
+
+							if (fields.find(name) == fields.end())
+								continue;
+
+							MonoScriptFieldInstance& fieldInstance = entityFields[name];
+							fieldInstance.Field = fields.at(name);
+
+							switch (fieldInstance.Field.Type)
+							{
+								READ_FIELD_TYPE(MonoScriptFieldType::Float, float);
+								READ_FIELD_TYPE(MonoScriptFieldType::Double, double);
+
+								READ_FIELD_TYPE(MonoScriptFieldType::Bool, bool);
+								READ_FIELD_TYPE(MonoScriptFieldType::Char, char);
+
+								READ_FIELD_TYPE(MonoScriptFieldType::Byte, int8_t);
+								READ_FIELD_TYPE(MonoScriptFieldType::Short, int16_t);
+								READ_FIELD_TYPE(MonoScriptFieldType::Int, int);
+								READ_FIELD_TYPE(MonoScriptFieldType::Long, int64_t);
+
+								READ_FIELD_TYPE(MonoScriptFieldType::UByte, uint8_t);
+								READ_FIELD_TYPE(MonoScriptFieldType::UInt16, uint16_t);
+								READ_FIELD_TYPE(MonoScriptFieldType::UInt32, uint32_t);
+								READ_FIELD_TYPE(MonoScriptFieldType::UInt64, uint64_t);
+
+								READ_FIELD_TYPE(MonoScriptFieldType::Vector2, glm::vec2);
+								READ_FIELD_TYPE(MonoScriptFieldType::Vector3, glm::vec3);
+								READ_FIELD_TYPE(MonoScriptFieldType::Vector4, glm::vec4);
+
+								READ_FIELD_TYPE(MonoScriptFieldType::Entity, UUID);
+							}
+						}
+#undef WRITE_FIELD_TYPE
+					}
 				}
 #pragma endregion
 
