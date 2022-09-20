@@ -7,7 +7,6 @@ namespace Sandbox
     internal class Balloon : Entity
     {
         public Entity m_Camera;
-        public float cameraSpeedBase = 1.0f;
 
         public float floatPower = 19.0f;
         public float windPower = 8.0f;
@@ -15,9 +14,9 @@ namespace Sandbox
         private Rigidbody2DComponent m_RigidBody2D;
 
         private float time = 0.0f;
-        private float cameraSpeed = 0.0f;
 
         private bool shouldReset = false;
+        private Camera m_CameraObject;
         protected override void OnCreate()
         {
             Console.WriteLine($"Balloon.OnCreate - {Tag} - {ID}");
@@ -32,22 +31,22 @@ namespace Sandbox
         }
         protected override void OnUpdate(float ts)
         {
+            m_CameraObject = m_Camera.As<Camera>();
             Tag = $"{Translation.Y}";
-            if(shouldReset)
+            if (shouldReset)
             {
 
                 m_RigidBody2D.Position = new Vector2(0.0f, 0.0f);
-                if (m_Camera != null)
-                    m_Camera.Translation = new Vector3(0.0f, 0.0f, 0.0f);
+                m_CameraObject.ResetCamera();
                 shouldReset = false;
             }
 
+          
             if (Translation.Y - m_Camera.Translation.Y > 2.0f)
-                 cameraSpeed = (Translation.Y - m_Camera.Translation.Y) + cameraSpeedBase;
+                m_CameraObject.cameraSpeed = (Translation.Y - m_Camera.Translation.Y) + m_CameraObject.cameraSpeedBase;
             else
-                cameraSpeed = cameraSpeedBase;
+                m_CameraObject.cameraSpeed = m_CameraObject.cameraSpeedBase;
 
-            m_Camera.Translation += new Vector3(0.0f, cameraSpeed * ts, 0.0f);
             if (Input.IsKeyDown(KeyCode.Space))
             {
                 time += ts * 5;
@@ -75,6 +74,7 @@ namespace Sandbox
             {
                 m_RigidBody2D.ApplyLinearImpulse(new Vector2(windPower * ts, 0.0f), true);
             }
+
 
             float scale = Rose.Math.Lerp(1.0f, 1.1f, time);
             //Console.WriteLine(scale);

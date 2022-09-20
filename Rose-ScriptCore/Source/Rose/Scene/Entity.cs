@@ -36,7 +36,13 @@ namespace Rose
             return new T() { entity = this };
         }
 
-        
+        public T As<T>() where T : Entity, new()
+        {
+            //TODO make sure entity has a valid script component
+            object instance = InternalCalls.Entity_GetScriptInstance(ID);
+            return instance as T;
+        }
+
         public string Tag
         {
             get
@@ -48,8 +54,6 @@ namespace Rose
                 InternalCalls.Entity_SetTag(ID, value);
             }
         }
-
-        //Note: Use tag name is here to make transitioning from other engines a bit smoother
         public string Name
         {
             get

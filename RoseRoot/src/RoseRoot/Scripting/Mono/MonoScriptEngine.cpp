@@ -378,6 +378,12 @@ namespace Rose {
 		return s_MonoData->CoreAssemblyImage;
 	}
 
+	MonoObject* MonoScriptEngine::GetMonoInstance(UUID uuid) 
+	{
+		RR_CORE_ASSERT(s_MonoData->EntityInstances.find(uuid) != s_MonoData->EntityInstances.end());
+		return s_MonoData->EntityInstances.at(uuid)->GetMonoObject();
+	}
+
 	//-----------------------
 
 	MonoScriptClass::MonoScriptClass(const std::string& classNameSpace, const std::string& className, bool isCore)

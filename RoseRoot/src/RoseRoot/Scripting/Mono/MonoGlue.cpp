@@ -29,6 +29,7 @@ namespace Rose {
 	{
 		char* utf8 = mono_string_to_utf8(path);
 		std::string string = std::string(utf8);
+		mono_free(utf8);
 
 		if (AssetManager::GetOrLoadTexture(AssetManager::GetAssetPath() + "\\" + string))
 			return true;
@@ -38,6 +39,7 @@ namespace Rose {
 	{
 		char* utf8 = mono_string_to_utf8(path);
 		std::string string = std::string(utf8);
+		mono_free(utf8);
 
 		if (AssetManager::GetTexture(AssetManager::GetAssetPath() + "\\" + string))
 			return true;
@@ -51,6 +53,8 @@ namespace Rose {
 		auto view = MonoScriptEngine::GetSceneContext()->GetAllEntitiesWith<TagComponent>();
 		char* utf8 = mono_string_to_utf8(tag);
 		std::string string = std::string(utf8);
+		mono_free(utf8);
+
 		for (auto e : view)
 		{
 			auto tc = view.get<TagComponent>(e);
@@ -142,6 +146,11 @@ namespace Rose {
 		char* utf8 = mono_string_to_utf8(tag);
 		entity.GetComponent<TagComponent>().Tag = std::string(utf8);
 		mono_free(utf8);
+	}
+
+	static MonoObject* Entity_GetScriptInstance(UUID entityID)
+	{
+		return MonoScriptEngine::GetMonoInstance(entityID);
 	}
 #pragma endregion
 
@@ -386,6 +395,7 @@ namespace Rose {
 		RR_ADD_INTERNAL_CALL(Entity_HasComponent);
 		RR_ADD_INTERNAL_CALL(Entity_GetTag);
 		RR_ADD_INTERNAL_CALL(Entity_SetTag);
+		RR_ADD_INTERNAL_CALL(Entity_GetScriptInstance);
 
 		RR_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
 		RR_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);

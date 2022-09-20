@@ -40,6 +40,11 @@ namespace Rose
         internal extern static string Entity_GetTag(ulong entityID);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void Entity_SetTag(ulong entityID, string tag);
+
+        //Object
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static object Entity_GetScriptInstance(ulong entityID);
+        
         #endregion
 
         #region TransformComponent

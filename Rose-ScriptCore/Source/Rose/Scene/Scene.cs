@@ -9,5 +9,6 @@ namespace Rose
             Entity newEntity = entityID != 0 ? new Entity(entityID) : null;
             return newEntity;
         }
+        public static Entity FindEntityByName(string name) { return FindEntityByTag(name); }
     }
 }

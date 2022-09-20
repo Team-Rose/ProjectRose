@@ -112,11 +112,12 @@ namespace Rose {
 			}
 			return *(T*)s_FieldValueBuffer;
 		}
-
 		template<typename T>
 		void SetFieldValue(const std::string& name, const T& value) {
 			SetFieldValueInternal(name, &value);
 		}
+
+		MonoObject* GetMonoObject() { return m_Instance; }
 	private:
 		bool GetFieldValueInternal(const std::string& name, void* buffer);
 		bool SetFieldValueInternal(const std::string& name, const void* value);
@@ -169,6 +170,8 @@ namespace Rose {
 		static MonoScriptFieldMap& GetScriptFieldMap(UUID entityID);
 
 		static MonoImage* GetCoreAssemblyImage();
+
+		static MonoObject* GetMonoInstance(UUID uuid);
 	private:
 		static void LoadAssemblyClasses(MonoAssembly* assembly);
 		static MonoObject* InstantiateClass(MonoClass* monoClass);
