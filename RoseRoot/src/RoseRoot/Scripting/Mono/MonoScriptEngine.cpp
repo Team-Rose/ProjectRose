@@ -183,7 +183,7 @@ namespace Rose {
 
 		LoadCoreAssembly("Resources/Scripts/Rose-ScriptCore.dll");
 		LoadAppAssembly(filepath);
-
+		RR_CORE_INFO("Reloading App Assembly ({})", filepath);
 		MonoGlue::RegisterComponents();
 		MonoGlue::RegisterFunctions();
 		s_MonoData->EntityClass = MonoScriptClass("Rose", "Entity", true);

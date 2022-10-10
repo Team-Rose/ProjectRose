@@ -20,6 +20,8 @@ namespace Rose
         #region Scene
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static ulong Scene_FindEntityByTag(string tag);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static ulong Scene_CreateEntity(string tag);
         #endregion
 
         #region Entity
@@ -34,6 +36,10 @@ namespace Rose
         //Component
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool Entity_HasComponent(ulong entityID, Type componentType);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Entity_AddComponent(ulong entityID, Type componentType);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Entity_RemoveComponent(ulong entityID, Type componentType);
 
         //Tag
         [MethodImplAttribute(MethodImplOptions.InternalCall)]

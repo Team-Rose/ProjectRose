@@ -14,6 +14,8 @@
 namespace Rose {
 
 	static std::unordered_map <MonoType*, std::function<bool(Entity)>> s_EntityHasComponentFuncs;
+	static std::unordered_map <MonoType*, std::function<void(Entity)>> s_EntityAddComponentFuncs;
+	static std::unordered_map <MonoType*, std::function<void(Entity)>> s_EntityRemoveComponentFuncs;
 
 #define RR_ADD_INTERNAL_CALL(Name) mono_add_internal_call("Rose.InternalCalls::" #Name, Name)
 
@@ -31,6 +33,7 @@ namespace Rose {
 		std::string string = std::string(utf8);
 		mono_free(utf8);
 
+		//RR_CORE_INFO(AssetManager::GetAssetPath() + "\\" + string);
 		if (AssetManager::GetOrLoadTexture(AssetManager::GetAssetPath() + "\\" + string))
 			return true;
 		return false;
@@ -64,6 +67,15 @@ namespace Rose {
 			}
 		}
 		return 0;
+	}
+	static uint64_t Scene_CreateEntity(MonoString* tag)
+	{
+		char* utf8 = mono_string_to_utf8(tag);
+		std::string string = std::string(utf8);
+		mono_free(utf8);
+
+		Entity entity = MonoScriptEngine::GetSceneContext()->CreateEntity(string);
+		return entity.GetUUID();
 	}
 #pragma endregion
 
@@ -124,6 +136,28 @@ namespace Rose {
 		RR_CORE_ASSERT(s_EntityHasComponentFuncs.find(managedType) != s_EntityHasComponentFuncs.end());
 
 		return s_EntityHasComponentFuncs.at(managedType)(entity);
+	}
+	static void Entity_AddComponent(UUID entityID, MonoReflectionType* componentType)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		MonoType* managedType = mono_reflection_type_get_type(componentType);
+		RR_CORE_ASSERT(s_EntityAddComponentFuncs.find(managedType) != s_EntityAddComponentFuncs.end());
+		s_EntityAddComponentFuncs.at(managedType)(entity);
+	}
+	static void Entity_RemoveComponent(UUID entityID, MonoReflectionType* componentType)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		MonoType* managedType = mono_reflection_type_get_type(componentType);
+		RR_CORE_ASSERT(s_EntityRemoveComponentFuncs.find(managedType) != s_EntityRemoveComponentFuncs.end());
+		s_EntityRemoveComponentFuncs.at(managedType)(entity);
 	}
 	static MonoString* Entity_GetTag(UUID entityID, MonoString* outTag)
 	{
@@ -367,6 +401,8 @@ namespace Rose {
 				return;
 			}
 			s_EntityHasComponentFuncs[managedType] = [](Entity entity) { return entity.HasComponent<Component>(); };
+			s_EntityAddComponentFuncs[managedType] = [](Entity entity) { return entity.AddComponent<Component>(); };
+			s_EntityRemoveComponentFuncs[managedType] = [](Entity entity) { return entity.RemoveComponent<Component>(); };
 		}(), ...);
 		
 	}
@@ -388,11 +424,14 @@ namespace Rose {
 		RR_ADD_INTERNAL_CALL(Asset_GetTexture2D);
 
 		RR_ADD_INTERNAL_CALL(Scene_FindEntityByTag);
+		RR_ADD_INTERNAL_CALL(Scene_CreateEntity);
 
 		RR_ADD_INTERNAL_CALL(Entity_GetParent);
 		RR_ADD_INTERNAL_CALL(Entity_SetParent);
 		RR_ADD_INTERNAL_CALL(Entity_GetChildren);
 		RR_ADD_INTERNAL_CALL(Entity_HasComponent);
+		RR_ADD_INTERNAL_CALL(Entity_AddComponent);
+		RR_ADD_INTERNAL_CALL(Entity_RemoveComponent);
 		RR_ADD_INTERNAL_CALL(Entity_GetTag);
 		RR_ADD_INTERNAL_CALL(Entity_SetTag);
 		RR_ADD_INTERNAL_CALL(Entity_GetScriptInstance);

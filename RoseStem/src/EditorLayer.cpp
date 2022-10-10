@@ -168,12 +168,7 @@ namespace Rose {
 					CommandHistory::Redo();
 
 				if (ImGui::MenuItem("Reload App Assembly", "Ctrl+R")) {
-					if (std::filesystem::exists(m_Project.GetAppAssemblyPath())) {
-						MonoScriptEngine::ReloadAppAssembly(m_Project.GetAppAssemblyPath());
-					}
-					else {
-						MonoScriptEngine::UnloadAppAssembly();
-					}
+					QuickReloadAppAssembly();
 				}
 
 				ImGui::EndMenu();
@@ -570,6 +565,8 @@ namespace Rose {
 			m_SceneManager.m_ContentBrowserPanel.SetAssetPath(m_Project.GetAssetPath());
 			m_SceneManager.m_SceneHierarchyPanel.SetAssetPath(m_Project.GetAssetPath());
 			m_SceneManager.SetAssetPath(m_Project.GetAssetPath());
+			m_SceneManager.SetAppAssemblyPath(m_Project.GetAppAssemblyPath());
+			AssetManager::SetAssetPath(m_Project.GetAssetPath().string());
 		}	
 	} 
 	void EditorLayer::OpenProject()
@@ -583,6 +580,8 @@ namespace Rose {
 			m_SceneManager.m_ContentBrowserPanel.SetAssetPath(m_Project.GetAssetPath());
 			m_SceneManager.m_SceneHierarchyPanel.SetAssetPath(m_Project.GetAssetPath());
 			m_SceneManager.SetAssetPath(m_Project.GetAssetPath());
+			m_SceneManager.SetAppAssemblyPath(m_Project.GetAppAssemblyPath());
+			AssetManager::SetAssetPath(m_Project.GetAssetPath().string());
 			ResetToProjectSettings();
 		}
 	}
@@ -592,6 +591,7 @@ namespace Rose {
 			MonoScriptEngine::ReloadAppAssembly(m_Project.GetAppAssemblyPath());
 		}
 		else {
+			RR_WARN("(ignore this if you aren't using C#) No App Assembly found! : {}", m_Project.GetAppAssemblyPath());
 			MonoScriptEngine::UnloadAppAssembly();
 		}
 	}

@@ -35,7 +35,23 @@ namespace Rose
 
             return new T() { entity = this };
         }
+        public T AddComponent<T>() where T : Component, new()
+        {
+            if (HasComponent<T>())
+                return GetComponent<T>();
 
+            Type componentType = typeof(T);
+            InternalCalls.Entity_AddComponent(ID, componentType);
+            return new T() { entity = this };
+        }
+
+        public void RemoveComponent<T>() where T : Component, new()
+        {
+            if (!HasComponent<T>())
+                return;
+            Type componentType = typeof(T);
+            InternalCalls.Entity_RemoveComponent(ID, componentType);
+        }
         public T As<T>() where T : Entity, new()
         {
             //TODO make sure entity has a valid script component
