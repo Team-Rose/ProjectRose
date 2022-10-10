@@ -201,6 +201,7 @@ namespace Rose {
 
 		s_MonoData->EntityInstances.clear();
 		s_MonoData->EntityClasses.clear();
+		s_MonoData->EntityScriptFields.clear();
 
 		s_MonoData->AppAssembly = nullptr;
 		s_MonoData->AppAssemblyImage = nullptr;
