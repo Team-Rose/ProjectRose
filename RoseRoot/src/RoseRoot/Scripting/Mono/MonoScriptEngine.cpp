@@ -340,7 +340,7 @@ namespace Rose {
 			else
 				fullName = name;
 			MonoClass* monoClass = mono_class_from_name(image, nameSpace, name);
-			if (monoClass == entityClass)
+			if (monoClass == nullptr || monoClass == entityClass)
 				continue;
 			bool isEntity = mono_class_is_subclass_of(monoClass, entityClass, false);
 			if (!isEntity)
