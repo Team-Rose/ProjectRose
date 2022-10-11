@@ -38,6 +38,50 @@ namespace Rose {
 
 	};
 	namespace Utils {
+		struct MonoExceptionInfo
+		{
+			std::string TypeName;
+			std::string Source;
+			std::string Message;
+			std::string StackTrace;
+		};
+
+		std::string MonoStringToUTF8(MonoString* monoString)
+		{
+			if (monoString == nullptr || mono_string_length(monoString) == 0)
+				return "";
+
+			MonoError error;
+			char* utf8 = mono_string_to_utf8_checked(monoString, &error);
+			std::string result(utf8);
+			mono_free(utf8);
+			return result;
+		}
+
+		static MonoExceptionInfo GetExceptionInfo(MonoObject* exception)
+		{
+			MonoClass* exceptionClass = mono_object_get_class(exception);
+			MonoType* exceptionType = mono_class_get_type(exceptionClass);
+
+			auto GetExceptionString = [exception, exceptionClass](const char* stringName) -> std::string
+			{
+				MonoProperty* property = mono_class_get_property_from_name(exceptionClass, stringName);
+
+				if (property == nullptr)
+					return "";
+
+				MonoMethod* getterMethod = mono_property_get_get_method(property);
+
+				if (getterMethod == nullptr)
+					return "";
+
+				MonoString* string = (MonoString*)mono_runtime_invoke(getterMethod, exception, NULL, NULL);
+				return MonoStringToUTF8(string);
+			};
+
+			return { mono_type_get_name(exceptionType), GetExceptionString("Source"), GetExceptionString("Message"), GetExceptionString("StackTrace") };
+		}
+
 		// TODO: Move to FileSystem class
 		static char* ReadBytes(const std::filesystem::path& filepath, uint32_t* outSize)
 		{
@@ -402,8 +446,17 @@ namespace Rose {
 	}
 	MonoObject* MonoScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)
 	{
-		if (method != nullptr)
-			return mono_runtime_invoke(method, instance, params, nullptr);
+		if (method != nullptr) {
+			MonoObject* exception = nullptr;
+			MonoObject* object = mono_runtime_invoke(method, instance, params, &exception);
+			if (exception) {
+				Utils::MonoExceptionInfo exceptionInfo = Utils::GetExceptionInfo(exception);
+				RR_CORE_ERROR("{}: {}/ Source: {}, Stack Trace: {}", exceptionInfo.TypeName, exceptionInfo.Message, exceptionInfo.Source, exceptionInfo.StackTrace);
+			}
+
+			return object;
+		}
+			
 		return nullptr;
 	}
 
