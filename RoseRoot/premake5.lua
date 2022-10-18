@@ -46,6 +46,7 @@ project "RoseRoot"
 		"%{IncludeDir.Lua}",
 		"%{IncludeDir.Mono}",
 
+		"%{IncludeDir.filewatch}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.VulkanSDK}",

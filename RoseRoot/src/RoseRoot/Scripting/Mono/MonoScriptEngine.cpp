@@ -1,6 +1,7 @@
 #include "rrpch.h"
 #include "MonoScriptEngine.h"
 
+#include "RoseRoot/Core/Application.h"
 #include "MonoGlue.h"
 
 #include "mono/jit/jit.h"
@@ -9,6 +10,8 @@
 #include "mono/metadata/object.h"
 #include "mono/metadata/tabledefs.h"
 #include <glm/glm.hpp>
+
+#include "FileWatch.h"
 
 namespace Rose {
 
@@ -179,10 +182,16 @@ namespace Rose {
 
 		MonoScriptClass EntityClass;
 
+		std::filesystem::path AppAssemblyFilepath;
+
 		std::unordered_map<std::string, Ref<MonoScriptClass>> EntityClasses;
 		std::unordered_map<UUID, Ref<MonoScriptInstance>> EntityInstances;
 		std::unordered_map<UUID, MonoScriptFieldMap> EntityScriptFields;
 		
+		Scope<filewatch::FileWatch<std::string>> AppAssemblyFileWatcher;
+
+		bool AssemblyReloadPending = false;
+
 		Scene* SceneContext;
 	};
 
@@ -214,16 +223,33 @@ namespace Rose {
 		s_MonoData->CoreAssemblyImage = mono_assembly_get_image(s_MonoData->CoreAssembly);
 	}
 
+	static void OnAppAssemblyFileSystemEvent(const std::string& path, const filewatch::Event change_type) {
+		if (change_type == filewatch::Event::modified && !s_MonoData->AssemblyReloadPending) {
+			s_MonoData->AssemblyReloadPending = true;
+			Application::Get().SubmitToMainThread([]() { MonoScriptEngine::ReloadAppAssembly(); });
+		}
+		if (change_type == filewatch::Event::removed) {
+			Application::Get().SubmitToMainThread([]() { MonoScriptEngine::UnloadAppAssembly(); });
+		}
+	}
+
 	void MonoScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
 	{
 		s_MonoData->AppAssembly = Utils::LoadMonoAssembly(filepath);
 		s_MonoData->AppAssemblyImage = mono_assembly_get_image(s_MonoData->AppAssembly);
 		LoadAssemblyClasses(s_MonoData->AppAssembly);
+
+		s_MonoData->AppAssemblyFilepath = filepath;
+		s_MonoData->AppAssemblyFileWatcher = CreateScope<filewatch::FileWatch<std::string>>(filepath.string(), OnAppAssemblyFileSystemEvent);
 	}
 
 	void MonoScriptEngine::ReloadAppAssembly(const std::filesystem::path& filepath)
 	{
 		UnloadAppAssembly();
+		s_MonoData->AssemblyReloadPending = false;
+		if (!std::filesystem::exists(filepath)) {
+			return;
+		}
 
 		LoadCoreAssembly("Resources/Scripts/Rose-ScriptCore.dll");
 		LoadAppAssembly(filepath);
@@ -234,7 +260,10 @@ namespace Rose {
 
 		mono_gc_collect(mono_gc_max_generation());
 	}
-
+	void MonoScriptEngine::ReloadAppAssembly()
+	{
+		ReloadAppAssembly(s_MonoData->AppAssemblyFilepath);
+	}
 	void MonoScriptEngine::UnloadAppAssembly()
 	{
 		s_MonoData->OldAppDomain = s_MonoData->AppDomain;

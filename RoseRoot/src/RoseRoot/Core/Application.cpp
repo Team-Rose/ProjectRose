@@ -86,6 +86,8 @@ namespace Rose {
 		{
 			RR_PROFILE_SCOPE("|| RunLoop ||");
 
+			ExecuteMainThreadQueue();
+
 			float time = m_Window->GetTime();
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
@@ -113,6 +115,13 @@ namespace Rose {
 		}
 	}
 
+	void Application::SubmitToMainThread(const std::function<void()>& function)
+	{
+		std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
+
+		m_MainThreadQueue.emplace_back(function);
+	}
+
 	bool Application::OnWindowClose(WindowCloseEvent& e)
 	{
 		m_Running = false;
@@ -132,5 +141,16 @@ namespace Rose {
 		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
 
 		return false;
+	}
+	void Application::ExecuteMainThreadQueue()
+	{
+		std::vector<std::function<void()>> copy;
+		{
+			std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
+			copy = m_MainThreadQueue;
+			m_MainThreadQueue.clear();
+		}
+		for (auto& fn : copy)
+			fn();
 	}
 }

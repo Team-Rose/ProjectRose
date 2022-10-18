@@ -19,6 +19,7 @@ project "RoseStem"
 		"%{wks.location}/RoseRoot/vendor/lua/sol",
 		"%{wks.location}/RoseRoot/src",
 		"%{wks.location}/RoseRoot/vendor",
+		"%{IncludeDir.filewatch}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.ImGuizmo}",

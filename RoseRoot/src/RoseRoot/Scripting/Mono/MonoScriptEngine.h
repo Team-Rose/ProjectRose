@@ -148,6 +148,7 @@ namespace Rose {
 
 		static void LoadAppAssembly(const std::filesystem::path& filepath);
 		static void ReloadAppAssembly(const std::filesystem::path& filepath);
+		static void ReloadAppAssembly();
 		static void UnloadAppAssembly();
 
 		static MonoDomain* GetAppDomain();
