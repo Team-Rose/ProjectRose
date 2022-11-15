@@ -47,6 +47,8 @@ namespace Rose
 		void OnSimulationStart(const std::string& assetPath);
 		void OnSimulationStop();
 
+		void Step(int step = 1);
+
 		void OnUpdateRuntime(Timestep ts, bool pause = false);
 		void OnUpdateSimulation(Timestep ts, EditorCamera& camera, bool pause = false);
 		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
@@ -97,6 +99,7 @@ namespace Rose
 		b2World* m_PhysicsWorld = nullptr;
 		ContactListener2D* m_Contactlistener;
 		bool m_IsRunning = false;
+		int m_SteppedFrames = 0;
 
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
 

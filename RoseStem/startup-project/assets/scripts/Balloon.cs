@@ -8,7 +8,7 @@ namespace Sandbox
     {
         public Entity m_Camera;
 
-        public float floatPower = 19.0f;
+        public float floatPower = 20.0f;
         public float windPower = 8.0f;
 
         private Rigidbody2DComponent m_RigidBody2D;

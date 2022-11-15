@@ -9,8 +9,10 @@ namespace Rose {
 	Rose::SceneManger::SceneManger()
 	{
 		m_IconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
+		m_IconPause = Texture2D::Create("Resources/Icons/PauseButton.png");
 		m_IconSimulate = Texture2D::Create("Resources/Icons/SimulateButton.png");
 		m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
+		m_IconStep = Texture2D::Create("Resources/Icons/StepButton.png");
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 	}
@@ -41,8 +43,8 @@ namespace Rose {
 
 		switch (m_SceneState) {
 		case SceneState::Edit: m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera); break;
-		case SceneState::Simulate: m_ActiveScene->OnUpdateSimulation(ts, m_EditorCamera); break;
-		case SceneState::Play: m_ActiveScene->OnUpdateRuntime(ts); break;
+		case SceneState::Simulate: m_ActiveScene->OnUpdateSimulation(ts, m_EditorCamera, m_IsPaused); break;
+		case SceneState::Play: m_ActiveScene->OnUpdateRuntime(ts, m_IsPaused); break;
 		}
 	}
 
@@ -210,7 +212,7 @@ namespace Rose {
 	{
 		if (m_SceneState == SceneState::Simulate)
 			OnSceneStop();
-
+		m_IsPaused = false;
 		/*if (std::filesystem::exists(m_AppAssemblyPath)) {
 			MonoScriptEngine::ReloadAppAssembly(m_AppAssemblyPath);
 		}
@@ -228,6 +230,7 @@ namespace Rose {
 	{
 		if (m_SceneState == SceneState::Play)
 			OnSceneStop();
+		m_IsPaused = false;
 
 		m_GizmoType = -1;
 		m_ActiveScene = Scene::Copy(m_EditorScene);
@@ -251,6 +254,14 @@ namespace Rose {
 		m_SceneState = SceneState::Edit;
 	}
 
+	void SceneManger::OnScenePause()
+	{
+		if (m_SceneState == SceneState::Edit)
+			return;
+
+		m_IsPaused = !m_IsPaused;
+	}
+
 	void SceneManger::UI_Toolbar()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
@@ -262,9 +273,12 @@ namespace Rose {
 		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
 		float size = ImGui::GetWindowHeight() - 4.0f;
+		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+
+		//Play Button
+		if (m_SceneState != SceneState::Simulate)
 		{
-			Ref<Texture2D> icon = (m_SceneState ==  SceneState::Edit || m_SceneState ==  SceneState::Simulate) ? m_IconPlay : m_IconStop;
-			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
 			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
 			{
 				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
@@ -273,10 +287,14 @@ namespace Rose {
 					OnSceneStop();
 			}
 		}
-		ImGui::SameLine();
+
+		//Simulate Button
+		if(m_SceneState != SceneState::Play)
 		{
+			if(m_SceneState != SceneState::Simulate)
+				ImGui::SameLine();
+
 			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) ? m_IconSimulate : m_IconStop;
-			//ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
 			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
 			{
 				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play)
@@ -285,6 +303,29 @@ namespace Rose {
 					OnSceneStop();
 			}
 		}
+		
+		//Pause Button
+		if (m_SceneState != SceneState::Edit)
+		{
+			ImGui::SameLine();
+
+			Ref<Texture2D> icon = !m_IsPaused ? m_IconPause : m_IconPlay;
+			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+			{
+				OnScenePause();
+			}
+
+			if (m_IsPaused) {
+				ImGui::SameLine();
+
+				Ref<Texture2D> icon = m_IconStep;
+				if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+				{
+					m_ActiveScene->Step();
+				}
+			}
+		}
+
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(3);
 		ImGui::End();

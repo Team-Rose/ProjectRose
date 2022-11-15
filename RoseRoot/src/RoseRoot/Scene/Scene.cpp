@@ -273,11 +273,17 @@ namespace Rose
 		RR_CORE_TRACE("-----Simulation Scene Stopped-----");
 	}
 
+	void Scene::Step(int step)
+	{
+		m_SteppedFrames += step;
+	}
+
 	void Scene::OnUpdateRuntime(Timestep ts, bool pause)
 	{
 		RR_PROFILE_FUNCTION();
-		if (!pause) {
-			// Update scripts
+		if (!pause || m_SteppedFrames > 0) {
+			if (m_SteppedFrames > 0)
+				m_SteppedFrames--;
 			{
 				RR_PROFILE_SCOPE("Update Scripts");
 				Timer scriptTimer;
@@ -401,34 +407,37 @@ namespace Rose
 	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera,bool pause)
 	{
 		RR_PROFILE_FUNCTION();
+		if (!pause || m_SteppedFrames > 0) {
+			if (m_SteppedFrames > 0)
+				m_SteppedFrames--;
 
-		Timer physicsTimer;
-		//  Physics 2D
-		{
-			RR_PROFILE_SCOPE("Update Physics2D");
-
-			const int32_t velocityIterations = 6;
-			const int32_t positionIterations = 2;
-			m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
-
-			// Retrieve transform from Box2D
-			auto view = m_Registry.view<Rigidbody2DComponent>();
-			for (auto e : view)
+			Timer physicsTimer;
+			//  Physics 2D
 			{
-				Entity entity = { e, this };
-				auto& transform = entity.GetComponent<TransformComponent>();
-				auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+				RR_PROFILE_SCOPE("Update Physics2D");
 
-				b2Body* body = (b2Body*)rb2d.RuntimeBody;
-				const auto& position = body->GetPosition();
-				transform.Translation.x = position.x;
-				transform.Translation.y = position.y;
-				transform.Rotation.z = body->GetAngle();
-				//body->SetAwake(true);
+				const int32_t velocityIterations = 6;
+				const int32_t positionIterations = 2;
+				m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
+
+				// Retrieve transform from Box2D
+				auto view = m_Registry.view<Rigidbody2DComponent>();
+				for (auto e : view)
+				{
+					Entity entity = { e, this };
+					auto& transform = entity.GetComponent<TransformComponent>();
+					auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+
+					b2Body* body = (b2Body*)rb2d.RuntimeBody;
+					const auto& position = body->GetPosition();
+					transform.Translation.x = position.x;
+					transform.Translation.y = position.y;
+					transform.Rotation.z = body->GetAngle();
+					//body->SetAwake(true);
+				}
 			}
+			m_SceneStats.PhysicsTime = physicsTimer.ElapsedMillis();
 		}
-		m_SceneStats.PhysicsTime = physicsTimer.ElapsedMillis();
-
 		Timer renderTimer;
 		RenderScene(camera);
 		m_SceneStats.RenderTime = renderTimer.ElapsedMillis();

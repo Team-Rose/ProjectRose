@@ -31,7 +31,7 @@ namespace Rose {
 		void OnScenePlay();
 		void OnSceneSimululate();
 		void OnSceneStop();
-
+		void OnScenePause();
 
 		void UI_Toolbar();
 		void OnDuplicateEntity();
@@ -63,6 +63,7 @@ namespace Rose {
 		glm::vec2 m_Gravity = { 0.0, -9.8 };
 
 		bool m_ShowPhysicsColliders = false;
+		bool m_IsPaused = false;
 
 		enum class SceneState
 		{
@@ -72,6 +73,6 @@ namespace Rose {
 		SceneState m_SceneState = SceneState::Edit;
 
 		//Editor Resources
-		Ref<Texture2D> m_IconPlay, m_IconSimulate ,m_IconStop;
+		Ref<Texture2D> m_IconPlay, m_IconPause, m_IconSimulate ,m_IconStop, m_IconStep;
 	};
 }
