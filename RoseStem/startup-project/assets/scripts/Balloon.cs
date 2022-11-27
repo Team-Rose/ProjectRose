@@ -41,7 +41,7 @@ namespace Sandbox
                 shouldReset = false;
             }
 
-          
+
             if (Translation.Y - m_Camera.Translation.Y > 2.0f)
                 m_CameraObject.cameraSpeed = (Translation.Y - m_Camera.Translation.Y) + m_CameraObject.cameraSpeedBase;
             else

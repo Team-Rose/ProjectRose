@@ -6,12 +6,17 @@
 
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
-#include <mono/metadata/mono-gc.h>
 #include "mono/metadata/object.h"
 #include "mono/metadata/tabledefs.h"
+#include "mono/metadata/mono-debug.h"
+#include "mono/metadata/threads.h"
+
 #include <glm/glm.hpp>
 
 #include "FileWatch.h"
+#include <mono/metadata/mono-gc.h>
+#include <RoseRoot/Core/Buffer.h>
+#include <RoseRoot/Core/FileSystem.h>
 
 namespace Rose {
 
@@ -85,43 +90,13 @@ namespace Rose {
 			return { mono_type_get_name(exceptionType), GetExceptionString("Source"), GetExceptionString("Message"), GetExceptionString("StackTrace") };
 		}
 
-		// TODO: Move to FileSystem class
-		static char* ReadBytes(const std::filesystem::path& filepath, uint32_t* outSize)
+		static MonoAssembly* LoadMonoAssembly(const std::filesystem::path& assemblyPath, bool loadPDB = false)
 		{
-			std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
-
-			if (!stream)
-			{
-				// Failed to open the file
-				return nullptr;
-			}
-
-			std::streampos end = stream.tellg();
-			stream.seekg(0, std::ios::beg);
-			uint32_t size = end - stream.tellg();
-
-			if (size == 0)
-			{
-				// File is empty
-				return nullptr;
-			}
-
-			char* buffer = new char[size];
-			stream.read((char*)buffer, size);
-			stream.close();
-
-			*outSize = size;
-			return buffer;
-		}
-
-		static MonoAssembly* LoadMonoAssembly(const std::filesystem::path& assemblyPath)
-		{
-			uint32_t fileSize = 0;
-			char* fileData = ReadBytes(assemblyPath, &fileSize);
+			Buffer fileData = FileSystem::ReadFileBinary(assemblyPath);
 
 			// NOTE: We can't use this image for anything other than loading the assembly because this image doesn't have a reference to the assembly
 			MonoImageOpenStatus status;
-			MonoImage* image = mono_image_open_from_data_full(fileData, fileSize, 1, &status, 0);
+			MonoImage* image = mono_image_open_from_data_full(fileData.As<char>(), fileData.Size, 1, &status, 0);
 
 			if (status != MONO_IMAGE_OK)
 			{
@@ -134,9 +109,18 @@ namespace Rose {
 			MonoAssembly* assembly = mono_assembly_load_from_full(image, string.c_str(), &status, 0);
 			mono_image_close(image);
 
-			// Don't forget to free the file data
-			delete[] fileData;
+			fileData.Release();
 
+			if (loadPDB)
+			{
+				std::filesystem::path pdbPath = assemblyPath;
+				pdbPath.replace_extension(".pdb");
+				if (std::filesystem::exists(pdbPath)) {
+					ScopedBuffer pdbFileData(FileSystem::ReadFileBinary(assemblyPath));
+					mono_debug_open_image_from_memory(image, pdbFileData.As<const mono_byte>(), pdbFileData.Size());
+					RR_CORE_INFO("Loaded PDB {}", pdbPath);
+				}
+			}
 			return assembly;
 		}
 
@@ -192,6 +176,8 @@ namespace Rose {
 
 		bool AssemblyReloadPending = false;
 
+		bool EnableDebugging = true;
+
 		Scene* SceneContext;
 	};
 
@@ -199,14 +185,30 @@ namespace Rose {
 
 	void MonoScriptEngine::Init()
 	{
-		mono_set_assemblies_path("mono/lib");
 		s_MonoData = new MonoScriptEngineData();
+		mono_set_assemblies_path("mono/lib");
+
+		if (s_MonoData->EnableDebugging)
+		{
+			const char* argv[2] = {
+				"--debugger-agent=transport=dt_socket,address=127.0.0.1:2550,server=y,suspend=n,loglevel=3,logfile=MonoDebugger.log",
+				"--soft-breakpoints"
+			};
+
+			mono_jit_parse_options(2, (char**)argv);
+			mono_debug_init(MONO_DEBUG_FORMAT_MONO);
+		}
 
 		MonoDomain* rootDomain = mono_jit_init("RoseJITRuntime");
 		RR_CORE_ASSERT(rootDomain);
 
 		// Store the root domain pointer
 		s_MonoData->RootDomain = rootDomain;
+
+		if (s_MonoData->EnableDebugging)
+			mono_debug_domain_create(s_MonoData->RootDomain);
+
+		mono_thread_set_main(mono_thread_current());
 	}
 
 	void MonoScriptEngine::Shutdown()
@@ -219,7 +221,7 @@ namespace Rose {
 
 	void MonoScriptEngine::LoadCoreAssembly(const std::filesystem::path& filepath)
 	{
-		s_MonoData->CoreAssembly = Utils::LoadMonoAssembly(filepath);
+		s_MonoData->CoreAssembly = Utils::LoadMonoAssembly(filepath, s_MonoData->EnableDebugging);
 		s_MonoData->CoreAssemblyImage = mono_assembly_get_image(s_MonoData->CoreAssembly);
 	}
 
@@ -235,7 +237,7 @@ namespace Rose {
 
 	void MonoScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
 	{
-		s_MonoData->AppAssembly = Utils::LoadMonoAssembly(filepath);
+		s_MonoData->AppAssembly = Utils::LoadMonoAssembly(filepath, s_MonoData->EnableDebugging);
 		s_MonoData->AppAssemblyImage = mono_assembly_get_image(s_MonoData->AppAssembly);
 		LoadAssemblyClasses(s_MonoData->AppAssembly);
 

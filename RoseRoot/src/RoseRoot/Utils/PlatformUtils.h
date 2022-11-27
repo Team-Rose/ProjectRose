@@ -4,7 +4,6 @@
 
 namespace Rose
  {
-
 	class FileDialogs
 	{
 	public:
