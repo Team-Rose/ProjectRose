@@ -583,9 +583,9 @@ namespace Rose
 					if (scriptFields)
 					{
 						Ref<MonoScriptClass> entityClass = MonoScriptEngine::GetEntityClass(msc.ClassName);
-						RR_CORE_ASSERT(entityClass);
-						const auto& fields = entityClass->GetFields();
-						auto& entityFields = MonoScriptEngine::GetScriptFieldMap(deserializedEntity.GetUUID());
+						if (entityClass) {
+							const auto& fields = entityClass->GetFields();
+							auto& entityFields = MonoScriptEngine::GetScriptFieldMap(deserializedEntity.GetUUID());
 
 #define READ_FIELD_TYPE(FieldType, Type)	\
 							case FieldType:		\
@@ -593,47 +593,51 @@ namespace Rose
 							fieldInstance.SetValue(data); }	\
 							break; 
 
-						for (auto scriptField : scriptFields)
-						{
-							std::string name = scriptField["Name"].as<std::string>();
-							std::string typeString = scriptField["Type"].as<std::string>();
-							MonoScriptFieldType type = Utils::StringToMonoScriptFieldType(typeString);
-							
-							// TODO(Sam): turn this assert into RoseStem log warning
-							RR_CORE_ASSERT(fields.find(name) != fields.end());
-
-							if (fields.find(name) == fields.end())
-								continue;
-
-							MonoScriptFieldInstance& fieldInstance = entityFields[name];
-							fieldInstance.Field = fields.at(name);
-
-							switch (fieldInstance.Field.Type)
+							for (auto scriptField : scriptFields)
 							{
-								READ_FIELD_TYPE(MonoScriptFieldType::Float, float);
-								READ_FIELD_TYPE(MonoScriptFieldType::Double, double);
+								std::string name = scriptField["Name"].as<std::string>();
+								std::string typeString = scriptField["Type"].as<std::string>();
+								MonoScriptFieldType type = Utils::StringToMonoScriptFieldType(typeString);
 
-								READ_FIELD_TYPE(MonoScriptFieldType::Bool, bool);
-								READ_FIELD_TYPE(MonoScriptFieldType::Char, char);
+								// TODO(Sam): turn this assert into RoseStem log warning
+								RR_CORE_ASSERT(fields.find(name) != fields.end());
 
-								READ_FIELD_TYPE(MonoScriptFieldType::Byte, int8_t);
-								READ_FIELD_TYPE(MonoScriptFieldType::Short, int16_t);
-								READ_FIELD_TYPE(MonoScriptFieldType::Int, int);
-								READ_FIELD_TYPE(MonoScriptFieldType::Long, int64_t);
+								if (fields.find(name) == fields.end())
+									continue;
 
-								READ_FIELD_TYPE(MonoScriptFieldType::UByte, uint8_t);
-								READ_FIELD_TYPE(MonoScriptFieldType::UInt16, uint16_t);
-								READ_FIELD_TYPE(MonoScriptFieldType::UInt32, uint32_t);
-								READ_FIELD_TYPE(MonoScriptFieldType::UInt64, uint64_t);
+								MonoScriptFieldInstance& fieldInstance = entityFields[name];
+								fieldInstance.Field = fields.at(name);
 
-								READ_FIELD_TYPE(MonoScriptFieldType::Vector2, glm::vec2);
-								READ_FIELD_TYPE(MonoScriptFieldType::Vector3, glm::vec3);
-								READ_FIELD_TYPE(MonoScriptFieldType::Vector4, glm::vec4);
+								switch (fieldInstance.Field.Type)
+								{
+									READ_FIELD_TYPE(MonoScriptFieldType::Float, float);
+									READ_FIELD_TYPE(MonoScriptFieldType::Double, double);
 
-								READ_FIELD_TYPE(MonoScriptFieldType::Entity, UUID);
+									READ_FIELD_TYPE(MonoScriptFieldType::Bool, bool);
+									READ_FIELD_TYPE(MonoScriptFieldType::Char, char);
+
+									READ_FIELD_TYPE(MonoScriptFieldType::Byte, int8_t);
+									READ_FIELD_TYPE(MonoScriptFieldType::Short, int16_t);
+									READ_FIELD_TYPE(MonoScriptFieldType::Int, int);
+									READ_FIELD_TYPE(MonoScriptFieldType::Long, int64_t);
+
+									READ_FIELD_TYPE(MonoScriptFieldType::UByte, uint8_t);
+									READ_FIELD_TYPE(MonoScriptFieldType::UInt16, uint16_t);
+									READ_FIELD_TYPE(MonoScriptFieldType::UInt32, uint32_t);
+									READ_FIELD_TYPE(MonoScriptFieldType::UInt64, uint64_t);
+
+									READ_FIELD_TYPE(MonoScriptFieldType::Vector2, glm::vec2);
+									READ_FIELD_TYPE(MonoScriptFieldType::Vector3, glm::vec3);
+									READ_FIELD_TYPE(MonoScriptFieldType::Vector4, glm::vec4);
+
+									READ_FIELD_TYPE(MonoScriptFieldType::Entity, UUID);
+								}
 							}
-						}
 #undef WRITE_FIELD_TYPE
+						} else {
+							RR_WARN("No entity class found in provided binary {}", msc.ClassName);
+						}
+						
 					}
 				}
 #pragma endregion

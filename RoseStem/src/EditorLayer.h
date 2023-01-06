@@ -7,6 +7,7 @@
 #include "RoseRoot/Renderer/EditorCamera.h"
 
 #include <chrono>
+#include "Project/Project.h"
 
 namespace Rose {
 	class EditorLayer : public Layer
@@ -26,16 +27,15 @@ namespace Rose {
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 		void ProjectSettingsWindow();
 
-		void ResetToProjectSettings();
-		void SaveProjectSettings();
-
 		void NewProject();
-		void OpenProject();
+		void OpenProjectDialog();
+		void OpenProject(const std::filesystem::path& path);
+		bool SaveProjectDialog();
+		bool SaveProject();
 
 		void QuickReloadAppAssembly();
 	private:
 		bool m_GizmoLastFrame;
-		Project m_Project;
 		std::string m_ProjectName;
 		SceneManger m_SceneManager;
 
@@ -44,13 +44,10 @@ namespace Rose {
 		bool m_ProjectSettingsOpen = true;
 
 		std::chrono::time_point<std::chrono::high_resolution_clock> m_LastTime = std::chrono::high_resolution_clock::now();
-		//Project Buffer
-		int m_NumberOfScenes = 0;
-		std::unordered_map<int, std::pair<int, std::filesystem::path>> m_ScenePathsBuffer;
 
 		Ref<Texture2D> m_SpriteSheet, m_ViewTest;
 		Ref<SubTexture2D> m_GrassTexture, m_StoneTexture, m_GlassTexture;
-
+		ProjectConfig m_ProjectSettingsBuffer;
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
 		glm::vec2 m_ViewportBounds[2];
 	};

@@ -9,14 +9,11 @@ namespace Rose {
 	class ContentBrowserPanel
 	{
 	public:
-		ContentBrowserPanel(std::filesystem::path path = "startup-project");
+		ContentBrowserPanel();
 
 		void OnImGuiRender();
-		
-		void SetAssetPath(std::filesystem::path path) { m_AssetPath = path; m_CurrentDirectory = m_AssetPath; }
 	private:
 		std::filesystem::path m_CurrentDirectory;
-		std::filesystem::path m_AssetPath;
 
 		Ref<Texture2D> m_DirectoryIcon;
 		Ref<Texture2D> m_FileIcon;

@@ -4,8 +4,6 @@
 #include "../Panels/ContentBrowserPanel.h"
 
 namespace Rose {
-	
-
 	class SceneManger
 	{
 	public:
@@ -35,13 +33,7 @@ namespace Rose {
 
 		void UI_Toolbar();
 		void OnDuplicateEntity();
-
-		void SetAssetPath(const std::filesystem::path& path) { m_AssetPath = path; }
-		void SetAppAssemblyPath(const std::filesystem::path& path) { m_AppAssemblyPath = path; }
-
-	//TODO make these protected or private
 	public:
-		
 		//Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		ContentBrowserPanel m_ContentBrowserPanel;
@@ -52,9 +44,6 @@ namespace Rose {
 
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
 	private:
-		std::filesystem::path m_AssetPath;
-		std::filesystem::path m_AppAssemblyPath = "";
-
 		Ref<Scene> m_ActiveScene;
 		Ref<Scene> m_EditorScene;
 		std::filesystem::path m_EditorScenePath;

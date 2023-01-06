@@ -176,7 +176,11 @@ namespace Rose {
 
 		bool AssemblyReloadPending = false;
 
+#ifdef RR_DEBUG
 		bool EnableDebugging = true;
+#else
+		bool EnableDebugging = false;
+#endif
 
 		Scene* SceneContext;
 	};
@@ -191,7 +195,7 @@ namespace Rose {
 		if (s_MonoData->EnableDebugging)
 		{
 			const char* argv[2] = {
-				"--debugger-agent=transport=dt_socket,address=127.0.0.1:2550,server=y,suspend=n,loglevel=3,logfile=MonoDebugger.log",
+				"--debugger-agent=transport=dt_socket,address=127.0.0.1:2550,server=y,suspend=n,loglevel=3,logfile=logs/MonoDebugger.log",
 				"--soft-breakpoints"
 			};
 
@@ -490,8 +494,6 @@ namespace Rose {
 			
 		return nullptr;
 	}
-
-
 
 	MonoScriptInstance::MonoScriptInstance(Ref<MonoScriptClass> scriptClass, Entity entity)
 		: m_ScriptClass(scriptClass)

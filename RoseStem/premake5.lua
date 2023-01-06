@@ -23,12 +23,15 @@ project "RoseStem"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.ImGuizmo}",
-		"%{IncludeDir.Lua}"
+		"%{IncludeDir.Lua}",
+
+		"%{IncludeDir.yaml_cpp}",
 	}
 
 	links
 	{
-		"RoseRoot"
+		"RoseRoot",
+		"yaml-cpp"
 	}
 
 	filter "system:windows"

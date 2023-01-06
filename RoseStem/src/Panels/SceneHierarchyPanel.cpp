@@ -74,11 +74,6 @@ namespace Rose {
 		m_SelectionContext = entity;
 	}
 
-	void SceneHierarchyPanel::SetAssetPath(std::filesystem::path path)
-	{
-		s_AssetPath = path;
-	}
-
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;

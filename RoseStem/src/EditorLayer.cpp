@@ -11,6 +11,9 @@
 #include "Core/CommandHistory.h"
 #include <Box2D/include/box2d/b2_body.h>
 
+//TODO (Sam) Major Refactor of the entire editor layer. It is a huge mess.
+//Maybe we should merge editor layer and scene manger back into one?
+
 namespace Rose {
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer")
@@ -21,30 +24,31 @@ namespace Rose {
 	{
 		RR_PROFILE_FUNCTION();
 		Application::Get().GetWindow().SetWindowIcon("Resources/icon.png");
-		CommandHistory::Init();
 		auto commandLineArgs = Application::Get().GetCommandLineArgs();
 		if (commandLineArgs.Count > 1)
 		{
 			auto projectFilePath = commandLineArgs[1];
-			m_Project = Project(projectFilePath);
+			OpenProject(projectFilePath);
 
 			if (commandLineArgs.Count > 2) {
 				auto sceneFilePath = commandLineArgs[2];
 				m_SceneManager.OpenScene(sceneFilePath);
 			}
 		}
+		else {
+			std::filesystem::path path = "startup-project/startup-project.rproj";
+			if (std::filesystem::exists(path)) {
+				OpenProject(path);
+			}
+			else {
+				NewProject();
+				Project::SaveActive(path);
+			}
 
-		AssetManager::SetAssetPath(m_Project.GetAssetPath().string());
-
-		//TODO Switch these to use the asset manager path
-		m_SceneManager.m_ContentBrowserPanel.SetAssetPath(m_Project.GetAssetPath());
-		m_SceneManager.m_SceneHierarchyPanel.SetAssetPath(m_Project.GetAssetPath());
-		m_SceneManager.SetAssetPath(m_Project.GetAssetPath());
-		m_SceneManager.SetAppAssemblyPath(m_Project.GetAppAssemblyPath());
+			m_SceneManager.NewScene();
+		}
+		CommandHistory::Init();
 		QuickReloadAppAssembly();
-
-		ResetToProjectSettings();
-		m_SceneManager.NewScene();
 	}
 
 	void EditorLayer::OnDetach()
@@ -143,7 +147,7 @@ namespace Rose {
 				if (ImGui::MenuItem("New Project"))
 					NewProject();
 				if (ImGui::MenuItem("Open Project"))
-					OpenProject();
+					OpenProjectDialog();
 
 				if (ImGui::MenuItem("New Scene", "Ctrl+N"))
 					m_SceneManager.NewScene();
@@ -237,7 +241,7 @@ namespace Rose {
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 			{
 				const wchar_t* path = (const wchar_t*)payload->Data;
-				m_SceneManager.OpenScene(m_Project.GetAssetPath() / path);
+				m_SceneManager.OpenScene(Project::GetActiveAssetDirectory() / path);
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -470,87 +474,16 @@ namespace Rose {
 		{
 			m_ProjectName = std::string(buffer);
 		}
-
-		ImGui::PushItemWidth(70);
-		ImGui::InputInt("Number of Scenes", &m_NumberOfScenes, 0, 100);
-		ImGui::PopItemWidth();
-
-		if (ImGui::TreeNodeEx("Scene Index"))
-		{
-			for (int i = 0; i < m_NumberOfScenes; i++) {
-				if (m_ScenePathsBuffer.find(i) == m_ScenePathsBuffer.end()) {
-					m_ScenePathsBuffer.insert(std::make_pair(i, std::pair<int, std::filesystem::path>(i, "no-scene")));
-				}
-
-				ImGui::PushItemWidth(70);
-				std::string index = "##Index ";
-				index += std::to_string(i);
-				ImGui::InputInt(index.c_str(), &m_ScenePathsBuffer.at(i).first, 0, 100);
-				ImGui::PopItemWidth();
-
-				ImGui::SameLine();
-
-				std::string  scene = m_ScenePathsBuffer.at(i).second.filename().string();
-				ImGui::Button(scene.c_str(), ImVec2(150.0f, 0.0f));
-
-				if (ImGui::BeginDragDropTarget())
-				{
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-					{
-						const wchar_t* path = (const wchar_t*)payload->Data;
-						std::filesystem::path scenePath = m_Project.GetAssetPath() / path;
-						m_ScenePathsBuffer.at(i).second = scenePath;
-					}
-					ImGui::EndDragDropTarget();
-				}
-			}
-
-			ImGui::TreePop();
-		}
-
-		ImGui::Text("");
+		ImGui::NewLine();
 
 		if (ImGui::Button("Save Project Settings", { 200, 30 }))
-			SaveProjectSettings();
+			SaveProject();
 		
 
 		if (ImGui::Button("Reset To Project Settings", { 200, 21 }))
-			ResetToProjectSettings();
+			m_ProjectSettingsBuffer = Project::GetActive()->GetConfig();
 		
 		ImGui::End();
-	}
-
-	void EditorLayer::ResetToProjectSettings()
-	{
-		m_ScenePathsBuffer.clear();
-
-		m_ProjectName = m_Project.GetName();
-		m_NumberOfScenes = m_Project.GetSizeOfSceneIndex();
-
-		auto sceneIndexPtr = m_Project.GetSceneIndexPtr();
-
-		int i = 0;
-		std::for_each(sceneIndexPtr->begin() , sceneIndexPtr->end(), [&](std::pair<int, std::filesystem::path> elements) {
-			m_ScenePathsBuffer.insert(std::make_pair(i, elements));
-			i++;
-		});
-	}
-
-	void EditorLayer::SaveProjectSettings()
-	{
-		m_Project.SetName(m_ProjectName);
-		for (int i = 0; i < m_NumberOfScenes; i++) {
-			m_Project.SetSceneToIndex(m_ScenePathsBuffer.at(i).first, m_ScenePathsBuffer.at(i).second);
-		}
-
-		m_Project.SaveProject();
-
-		m_SceneManager.m_ContentBrowserPanel.SetAssetPath(m_Project.GetAssetPath());
-		m_SceneManager.m_SceneHierarchyPanel.SetAssetPath(m_Project.GetAssetPath());
-		m_SceneManager.SetAssetPath(m_Project.GetAssetPath());
-		m_SceneManager.SetAppAssemblyPath(m_Project.GetAppAssemblyPath());
-
-		QuickReloadAppAssembly();
 	}
 
 	void EditorLayer::NewProject()
@@ -558,40 +491,61 @@ namespace Rose {
 		//TODO Saftey net for unsaved scenes.
 		//SaveScene();
 		m_SceneManager.NewScene();
-		std::filesystem::path filepath = FileDialogs::SaveFile("Rose Project");
-		if (!filepath.empty())
-		{
-			m_Project = Project(filepath);
-			m_SceneManager.m_ContentBrowserPanel.SetAssetPath(m_Project.GetAssetPath());
-			m_SceneManager.m_SceneHierarchyPanel.SetAssetPath(m_Project.GetAssetPath());
-			m_SceneManager.SetAssetPath(m_Project.GetAssetPath());
-			m_SceneManager.SetAppAssemblyPath(m_Project.GetAppAssemblyPath());
-			AssetManager::SetAssetPath(m_Project.GetAssetPath().string());
-		}	
+		Project::New();
+		m_ProjectSettingsBuffer = Project::GetActive()->GetConfig();
 	} 
-	void EditorLayer::OpenProject()
+	void EditorLayer::OpenProject(const std::filesystem::path& path)
+	{
+		//TODO Saftey net for unsaved scenes.
+		//SaveScene();
+		m_SceneManager.NewScene();
+		if (!Project::Load(path)) {
+			RR_ERROR("Failed to load project");
+			NewProject();
+			return;
+		}
+		AssetManager::SetAssetPath(Project::GetActiveAssetDirectory().string());
+		m_ProjectSettingsBuffer = Project::GetActive()->GetConfig();
+		const std::filesystem::path assetPath = Project::GetActiveAssetDirectory();
+		auto startScenePath = assetPath / Project::GetActive()->GetConfig().StartScene;
+		m_SceneManager.OpenScene(startScenePath);
+	}
+	void EditorLayer::OpenProjectDialog()
 	{
 		//TODO Saftey net for unsaved scenes.
 		//SaveScene();
 		m_SceneManager.NewScene();
 		std::string filepath = FileDialogs::OpenFile("Rose Project (*.rproj)\0*.rproj\0");
 		if (!filepath.empty()) {
-			m_Project.OpenProject(filepath);
-			m_SceneManager.m_ContentBrowserPanel.SetAssetPath(m_Project.GetAssetPath());
-			m_SceneManager.m_SceneHierarchyPanel.SetAssetPath(m_Project.GetAssetPath());
-			m_SceneManager.SetAssetPath(m_Project.GetAssetPath());
-			m_SceneManager.SetAppAssemblyPath(m_Project.GetAppAssemblyPath());
-			AssetManager::SetAssetPath(m_Project.GetAssetPath().string());
-			ResetToProjectSettings();
+			OpenProject(filepath);
 		}
 	}
+	bool EditorLayer::SaveProjectDialog()
+	{
+		//TODO Saftey net for unsaved scenes.
+		//SaveScene();
+		m_SceneManager.NewScene();
+		std::filesystem::path filepath = FileDialogs::SaveFile("Rose Project");
+		if (!filepath.empty())
+		{
+			Project::SaveActive(filepath);
+			AssetManager::SetAssetPath(Project::GetActiveAssetDirectory().string());
+		}
+		return true;
+	}
+	bool EditorLayer::SaveProject()
+	{
+		Project::SaveActive(Project::GetActiveProjectDirectory());
+		return true;
+	}
+
 	void EditorLayer::QuickReloadAppAssembly()
 	{
-		if (std::filesystem::exists(m_Project.GetAppAssemblyPath())) {
-			MonoScriptEngine::ReloadAppAssembly(m_Project.GetAppAssemblyPath());
+		if (std::filesystem::exists(Project::GetActiveProjectDirectory() / Project::GetActive()->GetConfig().ScriptModulePath)) {
+			MonoScriptEngine::ReloadAppAssembly(Project::GetActiveProjectDirectory() / Project::GetActive()->GetConfig().ScriptModulePath);
 		}
 		else {
-			RR_WARN("(ignore this if you aren't using C#) No App Assembly found! : {}", m_Project.GetAppAssemblyPath());
+			RR_WARN("(ignore this if you aren't using C#) No Script Module found! : {}", Project::GetActive()->GetConfig().ScriptModulePath);
 			MonoScriptEngine::UnloadAppAssembly();
 		}
 	}

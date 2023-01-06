@@ -3,6 +3,7 @@
 #include "RoseRoot/Scene/SceneSerializer.h"
 #include "RoseRoot/Utils/PlatformUtils.h"
 #include "CommandHistory.h"
+#include "../Project/Project.h"
 
 #include "imgui/imgui.h"
 namespace Rose {
@@ -166,7 +167,7 @@ namespace Rose {
 		Ref<Scene> newScene = CreateRef<Scene>();
 		AssetManager::UnloadAssets();
 		SceneSerializer serializer(newScene);
-		if (serializer.Deserialize(path.string(), m_AssetPath.string()))
+		if (serializer.Deserialize(path.string(), Project::GetActiveAssetDirectory().string()))
 		{
 			CommandHistory::Clear();
 			m_EditorScene = newScene;
@@ -221,7 +222,7 @@ namespace Rose {
 		}*/
 		m_GizmoType = -1;
 		m_ActiveScene = Scene::Copy(m_EditorScene);
-		m_ActiveScene->OnRuntimeStart(m_AssetPath.string());
+		m_ActiveScene->OnRuntimeStart(Project::GetActiveAssetDirectory().string());
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 		m_SceneState = SceneState::Play;
@@ -234,7 +235,7 @@ namespace Rose {
 
 		m_GizmoType = -1;
 		m_ActiveScene = Scene::Copy(m_EditorScene);
-		m_ActiveScene->OnSimulationStart(m_AssetPath.string());
+		m_ActiveScene->OnSimulationStart(Project::GetActiveAssetDirectory().string());
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 		m_SceneState = SceneState::Simulate;

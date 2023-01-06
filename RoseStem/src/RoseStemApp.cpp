@@ -13,6 +13,7 @@ namespace Rose {
 		RoseStem(ApplicationCommandLineArgs args)
 			: Application("Rose Stem", args)
 		{
+			Project::New();
 			PushLayer(new EditorLayer());
 		}
 

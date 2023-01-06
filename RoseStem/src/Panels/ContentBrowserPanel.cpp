@@ -1,14 +1,14 @@
 #include "rrpch.h"
 #include "ContentBrowserPanel.h"
+#include "../Project/Project.h"
 
 #include <imgui/imgui.h>
 
 namespace Rose {
 
-	ContentBrowserPanel::ContentBrowserPanel(std::filesystem::path path)
-		: m_AssetPath(path)
+	ContentBrowserPanel::ContentBrowserPanel()
 	{
-		m_CurrentDirectory = m_AssetPath;
+		m_CurrentDirectory = Project::GetActiveAssetDirectory();
 		m_DirectoryIcon = Texture2D::Create("Resources/Icons/ContentBrowser/DirectoryIcon.png");
 		m_FileIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FileIcon.png");
 		m_LuaIcon = Texture2D::Create("Resources/Icons/ContentBrowser/LuaIcon.png");
@@ -21,7 +21,18 @@ namespace Rose {
 	{
 		ImGui::Begin("Content Browser");
 
-		if (m_CurrentDirectory != m_AssetPath)
+		auto path = Project::GetActive()->GetAssetDirectory();
+		if (!std::filesystem::exists(path))
+		{
+			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "No Valid Asset Directory Found.");
+			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "	Set a valid asset directory in project settings");
+			ImGui::NewLine();
+			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), path.string().c_str());
+			ImGui::End();
+			return;
+		}
+
+		if (m_CurrentDirectory != Project::GetActiveAssetDirectory())
 		{
 			if (ImGui::Button("<-"))
 			{
@@ -40,10 +51,14 @@ namespace Rose {
 
 		ImGui::Columns(columnCount, 0, false);
 
+		if (!std::filesystem::exists(m_CurrentDirectory)) {
+			m_CurrentDirectory = Project::GetActiveAssetDirectory();
+		}
+
 		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
 			const auto& path = directoryEntry.path();
-			auto relativePath = std::filesystem::relative(path, m_AssetPath);
+			auto relativePath = std::filesystem::relative(path, Project::GetActiveAssetDirectory());
 			std::string filenameString = relativePath.filename().string();
 
 			ImGui::PushID(filenameString.c_str());
