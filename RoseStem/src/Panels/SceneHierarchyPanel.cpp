@@ -7,10 +7,9 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "RoseRoot/Scene/Components.h"
-
+#include "../Project/Project.h"
 #include "../Core/CommandHistory.h"
 namespace Rose {
-	static std::filesystem::path s_AssetPath;
 	static Ref<DeleteEntityCommand> s_DeletedCommand;
 
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
@@ -113,8 +112,6 @@ namespace Rose {
 
 		bool entityDeleted = false;
 
-		if (Input::IsKeyPressed(Key::Delete) && m_SelectionContext == entity)
-			entityDeleted = true;
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("Delete Entity"))
@@ -540,7 +537,7 @@ namespace Rose {
 					{
 						const wchar_t* path = (const wchar_t*)payload->Data;
 						std::filesystem::path texturePath = path;
-						component.Path = (s_AssetPath.string() + "\\" + texturePath.string());
+						component.Path = (Project::GetActiveAssetDirectory().string() + "\\" + texturePath.string());
 						if (Ref<Texture2D> texture = AssetManager::GetOrLoadTexture(component.Path))
 							component.Texture = texture;
 					}

@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include "ImGuizmo.h"
 
+#include <imgui_internal.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 
@@ -145,6 +146,12 @@ namespace Rose {
 
 		//Check Mark
 		colors[ImGuiCol_CheckMark] = ImVec4{ 0.9, 0.2, 0.7, 1.0f };
+	}
+
+	uint32_t ImGuiLayer::GetActiveWidgetID() const
+	{
+		ImGuiContext& g = *GImGui;
+		return g.ActiveId;
 	}
 
 }

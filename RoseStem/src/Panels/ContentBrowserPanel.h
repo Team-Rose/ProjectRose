@@ -13,6 +13,7 @@ namespace Rose {
 
 		void OnImGuiRender();
 	private:
+		std::filesystem::path m_AssetDirectory;
 		std::filesystem::path m_CurrentDirectory;
 
 		Ref<Texture2D> m_DirectoryIcon;

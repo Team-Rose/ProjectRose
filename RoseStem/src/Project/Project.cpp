@@ -12,7 +12,11 @@ namespace Rose
 	Ref<Project> Project::New()
 	{
 		s_ActiveProject = CreateRef<Project>();
-		s_ActiveProject->GetConfig().AssetDirectory = "assets";
+		auto config = s_ActiveProject->GetConfig();
+		config.Name = "NewProject";
+		config.AssetDirectory = "assets";
+		std::string nameCopy = config.Name;
+		config.ScriptModulePath = std::filesystem::path("Binaries") / nameCopy.append(".dll");
 
 		return s_ActiveProject;
 	}

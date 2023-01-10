@@ -20,14 +20,17 @@ namespace Rose {
 	void ContentBrowserPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Content Browser");
-
-		auto path = Project::GetActive()->GetAssetDirectory();
-		if (!std::filesystem::exists(path))
+		
+		if (m_AssetDirectory != Project::GetActiveAssetDirectory()) {
+			m_AssetDirectory = Project::GetActiveAssetDirectory();
+			m_CurrentDirectory = m_AssetDirectory;
+		}
+		if (!std::filesystem::exists(m_AssetDirectory))
 		{
 			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "No Valid Asset Directory Found.");
 			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "	Set a valid asset directory in project settings");
 			ImGui::NewLine();
-			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), path.string().c_str());
+			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), m_AssetDirectory.string().c_str());
 			ImGui::End();
 			return;
 		}
@@ -50,10 +53,6 @@ namespace Rose {
 			columnCount = 1;
 
 		ImGui::Columns(columnCount, 0, false);
-
-		if (!std::filesystem::exists(m_CurrentDirectory)) {
-			m_CurrentDirectory = Project::GetActiveAssetDirectory();
-		}
 
 		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{

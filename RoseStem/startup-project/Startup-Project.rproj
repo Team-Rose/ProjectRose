@@ -1,6 +1,5 @@
-Project: Startup-Project
-Scenes:
-  - Scene: 0
-    Path: startup-project\assets\ScriptingTest.rose
-  - Scene: 1
-    Path: startup-project\assets\scenes\CircleTest.rose
+ProjectV2:
+  Name: Startup-Project
+  StartScene: "BalloonGame.rose"
+  AssetDirectory: assets
+  ScriptModulePath: Binaries\Startup-Project.dll

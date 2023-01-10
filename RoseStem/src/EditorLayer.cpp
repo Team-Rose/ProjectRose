@@ -12,9 +12,6 @@
 #include <Box2D/include/box2d/b2_body.h>
 #include <RoseRoot/Scene/SceneSerializer.h>
 
-//TODO (Sam) Major Refactor of the entire editor layer. It is a huge mess.
-//Maybe we should merge editor layer and scene manger back into one?
-
 namespace Rose {
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer")
@@ -32,6 +29,8 @@ namespace Rose {
 		m_IconStep = Texture2D::Create("Resources/Icons/StepButton.png");
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+
+		CommandHistory::Init();
 
 		auto commandLineArgs = Application::Get().GetCommandLineArgs();
 		if (commandLineArgs.Count > 1)
@@ -51,14 +50,10 @@ namespace Rose {
 			}
 			else {
 				NewProject();
-				Project::SaveActive(path);
 			}
 
 			NewScene();
 		}
-
-		CommandHistory::Init();
-		QuickReloadAppAssembly();
 	}
 
 	void EditorLayer::OnDetach()
@@ -172,6 +167,15 @@ namespace Rose {
 			}
 
 		}
+		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) {
+			// Draw selected entity outline 
+			if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity())
+			{
+				const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
+				Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(0.65, 0.039, 0.576, 1.0f));
+			}
+		}
+
 		Renderer::EndScene();
 	}
 
@@ -241,17 +245,17 @@ namespace Rose {
 				if (ImGui::MenuItem("Open Project"))
 					OpenProjectDialog();
 
+				ImGui::Separator();
+
 				if (ImGui::MenuItem("New Scene", "Ctrl+N"))
 					NewScene();
-
-				if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
-					OpenScene();
-
 				if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
 					SaveScene();
 
 				if (ImGui::MenuItem("Save Scene As", "Ctrl+Shift+S"))
 					SaveSceneAs();
+
+				ImGui::Separator();
 
 				if (ImGui::MenuItem("Exit")) Application::Get().Close();
 				ImGui::EndMenu();
@@ -484,6 +488,17 @@ namespace Rose {
 
 			break;
 		}
+		case Key::Delete:
+		{
+			if (Application::Get().GetImGuiLayer()->GetActiveWidgetID() == 0) {
+				Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+				if (selectedEntity) {
+					m_SceneHierarchyPanel.SetSelectedEntity({});
+					m_ActiveScene->DestroyEntity(selectedEntity);
+				}
+			}
+			break;
+		}
 		case Key::L:
 		{
 			m_SceneSettingsOpen = !m_SceneSettingsOpen;
@@ -557,17 +572,35 @@ namespace Rose {
 	{
 		ImGui::Begin("Project Settings");
 
-		char buffer[256];
-		memset(buffer, 0, sizeof(buffer));
-		std::strncpy(buffer, m_ProjectConfigBuffer.Name.c_str(), sizeof(buffer));
-		if (ImGui::InputText("##Name", buffer, sizeof(buffer)))
 		{
-			m_ProjectConfigBuffer.Name = std::string(buffer);
+			char buffer[256];
+			memset(buffer, 0, sizeof(buffer));
+			std::strncpy(buffer, m_ProjectConfigBuffer.Name.c_str(), sizeof(buffer));
+			if (ImGui::InputText("##Name", buffer, sizeof(buffer)))
+			{
+				m_ProjectConfigBuffer.Name = std::string(buffer);
+			}
 		}
-		ImGui::NewLine();
+		ImGui::Separator();
+		/*
+		{
+			ImGui::Text(m_ProjectConfigBuffer.AssetDirectory.string().c_str());
+			if (ImGui::Button("Set Asset Parth")) {
+				std::string filepath = FileDialogs::OpenFile("All Files\0*.*\0\0");
+				if (!filepath.empty()) {
+					RR_INFO(filepath.c_str());
+					//OpenProject(filepath);
+				}
+			}
+		}
+		ImGui::Separator(); */
 
-		if (ImGui::Button("Save Project Settings", { 200, 30 }))
+		ImGui::NewLine();
+		if (ImGui::Button("Save Project Settings", { 200, 30 })) {
+			Project::GetActive()->GetConfig() = m_ProjectConfigBuffer;
 			SaveProject();
+		}
+			
 		
 
 		if (ImGui::Button("Reset To Project Settings", { 200, 21 }))
@@ -756,6 +789,7 @@ namespace Rose {
 		}
 		AssetManager::SetAssetPath(Project::GetActiveAssetDirectory().string());
 		m_ProjectConfigBuffer = Project::GetActive()->GetConfig();
+		QuickReloadAppAssembly();
 		const std::filesystem::path assetPath = Project::GetActiveAssetDirectory();
 		auto startScenePath = assetPath / Project::GetActive()->GetConfig().StartScene;
 		OpenScene(startScenePath);
@@ -785,8 +819,13 @@ namespace Rose {
 	}
 	bool EditorLayer::SaveProject()
 	{
-		Project::SaveActive(Project::GetActiveProjectDirectory());
-		return true;
+		if (std::filesystem::exists(Project::GetActiveProjectDirectory())) {
+			return SaveProjectDialog();
+		}
+		else {
+			Project::SaveActive(Project::GetActiveProjectDirectory());
+			return true;
+		}
 	}
 
 	void EditorLayer::NewScene()
@@ -830,6 +869,9 @@ namespace Rose {
 
 			m_ActiveScene = m_EditorScene;
 			m_EditorScenePath = path;
+		}
+		else {
+			RR_WARN("Could not deserialize {}", path.string());
 		}
 
 	}

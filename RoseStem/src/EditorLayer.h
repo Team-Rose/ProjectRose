@@ -2,7 +2,6 @@
 #include "RoseRoot.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
-#include "Core/SceneManager.h"
 
 #include "RoseRoot/Renderer/EditorCamera.h"
 
@@ -70,7 +69,7 @@ namespace Rose {
 
 		//Gizmo
 		int m_GizmoType = -1;
-		bool m_GizmoLastFrame;
+		bool m_GizmoLastFrame = false;
 
 		EditorCamera m_EditorCamera;
 		Entity m_HoveredEntity;
@@ -81,7 +80,10 @@ namespace Rose {
 
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
-		glm::vec2 m_ViewportBounds[2];
+		glm::vec2 m_ViewportBounds[2] = {
+			{ 0.0f, 0.0f },
+			{ 0.0f, 0.0f }
+		};
 
 		std::string m_SceneName = "Untitled";
 		glm::vec2 m_Gravity = { 0.0, -9.8 };
