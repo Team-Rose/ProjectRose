@@ -11,6 +11,7 @@
 #include <mono/metadata/appdomain.h>
 #include <RoseRoot/Assets/AssetManager.h>
 
+#include "RoseRoot/Physics/2D/Physics2D.h"
 namespace Rose {
 
 	static std::unordered_map <MonoType*, std::function<bool(Entity)>> s_EntityHasComponentFuncs;
@@ -382,6 +383,41 @@ namespace Rose {
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
 		body->ApplyLinearImpulseToCenter(b2Vec2(impulse->x, impulse->y), wake);
 	}
+	static void RigidBody2DComponent_GetLinearVelocity(UUID entityID, glm::vec2* outLinearVelocity)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		const b2Vec2& linearVelocity = body->GetLinearVelocity();
+		*outLinearVelocity = glm::vec2(linearVelocity.x, linearVelocity.y);
+	}
+	static Rigidbody2DComponent::BodyType RigidBody2DComponent_GetType(UUID entityID)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return Utils::Rigidbody2DTypeFromBox2DBody(body->GetType());
+	}
+	static void RigidBody2DComponent_SetType(UUID entityID, Rigidbody2DComponent::BodyType bodyType)
+	{
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+
+		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->SetType(Utils::Rigidbody2DTypeToBox2DBody(bodyType));
+	}
+	
 #pragma endregion
 
 	template<typename ... Component>
@@ -456,10 +492,11 @@ namespace Rose {
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_SetRotation);
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulse);
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulseToCenter);
+		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_GetLinearVelocity);
+		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_GetType);
+		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_SetType);
 
 		RR_ADD_INTERNAL_CALL(Input_IsKeyDown);
 	}
 	
 }
-
- 
