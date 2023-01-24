@@ -11,11 +11,13 @@
 #include "Core/CommandHistory.h"
 #include <Box2D/include/box2d/b2_body.h>
 #include <RoseRoot/Scene/SceneSerializer.h>
+#include "RoseRoot/Renderer/Font.h"
 
 namespace Rose {
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer")
 	{
+		Font font("C:\\Windows\\fonts\\Arial.ttf");
 	}
 
 	void EditorLayer::OnAttach()

@@ -50,6 +50,9 @@ project "RoseRoot"
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.VulkanSDK}",
+
+		"%{IncludeDir.msdfgen}",
+		"%{IncludeDir.msdf_atlas_gen}",
 	}
 
 	links
@@ -58,6 +61,7 @@ project "RoseRoot"
 		"GLFW",
 		"Glad",
 		"ImGui",
+		"msdf-atlas-gen",
 		"yaml-cpp",
 		"opengl32.lib",
 

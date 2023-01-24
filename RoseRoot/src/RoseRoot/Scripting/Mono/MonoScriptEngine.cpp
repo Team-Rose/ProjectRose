@@ -318,7 +318,7 @@ namespace Rose {
 			if (s_MonoData->EntityScriptFields.find(entityID) != s_MonoData->EntityScriptFields.end()) {
 				const MonoScriptFieldMap& fieldMap = s_MonoData->EntityScriptFields.at(entityID);
 				for (const auto& [name, fieldInstane] : fieldMap) {
-					instance->SetFieldValueInternal(name, fieldInstane.m_Buffer);
+					instance->SetFieldValueInternal(name, fieldInstane.m_Buffer); 
 				}
 			}
 			

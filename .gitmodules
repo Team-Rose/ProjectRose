@@ -19,3 +19,6 @@
 [submodule "RoseRoot/vendor/yaml-cpp"]
 	path = RoseRoot/vendor/yaml-cpp
 	url = https://github.com/TheCherno/yaml-cpp
+[submodule "RoseRoot\\vendor\\msdf-atlas-gen"]
+	path = RoseRoot\\vendor\\msdf-atlas-gen
+	url = https://github.com/TheCherno/msdf-atlas-gen
