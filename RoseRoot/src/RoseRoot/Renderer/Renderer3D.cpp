@@ -57,13 +57,6 @@ namespace Rose
 		float pad5;
 	};
 
-	struct Vertex
-	{
-		glm::vec3 Position;
-		glm::vec3 Normal;
-		glm::vec2 TexCoord;
-	};
-
 	struct RendererData
 	{
 		Ref<VertexArray> CubeVertexArray;
@@ -208,9 +201,6 @@ namespace Rose
 		s_Data.CameraBuffer.ViewPos = translation;
 
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
-
-		//RenderCommand::CullFaceDisabled();
-
 	}
 
 	void Renderer3D::BeginScene(const EditorCamera& camera)
@@ -298,6 +288,12 @@ namespace Rose
 		s_Data.WhiteTexture->Bind(0);
 		s_Data.WhiteTexture->Bind(1);
 		Submit(shader, s_Data.CubeVertexArray, transform);
+	}
+	void Renderer3D::DrawMesh(Mesh& mesh, const glm::mat4& transform)
+	{
+		s_Data.WhiteTexture->Bind(0);
+		s_Data.WhiteTexture->Bind(1);
+		Submit(s_Data.StandardShader, mesh.GetVertexArray(), transform);
 	}
 
 	void Renderer3D::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform, const glm::vec4& color, int entityID)

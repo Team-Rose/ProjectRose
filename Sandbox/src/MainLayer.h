@@ -18,6 +18,8 @@ namespace Sandbox {
 
 		Rose::Ref<Rose::Texture2D> crate;
 		Rose::Ref<Rose::Texture2D> cratespec;
+
+		Rose::Mesh m_TestMesh;
 		Rose::EditorCamera m_EditorCamera;
 	};
 }

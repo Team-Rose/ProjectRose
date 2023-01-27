@@ -1,6 +1,3 @@
-
--- RoseRoot Dependencies
-
 VULKAN_SDK = os.getenv("VULKAN_SDK")
 
 IncludeDir = {}
@@ -21,6 +18,7 @@ IncludeDir["SPIRV_Cross"] = "%{wks.location}/RoseRoot/vendor/SPIRV-Cross"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
 IncludeDir["msdfgen"] = "%{wks.location}/RoseRoot/vendor/msdf-atlas-gen/msdfgen"
 IncludeDir["msdf_atlas_gen"] = "%{wks.location}/RoseRoot/vendor/msdf-atlas-gen/msdf-atlas-gen"
+IncludeDir["TinyGLTF"] = "%{wks.location}/RoseRoot/vendor/TinyGLTF/include"
 
 LibraryDir = {}
 
@@ -30,7 +28,6 @@ LibraryDir["Lua"] = "%{wks.location}/RoseRoot/vendor/lua"
 
 
 Library = {}
-
 Library["Lua"] = "%{LibraryDir.Lua}/lua54.lib"
 Library["Mono"] = "%{LibraryDir.Mono}/libmono-static-sgen.lib"
 

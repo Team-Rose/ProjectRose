@@ -21,7 +21,7 @@ project "RoseRoot"
 		"vendor/lua/sol/**.hpp",
 
 		"vendor/ImGuizmo/ImGuizmo.h",
-		"vendor/ImGuizmo/ImGuizmo.cpp"
+		"vendor/ImGuizmo/ImGuizmo.cpp",
 	}
 
 	defines
@@ -35,6 +35,7 @@ project "RoseRoot"
 		"src",
 		"vendor/spdlog/include",
 		"vendor/lua/sol",
+		"%{IncludeDir.Assimp}",
 		"%{IncludeDir.Box2D}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
@@ -42,6 +43,7 @@ project "RoseRoot"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
+		"%{IncludeDir.TinyGLTF}",
 
 		"%{IncludeDir.Lua}",
 		"%{IncludeDir.Mono}",
@@ -92,7 +94,7 @@ project "RoseRoot"
 		{
 			"%{Library.ShaderC_Debug}",
 			"%{Library.SPIRV_Cross_Debug}",
-			"%{Library.SPIRV_Cross_GLSL_Debug}"
+			"%{Library.SPIRV_Cross_GLSL_Debug}",
 		}
 
 	filter "configurations:Release"
@@ -104,7 +106,7 @@ project "RoseRoot"
 		{
 			"%{Library.ShaderC_Release}",
 			"%{Library.SPIRV_Cross_Release}",
-			"%{Library.SPIRV_Cross_GLSL_Release}"
+			"%{Library.SPIRV_Cross_GLSL_Release}",
 		}
 
 	filter "configurations:Dist"
@@ -116,5 +118,5 @@ project "RoseRoot"
 		{
 			"%{Library.ShaderC_Release}",
 			"%{Library.SPIRV_Cross_Release}",
-			"%{Library.SPIRV_Cross_GLSL_Release}"
+			"%{Library.SPIRV_Cross_GLSL_Release}",
 		}

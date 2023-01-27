@@ -1,0 +1,20 @@
+#pragma once
+#include "VertexArray.h"
+
+namespace Rose {
+	struct Vertex
+	{
+		glm::vec3 Position;
+		glm::vec3 Normal;
+		glm::vec2 TexCoord;
+	};
+
+	class Mesh {
+	public:
+		Mesh(const std::filesystem::path& path);
+
+		const Ref<VertexArray> GetVertexArray() { return m_VertexArray; }
+	private:
+		Ref<VertexArray> m_VertexArray;
+	};
+}
