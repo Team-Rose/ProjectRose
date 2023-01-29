@@ -35,7 +35,7 @@ project "RoseRoot"
 		"src",
 		"vendor/spdlog/include",
 		"vendor/lua/sol",
-		"%{IncludeDir.Assimp}",
+		"%{IncludeDir.assimp}",
 		"%{IncludeDir.Box2D}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
@@ -43,7 +43,6 @@ project "RoseRoot"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.TinyGLTF}",
 
 		"%{IncludeDir.Lua}",
 		"%{IncludeDir.Mono}",
@@ -95,6 +94,9 @@ project "RoseRoot"
 			"%{Library.ShaderC_Debug}",
 			"%{Library.SPIRV_Cross_Debug}",
 			"%{Library.SPIRV_Cross_GLSL_Debug}",
+
+			"%{Library.assimp_debug}",
+			"%{Library.zlib_debug}",
 		}
 
 	filter "configurations:Release"
@@ -107,6 +109,9 @@ project "RoseRoot"
 			"%{Library.ShaderC_Release}",
 			"%{Library.SPIRV_Cross_Release}",
 			"%{Library.SPIRV_Cross_GLSL_Release}",
+
+			"%{Library.assimp_release}",
+			"%{Library.zlib_release}",
 		}
 
 	filter "configurations:Dist"
@@ -119,4 +124,7 @@ project "RoseRoot"
 			"%{Library.ShaderC_Release}",
 			"%{Library.SPIRV_Cross_Release}",
 			"%{Library.SPIRV_Cross_GLSL_Release}",
+
+			"%{Library.assimp_release}",
+			"%{Library.zlib_release}",
 		}

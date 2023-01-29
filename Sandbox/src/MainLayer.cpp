@@ -2,7 +2,7 @@
 
 namespace Sandbox {
 	MainLayer::MainLayer()
-		: Layer("MainLayer"), m_TestMesh("Resources\\american_house.glb")
+		: Layer("MainLayer"), m_TestMesh("Resources\\3Ddata.fbx")
 	{
 
 	}

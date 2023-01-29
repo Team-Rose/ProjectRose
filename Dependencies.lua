@@ -1,6 +1,7 @@
 VULKAN_SDK = os.getenv("VULKAN_SDK")
 
 IncludeDir = {}
+IncludeDir["assimp"] = "%{wks.location}/RoseRoot/vendor/assimp/include"
 IncludeDir["filewatch"] = "%{wks.location}/RoseRoot/vendor/filewatch"
 IncludeDir["stb_image"] = "%{wks.location}/RoseRoot/vendor/stb_image"
 IncludeDir["yaml_cpp"] = "%{wks.location}/RoseRoot/vendor/yaml-cpp/include"
@@ -18,16 +19,21 @@ IncludeDir["SPIRV_Cross"] = "%{wks.location}/RoseRoot/vendor/SPIRV-Cross"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
 IncludeDir["msdfgen"] = "%{wks.location}/RoseRoot/vendor/msdf-atlas-gen/msdfgen"
 IncludeDir["msdf_atlas_gen"] = "%{wks.location}/RoseRoot/vendor/msdf-atlas-gen/msdf-atlas-gen"
-IncludeDir["TinyGLTF"] = "%{wks.location}/RoseRoot/vendor/TinyGLTF/include"
 
 LibraryDir = {}
 
+LibraryDir["assimp"] = "%{wks.location}/RoseRoot/vendor/assimp/lib"
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
 LibraryDir["Mono"] = "%{wks.location}/RoseRoot/vendor/mono/lib/%{cfg.buildcfg}"
 LibraryDir["Lua"] = "%{wks.location}/RoseRoot/vendor/lua"
 
 
 Library = {}
+Library["assimp_debug"] = "%{LibraryDir.assimp}/Debug/assimp-vc143-mtd.lib"
+Library["assimp_release"] = "%{LibraryDir.assimp}/Release/assimp-vc143-mt.lib"
+Library["zlib_debug"] = "%{LibraryDir.assimp}/Debug/zlibstaticd.lib"
+Library["zlib_release"] = "%{LibraryDir.assimp}/Release/zlibstatic.lib"
+
 Library["Lua"] = "%{LibraryDir.Lua}/lua54.lib"
 Library["Mono"] = "%{LibraryDir.Mono}/libmono-static-sgen.lib"
 

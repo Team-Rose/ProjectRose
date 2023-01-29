@@ -84,6 +84,23 @@ namespace Rose {
 		CircleRendererComponent(const CircleRendererComponent&) = default;
 	};
 
+	struct MeshRendererComponent
+	{
+		std::string Path = "no_texture";
+		uint32_t MeshIndex;
+		Ref<Mesh> Mesh;
+		std::string BaseTexturePath = "no_texture";
+		Ref<Texture2D> BaseTexture;
+		glm::vec4 Color{ 1.f,1.f,1.f,1.f };
+
+		float TilingFactor = 1.0f;
+
+		MeshRendererComponent() = default;
+		MeshRendererComponent(const MeshRendererComponent&) = default;
+		MeshRendererComponent(const glm::vec4& color)
+			: Color(color) {}
+	};
+
 	struct CameraComponent
 	{
 		SceneCamera Camera;

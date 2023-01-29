@@ -11,7 +11,7 @@ namespace Rose {
 
 	class Mesh {
 	public:
-		Mesh(const std::filesystem::path& path);
+		Mesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t> indices);
 
 		const Ref<VertexArray> GetVertexArray() { return m_VertexArray; }
 	private:

@@ -22,7 +22,7 @@ project "Sandbox"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.ImGuizmo}",
-		"%{IncludeDir.Lua}"
+		"%{IncludeDir.Lua}",
 	}
 
 	links
@@ -37,7 +37,7 @@ project "Sandbox"
 		defines "RR_DEBUG"
 		runtime "Debug"
 		symbols "on"
-		
+
 	filter "configurations:Release"
 		defines "RR_RELEASE"
 		runtime "Release"
