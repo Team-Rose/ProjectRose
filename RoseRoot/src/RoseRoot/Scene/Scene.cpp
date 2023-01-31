@@ -23,6 +23,7 @@
 #include "Box2D/b2_polygon_shape.h"
 #include "Box2D/b2_circle_shape.h"
 #include <RoseRoot/Core/Timer.h>
+#include <RoseRoot/Renderer/Renderer3D.h>
 
 namespace Rose
  {
@@ -399,6 +400,18 @@ namespace Rose
 				}
 			}
 
+			// Draw Meshes
+			{
+				auto view = m_Registry.view<TransformComponent, MeshRendererComponent>();
+				for (auto entity : view)
+				{
+					auto [transform, mrc] = view.get<TransformComponent, MeshRendererComponent>(entity);
+
+					if (mrc.Model != nullptr && mrc.Model->GetMeshes().size() > 0) {
+						Renderer3D::DrawMesh(transform.GetTransform(), mrc, (int)entity);
+					}
+				}
+			}
 			Renderer::EndScene();
 		}
 		m_SceneStats.RenderTime = renderTimer.ElapsedMillis();
@@ -474,6 +487,7 @@ namespace Rose
 		CopyComponentIfExists<TransformComponent>(newEntity, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
 		CopyComponentIfExists<CircleRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<MeshRendererComponent>(newEntity, entity);
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 		CopyComponentIfExists<Rigidbody2DComponent>(newEntity, entity);
@@ -595,6 +609,7 @@ namespace Rose
 
 		Renderer::GetGeometryFrameBuffer()->ClearAttachment(1, -1);
 
+		Renderer3D::DrawDirLight({ -0.2f, -1.0f, -0.3f });
 		{
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
@@ -614,6 +629,20 @@ namespace Rose
 				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
 			}
 		}
+
+		// Draw Meshes
+		{
+			auto view = m_Registry.view<TransformComponent, MeshRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, mrc] = view.get<TransformComponent, MeshRendererComponent>(entity);
+
+				if (mrc.Model != nullptr && mrc.Model->GetMeshes().size() > 0) {
+					Renderer3D::DrawMesh(transform.GetTransform(), mrc, (int)entity);
+				}
+			}
+		}
+
 		Renderer::EndScene();
 	}
 
@@ -655,7 +684,10 @@ namespace Rose
 	void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
 	{
 	}
-
+	template<>
+	void Scene::OnComponentAdded<MeshRendererComponent>(Entity entity, MeshRendererComponent& component)
+	{
+	}
 	template<>
 	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
 	{

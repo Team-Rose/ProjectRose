@@ -64,6 +64,7 @@ namespace Rose
 		Ref<VertexArray> FrameBufferVertexArray;
 		Ref<Shader> FrameBufferShader;
 		Ref<Texture2D> WhiteTexture;
+		Ref<Texture2D> BlackTexture;
 
 		struct CameraData
 		{
@@ -78,7 +79,7 @@ namespace Rose
 			glm::mat4 Transform;
 			glm::vec4 Color;
 
-			float Tile;
+			float Tile = 1.0f;
 			int EntityID;
 		};
 
@@ -174,6 +175,10 @@ namespace Rose
 		s_Data.WhiteTexture = Texture2D::Create(1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+
+		s_Data.BlackTexture = Texture2D::Create(1, 1);
+		uint32_t blackTextureData = 0x00000000;
+		s_Data.BlackTexture->SetData(&blackTextureData, sizeof(uint32_t));
 
 		s_Data.StandardShader = Shader::Create("Resources/DefaultShaders/Standard.glsl");
 
@@ -289,11 +294,22 @@ namespace Rose
 		s_Data.WhiteTexture->Bind(1);
 		Submit(shader, s_Data.CubeVertexArray, transform);
 	}
-	void Renderer3D::DrawMesh(Mesh& mesh, const glm::mat4& transform)
+	void Renderer3D::DrawMesh(const Ref<Mesh>& mesh, const glm::mat4& transform, const glm::vec4& color, int entityID)
 	{
 		s_Data.WhiteTexture->Bind(0);
 		s_Data.WhiteTexture->Bind(1);
-		Submit(s_Data.StandardShader, mesh.GetVertexArray(), transform);
+		Submit(s_Data.StandardShader, mesh->GetVertexArray(), transform, color, entityID);
+	}
+
+	void Renderer3D::DrawMesh(const glm::mat4& transform, MeshRendererComponent& src, int entityID)
+	{
+		if (src.BaseTexture)
+			src.BaseTexture->Bind(0);
+		else
+			s_Data.WhiteTexture->Bind(0);
+
+		s_Data.WhiteTexture->Bind(1);
+		Submit(s_Data.StandardShader, src.Model->GetMeshes()[src.MeshIndex]->GetVertexArray(), transform, src.Color, entityID);
 	}
 
 	void Renderer3D::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform, const glm::vec4& color, int entityID)

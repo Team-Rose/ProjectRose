@@ -26,6 +26,7 @@
 #include "RoseRoot/Scripting/Mono/MonoScriptEngine.h"
 
 #include "RoseRoot/Assets/AssetManager.h"
+#include "RoseRoot/Assets/Model.h"
 
 //Renderer
 #include "RoseRoot/Renderer/Renderer.h" 

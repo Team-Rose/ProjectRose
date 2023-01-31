@@ -4,6 +4,8 @@
 
 #include "RoseRoot/Core/UUID.h"
 #include "RoseRoot/Renderer/Texture.h"
+#include "RoseRoot/Renderer/Mesh.h"
+#include "RoseRoot/Assets/Model.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -86,19 +88,18 @@ namespace Rose {
 
 	struct MeshRendererComponent
 	{
-		std::string Path = "no_texture";
-		uint32_t MeshIndex;
-		Ref<Mesh> Mesh;
+		std::filesystem::path Path = "";
+		int MeshIndex = 0;
 		std::string BaseTexturePath = "no_texture";
-		Ref<Texture2D> BaseTexture;
 		glm::vec4 Color{ 1.f,1.f,1.f,1.f };
-
 		float TilingFactor = 1.0f;
+
+		//Render time Storage
+		Ref<Model> Model = nullptr;
+		Ref<Texture2D> BaseTexture = nullptr;
 
 		MeshRendererComponent() = default;
 		MeshRendererComponent(const MeshRendererComponent&) = default;
-		MeshRendererComponent(const glm::vec4& color)
-			: Color(color) {}
 	};
 
 	struct CameraComponent
@@ -201,7 +202,7 @@ namespace Rose {
 	};
 
 	using AllComponents =
-		ComponentGroup<TransformComponent, SpriteRendererComponent,CircleRendererComponent, CameraComponent,
+		ComponentGroup<TransformComponent, SpriteRendererComponent,CircleRendererComponent, MeshRendererComponent, CameraComponent,
 		LuaScriptComponent, MonoScriptComponent, NativeScriptComponent, 
 		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent>;
 }

@@ -7,7 +7,7 @@
 #include "Texture.h"
 #include "Framebuffer.h"
 #include "Mesh.h"
-
+#include "RoseRoot/Scene/Components.h"
 namespace Rose {
 
 	class Renderer3D {
@@ -22,7 +22,7 @@ namespace Rose {
 		static void EndScene();
 
 		static void ClearLightData();
-		static void DrawDirLight(const glm::vec3& direction, const glm::vec3& ambient = glm::vec3(0.02f, 0.02f, 0.02f), const glm::vec3& diffuse = glm::vec3(0.05f, 0.05f, 0.05f), const glm::vec3& specular = glm::vec3(0.05f, 0.05f, 0.05f));
+		static void DrawDirLight(const glm::vec3& direction, const glm::vec3& ambient = glm::vec3(0.02f, 0.02f, 0.02f), const glm::vec3& diffuse = glm::vec3(0.12f, 0.12f, 0.12f), const glm::vec3& specular = glm::vec3(0.05f, 0.05f, 0.05f));
 
 		static void DrawCube(const glm::mat4& transform = glm::mat4(1.0f), const glm::vec4& color = glm::vec4(1.0f));
 
@@ -30,7 +30,8 @@ namespace Rose {
 		static void DrawCube(const Ref<Texture2D>& texure, const Ref<Texture2D>& spec, const glm::mat4& transform = glm::mat4(1.0f), const float& tile = 1.0f, const glm::vec4& color = glm::vec4(1.0f));
 		static void DrawCube(const Ref<Shader>& shader, const glm::mat4& transform = glm::mat4(1.0f));
 
-		static void DrawMesh(Mesh& mesh, const glm::mat4& transform);
+		static void DrawMesh(const Ref<Mesh>& mesh, const glm::mat4& transform, const glm::vec4& color = glm::vec4(1.0f), int entityID = -1);
+		static void DrawMesh(const glm::mat4& transform, MeshRendererComponent& src, int entityID);
 
 		static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f), const glm::vec4& color = glm::vec4(1.0f), int entityID = -1);
 	};

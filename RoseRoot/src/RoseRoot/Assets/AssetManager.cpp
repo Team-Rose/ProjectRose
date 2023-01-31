@@ -1,11 +1,14 @@
 #include "rrpch.h"
 #include "AssetManager.h"
+#include <RoseRoot/Scene/Scene.h>
 
 namespace Rose {
 	struct AssetManagerData
 	{
 		std::string AssetPath;
 		std::unordered_map<std::string, Ref<Texture2D>> Textures;
+
+		std::unordered_map<std::filesystem::path, Ref<Model>> Models;
 	};
 
 	static AssetManagerData s_Data;
@@ -32,6 +35,7 @@ namespace Rose {
 	void AssetManager::SetAssetPath(const std::string& path)
 	{
 		s_Data.AssetPath = path;
+		ReloadAssets();
 	}
 	const std::string& AssetManager::GetAssetPath()
 	{
@@ -68,5 +72,35 @@ namespace Rose {
 		}
 
 		return loadedtexture;
+	}
+	bool AssetManager::LoadModel(const std::filesystem::path& path)
+	{
+		Ref<Model> model = CreateRef<Model>();
+		if (!model->ReadFile(path))
+			return false;
+		s_Data.Models[path] = model;
+		return true;
+	}
+	Ref<Model> AssetManager::GetModel(const std::filesystem::path& path)
+	{
+		auto& it = s_Data.Models.find(path);
+		if (it != s_Data.Models.end())
+			return it->second;
+		return nullptr;
+	}
+	Ref<Model> AssetManager::GetOrLoadModel(const std::filesystem::path& path)
+	{
+		if (!std::filesystem::exists(path))
+			return nullptr;
+
+		Ref<Model> model = GetModel(path);
+		if (!model) {
+			bool load = LoadModel(path);
+			if (!load)
+				return nullptr;
+			return GetModel(path);
+		}
+
+		return model;
 	}
 }

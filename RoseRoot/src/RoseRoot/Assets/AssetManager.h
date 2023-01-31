@@ -1,5 +1,7 @@
 #pragma once
 #include <RoseRoot/Renderer/Texture.h>
+#include <RoseRoot/Renderer/Mesh.h>
+#include "Model.h"
 
 namespace Rose {
 	class AssetManager {
@@ -15,5 +17,9 @@ namespace Rose {
 		static bool LoadTexture(const std::string& path);
 		static Ref<Texture2D> GetTexture(const std::string& path);
 		static Ref<Texture2D> GetOrLoadTexture(const std::string& path);
+
+		static bool LoadModel(const std::filesystem::path& path);
+		static Ref<Model> GetModel(const std::filesystem::path& path);
+		static Ref<Model> GetOrLoadModel(const std::filesystem::path& path);
 	};
 }

@@ -1,0 +1,95 @@
+Scene: 3D Test Scene
+Scene Settings:
+  Gravity2D: [0, -9.80000019]
+Entities:
+  - Entity: 11729489062026547925
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [3.29974222, 2.35899949, 3.18086886]
+      Rotation: [-0.14309226, 0.771566987, -0.0125523079]
+      Scale: [0.999999881, 1.00000024, 0.99999994]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 2233364827291716399
+    TagComponent:
+      Tag: BeePart3
+    RelationshipComponent:
+      Parent: 17661884799496954958
+    TransformComponent:
+      Translation: [0.287112743, 2.40480185, 0.0118076345]
+      Rotation: [-1.58722413, 0.229217663, -0.0836763233]
+      Scale: [0.800000012, 0.800000012, 0.800000012]
+    MeshRendererComponent:
+      Color: [1, 1, 1, 1]
+      Path: startup-project\assets\models\bee.blend
+      MeshIndex: 2
+      BaseTexturePath: no_texture
+  - Entity: 17631889671281937646
+    TagComponent:
+      Tag: BeePart2
+    RelationshipComponent:
+      Parent: 17661884799496954958
+    TransformComponent:
+      Translation: [0.287112743, 2.40480185, 0.0118076345]
+      Rotation: [-1.58722413, 0.229217663, -0.0836763233]
+      Scale: [0.800000012, 0.800000012, 0.800000012]
+    MeshRendererComponent:
+      Color: [1, 0.936708808, 0, 1]
+      Path: startup-project\assets\models\bee.blend
+      MeshIndex: 1
+      BaseTexturePath: no_texture
+  - Entity: 2898294701164676531
+    TagComponent:
+      Tag: BeePart1
+    RelationshipComponent:
+      Parent: 17661884799496954958
+    TransformComponent:
+      Translation: [0.287112743, 2.40480185, 0.0118076345]
+      Rotation: [-1.58722413, 0.229217663, -0.0836763233]
+      Scale: [0.800000012, 0.800000012, 0.800000012]
+    MeshRendererComponent:
+      Color: [0, 0, 0, 1]
+      Path: startup-project\assets\models\bee.blend
+      MeshIndex: 0
+      BaseTexturePath: no_texture
+  - Entity: 14970775517069901681
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Translation: [0, -2, 0]
+      Rotation: [0, 0, 0]
+      Scale: [20, 1, 20]
+    MeshRendererComponent:
+      Color: [0.0623135492, 0.561181426, 0.0213106722, 1]
+      Path: startup-project\assets\models\Test.glb
+      MeshIndex: 0
+      BaseTexturePath: no_texture
+  - Entity: 17661884799496954958
+    TagComponent:
+      Tag: Bee
+    TransformComponent:
+      Translation: [0.810682237, 1.78824282, -0.130870581]
+      Rotation: [0.329156488, -0.817838252, 4.3583384e-08]
+      Scale: [0.999999881, 1, 1]
+  - Entity: 3012950724662875116
+    TagComponent:
+      Tag: Flower
+    TransformComponent:
+      Translation: [-0.0312747061, -1.0886631, 1.39611983]
+      Rotation: [0, 0, 0]
+      Scale: [1.29999995, 1.29999995, 1.29999995]
+    MeshRendererComponent:
+      Color: [1, 1, 1, 1]
+      Path: startup-project\assets\models\Red_rose_SF.obj
+      MeshIndex: 0
+      BaseTexturePath: startup-project\assets\textures\Red_rose.png

@@ -301,6 +301,15 @@ namespace Rose {
 				}
 			}
 
+			if (!m_SelectionContext.HasComponent<MeshRendererComponent>())
+			{
+				if (ImGui::MenuItem("Mesh Renderer"))
+				{
+					m_SelectionContext.AddComponent<MeshRendererComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
 			if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
 			{
 				if (ImGui::MenuItem("Sprite Renderer"))
@@ -523,6 +532,59 @@ namespace Rose {
 
 					ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio);
 				}
+			});
+
+		DrawComponent<MeshRendererComponent>("Mesh Renderer", entity, [](MeshRendererComponent& component)
+			{
+				if(component.Model && component.Model->GetMeshes().size() > 0) {
+					ImGui::Text(component.Path.string().c_str());
+				}
+				else {
+					ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Missing or empty mesh!");
+				}
+				ImGui::Button("Set Mesh", ImVec2(120.0f, 0.0f));
+
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path meshPath = path;
+						component.Path = (Project::GetActiveAssetDirectory().string() + "\\" + meshPath.string());
+
+						if (Ref<Model> model = AssetManager::GetOrLoadModel(component.Path)) {
+							component.Model = model;
+							component.MeshIndex = 0;
+						}
+					}
+					ImGui::EndDragDropTarget();
+				}
+
+				if (component.Model && component.Model->GetMeshes().size() > 0) {
+					ImGui::DragInt("Mesh Index", &component.MeshIndex, 0.25f,0, component.Model->GetMeshes().size() - 1);
+					if (component.MeshIndex > component.Model->GetMeshes().size() - 1) {
+						component.MeshIndex = component.Model->GetMeshes().size() - 1;
+					}
+
+					//Base Texture
+					ImGui::Button("Base Texture", ImVec2(150.0f, 0.0f));
+
+					if (ImGui::BeginDragDropTarget())
+					{
+						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+						{
+							const wchar_t* path = (const wchar_t*)payload->Data;
+							std::filesystem::path texturePath = path;
+							component.BaseTexturePath = (Project::GetActiveAssetDirectory().string() + "\\" + texturePath.string());
+							if (Ref<Texture2D> texture = AssetManager::GetOrLoadTexture(component.BaseTexturePath))
+								component.BaseTexture = texture;
+						}
+						ImGui::EndDragDropTarget();
+					}
+
+					ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+				}
+
 			});
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)

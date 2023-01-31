@@ -242,6 +242,24 @@ namespace Rose
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 
+		if (entity.HasComponent<MeshRendererComponent>())
+		{
+			out << YAML::Key << "MeshRendererComponent";
+			out << YAML::BeginMap; // MeshRendererComponent
+
+			auto& meshRendererComponent = entity.GetComponent<MeshRendererComponent>();
+			out << YAML::Key << "Color" << YAML::Value << meshRendererComponent.Color;
+			if (!meshRendererComponent.Path.empty()) {
+				out << YAML::Key << "Path" << YAML::Value << meshRendererComponent.Path.string();
+				out << YAML::Key << "MeshIndex" << YAML::Value << meshRendererComponent.MeshIndex;
+			}
+			if (meshRendererComponent.Path != "no_texture") {
+				out << YAML::Key << "BaseTexturePath" << YAML::Value << meshRendererComponent.BaseTexturePath;
+			}
+
+			out << YAML::EndMap; // MeshRendererComponent
+		}
+
 		if (entity.HasComponent<CircleRendererComponent>())
 		{
 			out << YAML::Key << "CircleRendererComponent";
@@ -523,6 +541,28 @@ namespace Rose
 						src.Path = spriteRendererComponent["Path"].as<std::string>();
 						if (Ref<Texture2D> texture = AssetManager::GetOrLoadTexture(src.Path))
 							src.Texture = texture;
+					}
+				}
+
+				auto meshRendererComponent = entity["MeshRendererComponent"];
+				if (meshRendererComponent)
+				{
+					auto& src = deserializedEntity.AddComponent<MeshRendererComponent>();
+					src.Color = meshRendererComponent["Color"].as<glm::vec4>();
+
+					if (meshRendererComponent["Path"] && !meshRendererComponent["Path"].as<std::string>().empty()) {
+						src.Path = meshRendererComponent["Path"].as<std::string>();
+
+						if (Ref<Model> model = AssetManager::GetOrLoadModel(src.Path)) {
+							src.Model = model;
+							src.MeshIndex = meshRendererComponent["MeshIndex"] ? meshRendererComponent["MeshIndex"].as<int>() : 0;
+						}
+					}
+
+					if (meshRendererComponent["BaseTexturePath"] && meshRendererComponent["BaseTexturePath"].as<std::string>() != "no_texture") {
+						src.BaseTexturePath = meshRendererComponent["BaseTexturePath"].as<std::string>();
+						if (Ref<Texture2D> texture = AssetManager::GetOrLoadTexture(src.BaseTexturePath))
+							src.BaseTexture = texture;
 					}
 				}
 

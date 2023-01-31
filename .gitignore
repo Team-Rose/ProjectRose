@@ -26,3 +26,4 @@ Sandbox/RoseProfile-Startup.json
 .vscode/settings.json
 Sandbox/Resources/cache
 RoseStem/Resources/cache
+RoseRoot/vendor/assimp/lib/Debug/assimp-vc143-mtd.lib
