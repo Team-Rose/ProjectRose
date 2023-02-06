@@ -6,15 +6,22 @@
 #include <assimp/postprocess.h>
 #include <RoseRoot/Renderer/Mesh.h>
 #include "RoseRoot/Scene/Entity.h"
+#include <future>
+#include <RoseRoot/Core/Timer.h>
 namespace Rose {
 	Model::Model()
 	{
 	}
 	bool Model::ReadFile(const std::filesystem::path& path)
 	{
+		RR_PROFILE_FUNCTION();
+		float readFileTime, totalImportTime;
+		Timer readFileTimer, totalImportTimer;
+
 		Assimp::Importer importer;
 
 		const aiScene* scene = importer.ReadFile(path.string(), aiProcess_Triangulate);
+		readFileTime = readFileTimer.ElapsedMillis();
 
 		if (scene == nullptr) {
 			RR_CORE_ERROR("Failed to import mesh!: {}", importer.GetErrorString());
@@ -22,13 +29,13 @@ namespace Rose {
 		}
 
 		RR_CORE_TRACE("Importing external scene file ({}) '{}'", path.string(), scene->mName.C_Str());
-		RR_CORE_TRACE("{} Mesh(es)", scene->mNumMeshes);
 
 		for (uint32_t i = 0; i < scene->mNumMeshes; i++) {
 			const aiMesh* mesh = scene->mMeshes[i];
 
 			std::vector<Vertex> vertices;
 			std::vector<uint32_t> indices;
+			
 			for (uint32_t i = 0; i < mesh->mNumVertices; i++) {
 				Vertex vertex;
 				vertex.Position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
@@ -49,6 +56,9 @@ namespace Rose {
 			m_Meshes.push_back(rmesh);
 		}
 
+		totalImportTime = totalImportTimer.ElapsedMillis();
+
+		RR_CORE_TRACE("Imported: {} Mesh(es), Reading the file took: {}ms, Full import took {}ms", scene->mNumMeshes, readFileTime, totalImportTime);
 		return true;
 	}
 }

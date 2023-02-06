@@ -82,8 +82,8 @@ namespace Rose
 		frameBufferIndexBuffer = IndexBuffer::Create(frameBufferIndices, sizeof(frameBufferIndices) / sizeof(uint32_t));
 		s_Data.FrameBufferVertexArray->SetIndexBuffer(frameBufferIndexBuffer);
 
-		s_Data.CompositeShader = Shader::Create("Resources/DefaultShaders/Composites.glsl"); 
-		s_Data.FinalPassShader = Shader::Create("Resources/DefaultShaders/DrawTexture.glsl");
+		s_Data.CompositeShader = Shader::Create("Resources/Shaders/Composites.glsl"); 
+		s_Data.FinalPassShader = Shader::Create("Resources/Shaders/DrawTexture.glsl");
 
 		RenderCommand::Init();
 		Renderer2D::Init();

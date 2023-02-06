@@ -15,18 +15,21 @@ namespace Rose {
 
 	void AssetManager::Init()
 	{
-		
+		RR_PROFILE_FUNCTION();
 	}
 	void AssetManager::ShutDown()
 	{
+		RR_PROFILE_FUNCTION();
 		s_Data = AssetManagerData{};
 	}
 	void AssetManager::UnloadAssets()
 	{
+		RR_PROFILE_FUNCTION();
 		s_Data.Textures.clear();
 	}
 	void AssetManager::ReloadAssets()
 	{
+		RR_PROFILE_FUNCTION();
 		for (auto& [path, texture] : s_Data.Textures) {
 			if(!LoadTexture(path))
 				s_Data.Textures.erase(path);
@@ -34,16 +37,19 @@ namespace Rose {
 	}
 	void AssetManager::SetAssetPath(const std::string& path)
 	{
+		RR_PROFILE_FUNCTION();
 		s_Data.AssetPath = path;
 		ReloadAssets();
 	}
 	const std::string& AssetManager::GetAssetPath()
 	{
+		RR_PROFILE_FUNCTION();
 		return s_Data.AssetPath;
 	}
 
 	bool AssetManager::LoadTexture(const std::string& path)
 	{
+		RR_PROFILE_FUNCTION();
 		Ref<Texture2D> loadedtexture = Texture2D::Create(path);
 		if (!loadedtexture->IsLoaded())
 			return false;
@@ -53,6 +59,7 @@ namespace Rose {
 	}
 	Ref<Texture2D> AssetManager::GetTexture(const std::string& path)
 	{
+		RR_PROFILE_FUNCTION();
 		auto& it = s_Data.Textures.find(path);
 		if (it != s_Data.Textures.end())
 			return it->second;
@@ -60,6 +67,7 @@ namespace Rose {
 	}
 	Ref<Texture2D> AssetManager::GetOrLoadTexture(const std::string& path)
 	{
+		RR_PROFILE_FUNCTION();
 		if (!std::filesystem::exists(path))
 			return nullptr;
 
@@ -75,6 +83,7 @@ namespace Rose {
 	}
 	bool AssetManager::LoadModel(const std::filesystem::path& path)
 	{
+		RR_PROFILE_FUNCTION();
 		Ref<Model> model = CreateRef<Model>();
 		if (!model->ReadFile(path))
 			return false;
@@ -83,6 +92,7 @@ namespace Rose {
 	}
 	Ref<Model> AssetManager::GetModel(const std::filesystem::path& path)
 	{
+		RR_PROFILE_FUNCTION();
 		auto& it = s_Data.Models.find(path);
 		if (it != s_Data.Models.end())
 			return it->second;
@@ -90,6 +100,7 @@ namespace Rose {
 	}
 	Ref<Model> AssetManager::GetOrLoadModel(const std::filesystem::path& path)
 	{
+		RR_PROFILE_FUNCTION();
 		if (!std::filesystem::exists(path))
 			return nullptr;
 

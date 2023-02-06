@@ -160,6 +160,7 @@ namespace Rose
 
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
+		RR_PROFILE_FUNCTION();
 		RR_CORE_ASSERT(entity.HasComponent<IDComponent>());
 
 		out << YAML::BeginMap; // Entity
@@ -398,6 +399,7 @@ namespace Rose
 
 	void SceneSerializer::Serialize(const std::string& filepath)
 	{
+		RR_PROFILE_FUNCTION();
 		YAML::Emitter out;
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene" << YAML::Value << m_Scene->m_SceneSettings.Name.c_str();
@@ -433,6 +435,7 @@ namespace Rose
 
 	bool SceneSerializer::Deserialize(const std::string& filepath, const std::string& assetPath)
 	{
+		RR_PROFILE_FUNCTION();
 		YAML::Node data;
 		try
 		{
@@ -455,6 +458,7 @@ namespace Rose
 		auto sceneSettings = data["Scene Settings"];
 		if (sceneSettings)
 		{
+			RR_PROFILE_SCOPE("SceneSerializer::Deserialize Scene Settings");
 			m_Scene->m_SceneSettings.Name = sceneName;
 
 			auto Gravity2D = sceneSettings["Gravity2D"];
@@ -471,11 +475,13 @@ namespace Rose
 		auto entities = data["Entities"];
 		if (entities)
 		{
+			RR_PROFILE_SCOPE("SceneSerializer::Deserialize Entities");
 			std::unordered_map<UUID, std::vector<UUID>> parentsToChildren;
 
 			for (auto entity : entities)
 			{
 				uint64_t uuid = entity["Entity"].as<uint64_t>();
+				RR_PROFILE_SCOPE("SceneSerializer::Deserialize Entity");
 
 				std::string name;
 				auto tagComponent = entity["TagComponent"];

@@ -180,7 +180,7 @@ namespace Rose
 		uint32_t blackTextureData = 0x00000000;
 		s_Data.BlackTexture->SetData(&blackTextureData, sizeof(uint32_t));
 
-		s_Data.StandardShader = Shader::Create("Resources/DefaultShaders/Standard.glsl");
+		s_Data.StandardShader = Shader::Create("Resources/Shaders/Standard.glsl");
 
 		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
 		s_Data.ObjectAndSceneDataUniformBuffer = UniformBuffer::Create(sizeof(RendererData::ObjectAndSceneData), 1);
@@ -219,11 +219,13 @@ namespace Rose
 
 	void Renderer3D::EndScene()
 	{
+		RR_PROFILE_FUNCTION();
 		ClearLightData();
 	}
 
 	void Renderer3D::ClearLightData()
 	{
+		RR_PROFILE_FUNCTION();
 		s_Data.LightDataBuffer.DirLight.direction = { 0.0f,0.0f,0.0f };
 		s_Data.LightDataBuffer.DirLight.ambient = { 0.0f,0.0f,0.0f };
 		s_Data.LightDataBuffer.DirLight.diffuse = { 0.0f,0.0f,0.0f };
@@ -259,6 +261,7 @@ namespace Rose
 
 	void Renderer3D::DrawDirLight(const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular)
 	{
+		RR_PROFILE_FUNCTION();
 		s_Data.LightDataBuffer.DirLight.direction = direction;
 		s_Data.LightDataBuffer.DirLight.ambient = ambient;
 		s_Data.LightDataBuffer.DirLight.diffuse = diffuse;
@@ -267,6 +270,7 @@ namespace Rose
 
 	void Renderer3D::DrawCube(const glm::mat4& transform, const glm::vec4& color)
 	{
+		RR_PROFILE_FUNCTION();
 		s_Data.WhiteTexture->Bind(0);
 		s_Data.WhiteTexture->Bind(1);
 		Submit(s_Data.StandardShader, s_Data.CubeVertexArray, transform, color);
@@ -274,6 +278,7 @@ namespace Rose
 
 	void Renderer3D::DrawCube(const Ref<Texture2D>& texure, const glm::mat4& transform, const float& tile, const glm::vec4& color)
 	{
+		RR_PROFILE_FUNCTION();
 		texure->Bind(0);
 		s_Data.WhiteTexture->Bind(1);
 		s_Data.ObjectAndSceneDataBuffer.Tile = tile;
@@ -282,6 +287,7 @@ namespace Rose
 
 	void Renderer3D::DrawCube(const Ref<Texture2D>& texure, const Ref<Texture2D>& spec, const glm::mat4& transform, const float& tile, const glm::vec4& color)
 	{
+		RR_PROFILE_FUNCTION();
 		texure->Bind(0);
 		spec->Bind(1);
 		s_Data.ObjectAndSceneDataBuffer.Tile = tile;
@@ -290,12 +296,14 @@ namespace Rose
 
 	void Renderer3D::DrawCube(const Ref<Shader>& shader, const glm::mat4& transform)
 	{
+		RR_PROFILE_FUNCTION();
 		s_Data.WhiteTexture->Bind(0);
 		s_Data.WhiteTexture->Bind(1);
 		Submit(shader, s_Data.CubeVertexArray, transform);
 	}
 	void Renderer3D::DrawMesh(const Ref<Mesh>& mesh, const glm::mat4& transform, const glm::vec4& color, int entityID)
 	{
+		RR_PROFILE_FUNCTION();
 		s_Data.WhiteTexture->Bind(0);
 		s_Data.WhiteTexture->Bind(1);
 		Submit(s_Data.StandardShader, mesh->GetVertexArray(), transform, color, entityID);
@@ -303,6 +311,7 @@ namespace Rose
 
 	void Renderer3D::DrawMesh(const glm::mat4& transform, MeshRendererComponent& src, int entityID)
 	{
+		RR_PROFILE_FUNCTION();
 		if (src.BaseTexture)
 			src.BaseTexture->Bind(0);
 		else
@@ -314,6 +323,7 @@ namespace Rose
 
 	void Renderer3D::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform, const glm::vec4& color, int entityID)
 	{
+		RR_PROFILE_FUNCTION();
 		RenderCommand::CullFaceBack();
 		shader->Bind();
 

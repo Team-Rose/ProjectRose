@@ -163,9 +163,9 @@ namespace Rose
 		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
 			samplers[i] = i;
 
-		s_Data.QuadShader = Shader::Create("Resources/DefaultShaders/Default2D.glsl");
-		s_Data.CircleShader = Shader::Create("Resources/DefaultShaders/Renderer2D_Circle.glsl");
-		s_Data.LineShader = Shader::Create("Resources/DefaultShaders/Renderer2D_Line.glsl");
+		s_Data.QuadShader = Shader::Create("Resources/Shaders/Default2D.glsl");
+		s_Data.CircleShader = Shader::Create("Resources/Shaders/Renderer2D_Circle.glsl");
+		s_Data.LineShader = Shader::Create("Resources/Shaders/Renderer2D_Line.glsl");
 
 		// Set first texture slot to 0
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
