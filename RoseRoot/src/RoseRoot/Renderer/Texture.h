@@ -6,11 +6,27 @@
 
 namespace Rose
  {
+	enum class ImageFormat
+	{
+		None = 0,
+		R8,
+		RGB8,
+		RGBA8,
+		RGBA32F,
+	};
+	struct Texture2DSpecification
+	{
+		uint32_t Width = 1, Height = 1;
+		ImageFormat Format = ImageFormat::RGBA8;
+		bool GenerateMips = true;
+	};
 
 	class Texture
 	{
 	public:
 		virtual ~Texture() = default;
+
+		virtual const Texture2DSpecification& GetSpecification() const = 0;
 
 		virtual uint32_t GetWidth() const = 0;
 		virtual uint32_t GetHeight() const = 0;
@@ -28,7 +44,7 @@ namespace Rose
 	class Texture2D : public Texture
 	{
 	public:
-		static Ref<Texture2D> Create(uint32_t width, uint32_t height);
+		static Ref<Texture2D> Create(const Texture2DSpecification& specification);
 		static Ref<Texture2D> Create(const std::string& path);
 	};
 }
