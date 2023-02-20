@@ -614,6 +614,13 @@ namespace Rose
 				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
 			}
 		}
+
+		Renderer2D::DrawString(
+R"(
+Hello, welcome to Rose!
+Rose is a WIP game engine with a focus on not wasting your time.
+Things should happen instantly allowing for quick changes and fast development.)"
+, Font::GetDefault(), glm::mat4(1.0f), glm::vec4(1.0f));
 		Renderer::EndScene();
 	}
 

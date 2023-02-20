@@ -14,11 +14,9 @@
 #include "RoseRoot/Renderer/Font.h"
 
 namespace Rose {
-	static Font* s_Font;
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer")
 	{
-		s_Font = new Font("C:\\Windows\\fonts\\Arial.ttf");
 	}
 
 	void EditorLayer::OnAttach()
@@ -312,7 +310,7 @@ namespace Rose {
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
-		ImGui::Image((ImTextureID)s_Font->GetAtlastTexture()->GetRendererID(), { 512, 512 }, {0, 1}, { 1, 0});
+		ImGui::Image((ImTextureID)Font::GetDefault()->GetAtlasTexture()->GetRendererID(), {512, 512}, {0, 1}, {1, 0});
 		ImGui::End();
 
 		m_SceneHierarchyPanel.OnImGuiRender();
