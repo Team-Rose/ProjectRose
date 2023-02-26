@@ -84,6 +84,16 @@ namespace Rose {
 		CircleRendererComponent(const CircleRendererComponent&) = default;
 	};
 
+	struct TextRendererComponent
+	{
+		std::string Text = "";
+		glm::vec4 Color{ 1.f,1.f,1.f,1.f };
+
+		TextRendererComponent() = default;
+		TextRendererComponent(const TextRendererComponent&) = default;
+	};
+
+
 	struct CameraComponent
 	{
 		SceneCamera Camera;
@@ -184,7 +194,7 @@ namespace Rose {
 	};
 
 	using AllComponents =
-		ComponentGroup<TransformComponent, SpriteRendererComponent,CircleRendererComponent, CameraComponent,
+		ComponentGroup<TransformComponent, SpriteRendererComponent,CircleRendererComponent, TextRendererComponent, CameraComponent,
 		LuaScriptComponent, MonoScriptComponent, NativeScriptComponent, 
 		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent>;
 }

@@ -44,9 +44,10 @@ namespace Rose
 		static void DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityID = -1);
 		static void DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID = -1);
 
+		static void DrawString(const std::string& string, Ref<Font> font,const glm::mat4& transform, const glm::vec4 & color, int entityID = -1);
+		
 		static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID);
-
-		static void DrawString(const std::string& string, Ref<Font> font,const glm::mat4& transform, const glm::vec4 & color);
+		static void DrawTextRendererComponent(const glm::mat4& transform, TextRendererComponent& src, int entityID);
 
 		static float GetLineWidth();
 		static void SetLineWidth(float width);

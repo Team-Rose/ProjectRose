@@ -319,6 +319,15 @@ namespace Rose {
 				}
 			}
 
+			if (!m_SelectionContext.HasComponent<TextRendererComponent>())
+			{
+				if (ImGui::MenuItem("Text Renderer"))
+				{
+					m_SelectionContext.AddComponent<TextRendererComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
 			if (!m_SelectionContext.HasComponent<Rigidbody2DComponent>())
 			{
 				if (ImGui::MenuItem("Rigidbody 2D"))
@@ -552,6 +561,20 @@ namespace Rose {
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 				ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f);
 				ImGui::DragFloat("Fade", &component.Fade, 0.0025f, 0.0f, 1.0f);
+			});
+
+		DrawComponent<TextRendererComponent>("Text Renderer", entity, [](TextRendererComponent& component)
+			{
+				char buffer[256];
+				memset(buffer, 0, sizeof(buffer));
+				std::strncpy(buffer, component.Text.c_str(), sizeof(buffer));
+				if (ImGui::InputText("Text", buffer, sizeof(buffer)))
+				{
+					component.Text = std::string(buffer);
+
+				}
+				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+
 			});
 
 

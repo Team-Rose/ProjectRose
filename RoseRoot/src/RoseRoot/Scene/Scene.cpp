@@ -474,6 +474,7 @@ namespace Rose
 		CopyComponentIfExists<TransformComponent>(newEntity, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
 		CopyComponentIfExists<CircleRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<TextRendererComponent>(newEntity, entity);
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 		CopyComponentIfExists<Rigidbody2DComponent>(newEntity, entity);
@@ -615,12 +616,15 @@ namespace Rose
 			}
 		}
 
-		Renderer2D::DrawString(
-R"(
-Hello, welcome to Rose!
-Rose is a WIP game engine with a focus on not wasting your time.
-Things should happen instantly allowing for quick changes and fast development.)"
-, Font::GetDefault(), glm::mat4(1.0f), glm::vec4(1.0f));
+		{
+			auto view = m_Registry.view<TransformComponent, TextRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, text] = view.get<TransformComponent, TextRendererComponent>(entity);
+				Renderer2D::DrawTextRendererComponent(transform.GetTransform(), text, (int)entity);
+			}
+		}
+
 		Renderer::EndScene();
 	}
 
@@ -660,6 +664,11 @@ Things should happen instantly allowing for quick changes and fast development.)
 
 	template<>
 	void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<TextRendererComponent>(Entity entity, TextRendererComponent& component)
 	{
 	}
 
