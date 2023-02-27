@@ -646,7 +646,9 @@ namespace Rose
 			for (auto entity : view)
 			{
 				auto [transform, text] = view.get<TransformComponent, TextRendererComponent>(entity);
-				Renderer2D::DrawTextComponent(transform.GetTransform() ,text ,(int)entity);
+				Renderer2D::DrawTextComponent(transform.GetTransform(), text, (int)entity);
+			}
+		}
 		// Draw Meshes
 		{
 			auto view = m_Registry.view<TransformComponent, MeshRendererComponent>();

@@ -176,7 +176,7 @@ namespace Rose
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
-		s_Data.BlackTexture = Texture2D::Create(1, 1);
+		s_Data.BlackTexture = Texture2D::Create(Texture2DSpecification());
 		uint32_t blackTextureData = 0x00000000;
 		s_Data.BlackTexture->SetData(&blackTextureData, sizeof(uint32_t));
 
