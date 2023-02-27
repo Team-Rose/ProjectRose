@@ -8,10 +8,12 @@ Intermediates/
 
 # Visual Studio files and folder
 .vs/
+.idea/
 **.sln
 **.vcxproj
 **.vcxproj.filters
 **.vcxproj.user
+**/Makefile
 
 # Directories
 RoseRoot/vendor/VulkanSDK

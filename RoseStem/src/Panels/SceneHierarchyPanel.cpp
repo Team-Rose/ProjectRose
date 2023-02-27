@@ -2,6 +2,7 @@
 
 #include <ImGui/imgui.h>
 #include <imgui/imgui_internal.h>
+#include <imgui/misc/cpp/imgui_stdlib.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -565,15 +566,11 @@ namespace Rose {
 
 		DrawComponent<TextRendererComponent>("Text Renderer", entity, [](TextRendererComponent& component)
 			{
-				char buffer[256];
-				memset(buffer, 0, sizeof(buffer));
-				std::strncpy(buffer, component.Text.c_str(), sizeof(buffer));
-				if (ImGui::InputText("Text", buffer, sizeof(buffer)))
-				{
-					component.Text = std::string(buffer);
-
-				}
+				ImGui::Text("Text: ");
+				ImGui::InputTextMultiline("##Text", &component.Text);
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+				ImGui::DragFloat("Kerning", &component.Kerning, 0.025f, 0.0f, 1.0f);
+				ImGui::DragFloat("LineSpacing", &component.LineSpacing, 0.025f);
 
 			});
 

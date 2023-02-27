@@ -4,6 +4,7 @@
 
 #include "RoseRoot/Core/UUID.h"
 #include "RoseRoot/Renderer/Texture.h"
+#include "RoseRoot/Renderer/Font.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -20,6 +21,9 @@ namespace Rose {
 		IDComponent() = default;
 		IDComponent(const IDComponent&) = default;
 	};
+
+	//TODO Change name and refactor TagComponent
+	//Possibly make it sorta "EngineInfo" component that has a name, tags, and active or not
 	struct TagComponent
 	{
 		std::string Tag;
@@ -87,6 +91,9 @@ namespace Rose {
 	struct TextRendererComponent
 	{
 		std::string Text = "";
+		Ref<Font> FontAsset = Font::GetDefault();
+		float Kerning = 0.0f;
+		float LineSpacing = 0.0f;
 		glm::vec4 Color{ 1.f,1.f,1.f,1.f };
 
 		TextRendererComponent() = default;

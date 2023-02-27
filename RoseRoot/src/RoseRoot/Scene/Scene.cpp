@@ -399,6 +399,16 @@ namespace Rose
 				}
 			}
 
+			// Draw text
+			{
+				auto view = m_Registry.view<TransformComponent, TextRendererComponent>();
+				for (auto entity : view)
+				{
+					auto [transform, text] = view.get<TransformComponent, TextRendererComponent>(entity);
+					Renderer2D::DrawTextComponent(transform.GetTransform(), text, (int)entity);
+				}
+			}
+
 			Renderer::EndScene();
 		}
 		m_SceneStats.RenderTime = renderTimer.ElapsedMillis();
@@ -550,7 +560,7 @@ namespace Rose
 				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
 
 				b2PolygonShape boxShape;
-				boxShape.SetAsBox(bc2d.Size.x * transform.Scale.x, bc2d.Size.y * transform.Scale.y);
+				boxShape.SetAsBox(bc2d.Size.x * transform.Scale.x, bc2d.Size.y * transform.Scale.y, b2Vec2(bc2d.Offset.x, bc2d.Offset.y), 0.0f);
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &boxShape;
@@ -621,7 +631,7 @@ namespace Rose
 			for (auto entity : view)
 			{
 				auto [transform, text] = view.get<TransformComponent, TextRendererComponent>(entity);
-				Renderer2D::DrawTextRendererComponent(transform.GetTransform(), text, (int)entity);
+				Renderer2D::DrawTextComponent(transform.GetTransform() ,text ,(int)entity);
 			}
 		}
 
