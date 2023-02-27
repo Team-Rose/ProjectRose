@@ -400,6 +400,16 @@ namespace Rose
 				}
 			}
 
+			// Draw text
+			{
+				auto view = m_Registry.view<TransformComponent, TextRendererComponent>();
+				for (auto entity : view)
+				{
+					auto [transform, text] = view.get<TransformComponent, TextRendererComponent>(entity);
+					Renderer2D::DrawTextComponent(transform.GetTransform(), text, (int)entity);
+				}
+			}
+
 			// Draw Meshes
 			{
 				auto view = m_Registry.view<TransformComponent, MeshRendererComponent>();
@@ -487,6 +497,7 @@ namespace Rose
 		CopyComponentIfExists<TransformComponent>(newEntity, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
 		CopyComponentIfExists<CircleRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<TextRendererComponent>(newEntity, entity);
 		CopyComponentIfExists<MeshRendererComponent>(newEntity, entity);
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
@@ -563,7 +574,7 @@ namespace Rose
 				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
 
 				b2PolygonShape boxShape;
-				boxShape.SetAsBox(bc2d.Size.x * transform.Scale.x, bc2d.Size.y * transform.Scale.y);
+				boxShape.SetAsBox(bc2d.Size.x * transform.Scale.x, bc2d.Size.y * transform.Scale.y, b2Vec2(bc2d.Offset.x, bc2d.Offset.y), 0.0f);
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &boxShape;
@@ -630,6 +641,12 @@ namespace Rose
 			}
 		}
 
+		{
+			auto view = m_Registry.view<TransformComponent, TextRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, text] = view.get<TransformComponent, TextRendererComponent>(entity);
+				Renderer2D::DrawTextComponent(transform.GetTransform() ,text ,(int)entity);
 		// Draw Meshes
 		{
 			auto view = m_Registry.view<TransformComponent, MeshRendererComponent>();
@@ -684,6 +701,11 @@ namespace Rose
 	void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
 	{
 	}
+	template<>
+	void Scene::OnComponentAdded<TextRendererComponent>(Entity entity, TextRendererComponent& component)
+	{
+	}
+
 	template<>
 	void Scene::OnComponentAdded<MeshRendererComponent>(Entity entity, MeshRendererComponent& component)
 	{

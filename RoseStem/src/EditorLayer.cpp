@@ -16,7 +16,6 @@ namespace Rose {
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer")
 	{
-		Font font("C:\\Windows\\fonts\\Arial.ttf");
 	}
 
 	void EditorLayer::OnAttach()
@@ -129,45 +128,43 @@ namespace Rose {
 
 		if (m_ShowPhysicsColliders)
 		{
-			if (m_ShowPhysicsColliders)
+			// Box Colliders
 			{
-				// Box Colliders
+				auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+				for (auto entity : view)
 				{
-					auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
-					for (auto entity : view)
-					{
-						auto [tc, bc2d] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
+					auto [tc, bc2d] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
 
-						glm::vec3 translation = tc.Translation + glm::vec3(bc2d.Offset, 0.001f);
-						glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
+					glm::vec3 translation = tc.Translation + glm::vec3(bc2d.Offset, 0.001f);
+					glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
 
-						glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)
-							* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
-							* glm::scale(glm::mat4(1.0f), scale);
+					glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
+						* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+						* glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, 0.001f))
+						* glm::scale(glm::mat4(1.0f), scale);
 
-						Renderer2D::DrawRect(transform, glm::vec4(0.2f, 0.2f, 1, 1));
-					}
-				}
-
-				// Circle Colliders
-				{
-					auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
-					for (auto entity : view)
-					{
-						auto [tc, cc2d] = view.get<TransformComponent, CircleCollider2DComponent>(entity);
-
-						glm::vec3 translation = tc.Translation + glm::vec3(cc2d.Offset, 0.001f);
-						glm::vec3 scale = tc.Scale * glm::vec3(cc2d.Radius * 2.0f);
-
-						glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)
-							* glm::scale(glm::mat4(1.0f), scale);
-
-						Renderer2D::DrawCircle(transform, glm::vec4(0.2f, 0.2f, 1, 1), 0.05f);
-					}
+					Renderer2D::DrawRect(transform, glm::vec4(0.2f, 0.2f, 1, 1));
 				}
 			}
 
+			// Circle Colliders
+			{
+				auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
+				for (auto entity : view)
+				{
+					auto [tc, cc2d] = view.get<TransformComponent, CircleCollider2DComponent>(entity);
+
+					glm::vec3 translation = tc.Translation + glm::vec3(cc2d.Offset, 0.001f);
+					glm::vec3 scale = tc.Scale * glm::vec3(cc2d.Radius * 2.0f);
+
+					glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)
+						* glm::scale(glm::mat4(1.0f), scale);
+
+					Renderer2D::DrawCircle(transform, glm::vec4(0.2f, 0.2f, 1, 1), 0.05f);
+				}
+			}
 		}
+		
 		if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) {
 			// Draw selected entity outline 
 			if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity())
@@ -310,6 +307,7 @@ namespace Rose {
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
+		ImGui::Image((ImTextureID)Font::GetDefault()->GetAtlasTexture()->GetRendererID(), {512, 512}, {0, 1}, {1, 0});
 		ImGui::End();
 
 		m_SceneHierarchyPanel.OnImGuiRender();

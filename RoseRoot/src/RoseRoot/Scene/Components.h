@@ -4,8 +4,7 @@
 
 #include "RoseRoot/Core/UUID.h"
 #include "RoseRoot/Renderer/Texture.h"
-#include "RoseRoot/Renderer/Mesh.h"
-#include "RoseRoot/Assets/Model.h"
+#include "RoseRoot/Renderer/Font.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -22,6 +21,9 @@ namespace Rose {
 		IDComponent() = default;
 		IDComponent(const IDComponent&) = default;
 	};
+
+	//TODO Change name and refactor TagComponent
+	//Possibly make it sorta "EngineInfo" component that has a name, tags, and active or not
 	struct TagComponent
 	{
 		std::string Tag;
@@ -86,21 +88,18 @@ namespace Rose {
 		CircleRendererComponent(const CircleRendererComponent&) = default;
 	};
 
-	struct MeshRendererComponent
+	struct TextRendererComponent
 	{
-		std::filesystem::path Path = "";
-		int MeshIndex = 0;
-		std::string BaseTexturePath = "no_texture";
+		std::string Text = "";
+		Ref<Font> FontAsset = Font::GetDefault();
+		float Kerning = 0.0f;
+		float LineSpacing = 0.0f;
 		glm::vec4 Color{ 1.f,1.f,1.f,1.f };
-		float TilingFactor = 1.0f;
 
-		//Render time Storage
-		Ref<Model> Model = nullptr;
-		Ref<Texture2D> BaseTexture = nullptr;
-
-		MeshRendererComponent() = default;
-		MeshRendererComponent(const MeshRendererComponent&) = default;
+		TextRendererComponent() = default;
+		TextRendererComponent(const TextRendererComponent&) = default;
 	};
+
 
 	struct CameraComponent
 	{
@@ -202,7 +201,7 @@ namespace Rose {
 	};
 
 	using AllComponents =
-		ComponentGroup<TransformComponent, SpriteRendererComponent,CircleRendererComponent, MeshRendererComponent, CameraComponent,
+		ComponentGroup<TransformComponent, SpriteRendererComponent,CircleRendererComponent, TextRendererComponent, CameraComponent,
 		LuaScriptComponent, MonoScriptComponent, NativeScriptComponent, 
 		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent>;
 }

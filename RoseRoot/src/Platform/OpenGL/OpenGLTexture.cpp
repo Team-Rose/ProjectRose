@@ -5,20 +5,44 @@
 
 namespace Rose
  {
+	namespace Utils {
+		static GLenum RoseFormatToGLFormat(ImageFormat format) 
+		{
+			switch (format)
+			{
+			case Rose::ImageFormat::RGB8: return GL_RGB;
+			case Rose::ImageFormat::RGBA8:return GL_RGBA;
+			}
+			RR_CORE_ERROR("RoseFormatToGLFormat could not convert {} to GLenum!", (int)format);
+			RR_CORE_ASSERT(false);
+			return 0;
+		}
+		static GLenum RoseFormatToGLInternalFormat(ImageFormat format)
+		{
+			switch (format)
+			{
+			case Rose::ImageFormat::RGB8: return GL_RGB8;
+			case Rose::ImageFormat::RGBA8:return GL_RGBA8;
+			}
+			RR_CORE_ERROR("RoseFormatToGLInternalFormat could not convert {} to GLenum!", (int)format);
+			RR_CORE_ASSERT(false);
+			return 0;
+		}
 
-	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
-		: m_Width(width), m_Height(height)
+	}
+	OpenGLTexture2D::OpenGLTexture2D(const Texture2DSpecification& specification)
+		: m_Specification(specification), m_Width(specification.Width), m_Height(specification.Height)
 	{
 		RR_PROFILE_FUNCTION();
-
-		m_InternalFormat = GL_RGBA8;
-		m_DataFormat = GL_RGBA;
+		
+		m_InternalFormat = Utils::RoseFormatToGLInternalFormat(m_Specification.Format);
+		m_DataFormat = Utils::RoseFormatToGLFormat(m_Specification.Format);
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
 
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);

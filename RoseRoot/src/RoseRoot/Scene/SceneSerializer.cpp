@@ -274,6 +274,20 @@ namespace Rose
 			out << YAML::EndMap; // CircleRendererComponent
 		}
 
+		if (entity.HasComponent<TextRendererComponent>())
+		{
+			out << YAML::Key << "TextRendererComponent";
+			out << YAML::BeginMap; // TextRendererComponent
+
+			auto& textRendererComponent = entity.GetComponent<TextRendererComponent>();
+			out << YAML::Key << "Text" << YAML::Value << textRendererComponent.Text;
+			out << YAML::Key << "Color" << YAML::Value << textRendererComponent.Color;
+			out << YAML::Key << "Kerning" << YAML::Value << textRendererComponent.Kerning;
+			out << YAML::Key << "LineSpacing" << YAML::Value << textRendererComponent.LineSpacing;
+
+			out << YAML::EndMap; // TextRendererComponent
+		}
+
 		if (entity.HasComponent<Rigidbody2DComponent>())
 		{
 			out << YAML::Key << "Rigidbody2DComponent";
@@ -579,6 +593,16 @@ namespace Rose
 					src.Color = circleRendererComponent["Color"].as<glm::vec4>();
 					src.Thickness = circleRendererComponent["Thickness"].as<float>();
 					src.Fade = circleRendererComponent["Fade"].as<float>();
+				}
+
+				auto textRendererComponent = entity["TextRendererComponent"];
+				if (textRendererComponent)
+				{
+					auto& src = deserializedEntity.AddComponent<TextRendererComponent>();
+					src.Text = textRendererComponent["Text"].as<std::string>();
+					src.Color = textRendererComponent["Color"].as<glm::vec4>();
+					src.Kerning = textRendererComponent["Kerning"].as<float>();
+					src.LineSpacing = textRendererComponent["LineSpacing"].as<float>();
 				}
 
 				auto rigidbody2DComponent = entity["Rigidbody2DComponent"];

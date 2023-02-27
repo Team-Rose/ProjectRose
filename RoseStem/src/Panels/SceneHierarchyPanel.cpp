@@ -2,6 +2,7 @@
 
 #include <ImGui/imgui.h>
 #include <imgui/imgui_internal.h>
+#include <imgui/misc/cpp/imgui_stdlib.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -328,6 +329,15 @@ namespace Rose {
 				}
 			}
 
+			if (!m_SelectionContext.HasComponent<TextRendererComponent>())
+			{
+				if (ImGui::MenuItem("Text Renderer"))
+				{
+					m_SelectionContext.AddComponent<TextRendererComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+
 			if (!m_SelectionContext.HasComponent<Rigidbody2DComponent>())
 			{
 				if (ImGui::MenuItem("Rigidbody 2D"))
@@ -614,6 +624,16 @@ namespace Rose {
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 				ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f);
 				ImGui::DragFloat("Fade", &component.Fade, 0.0025f, 0.0f, 1.0f);
+			});
+
+		DrawComponent<TextRendererComponent>("Text Renderer", entity, [](TextRendererComponent& component)
+			{
+				ImGui::Text("Text: ");
+				ImGui::InputTextMultiline("##Text", &component.Text);
+				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+				ImGui::DragFloat("Kerning", &component.Kerning, 0.025f, 0.0f, 1.0f);
+				ImGui::DragFloat("LineSpacing", &component.LineSpacing, 0.025f);
+
 			});
 
 
