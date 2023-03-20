@@ -14,6 +14,15 @@
 #include "RoseRoot/Physics/2D/Physics2D.h"
 namespace Rose {
 
+	namespace Utils {
+		std::string MonoStringToString(MonoString* string) {
+			char* cStr = mono_string_to_utf8(string);
+			std::string str(cStr);
+			mono_free(cStr);
+			return str;
+		}
+	}
+
 	static std::unordered_map <MonoType*, std::function<bool(Entity)>> s_EntityHasComponentFuncs;
 	static std::unordered_map <MonoType*, std::function<void(Entity)>> s_EntityAddComponentFuncs;
 	static std::unordered_map <MonoType*, std::function<void(Entity)>> s_EntityRemoveComponentFuncs;
@@ -55,9 +64,7 @@ namespace Rose {
 	static uint64_t Scene_FindEntityByTag(MonoString* tag)
 	{
 		auto view = MonoScriptEngine::GetSceneContext()->GetAllEntitiesWith<TagComponent>();
-		char* utf8 = mono_string_to_utf8(tag);
-		std::string string = std::string(utf8);
-		mono_free(utf8);
+		std::string string = Utils::MonoStringToString(tag);
 
 		for (auto e : view)
 		{
@@ -178,9 +185,7 @@ namespace Rose {
 		Entity entity = scene->GetEntityByUUID(entityID);
 		RR_CORE_ASSERT(entity);
 
-		char* utf8 = mono_string_to_utf8(tag);
-		entity.GetComponent<TagComponent>().Tag = std::string(utf8);
-		mono_free(utf8);
+		entity.GetComponent<TagComponent>().Tag = Utils::MonoStringToString(tag);
 	}
 
 	static MonoObject* Entity_GetScriptInstance(UUID entityID)
@@ -312,6 +317,85 @@ namespace Rose {
 	}
 #pragma endregion
 
+#pragma region TextRendererComponent
+	static MonoString* TextRendererComponent_GetText(UUID entityID) {
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+		RR_CORE_ASSERT(entity.HasComponent<TextRendererComponent>());
+
+		std::string& str = entity.GetComponent<TextRendererComponent>().Text;
+		return MonoScriptEngine::CreateMonoString(str);
+	}
+	static void TextRendererComponent_SetText(UUID entityID, MonoString* textString) {
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+		RR_CORE_ASSERT(entity.HasComponent<TextRendererComponent>());
+
+		entity.GetComponent<TextRendererComponent>().Text = Utils::MonoStringToString(textString);
+	}
+
+	static void TextRendererComponent_GetColor(UUID entityID, glm::vec4* colorOut) {
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+		RR_CORE_ASSERT(entity.HasComponent<TextRendererComponent>());
+
+		*colorOut = entity.GetComponent<TextRendererComponent>().Color;
+	}
+	static void TextRendererComponent_SetColor(UUID entityID, glm::vec4* color) {
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+		RR_CORE_ASSERT(entity.HasComponent<TextRendererComponent>());
+
+		entity.GetComponent<TextRendererComponent>().Color = *color;
+	}
+
+	static float TextRendererComponent_GetKerning(UUID entityID) {
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+		RR_CORE_ASSERT(entity.HasComponent<TextRendererComponent>());
+
+		return entity.GetComponent<TextRendererComponent>().Kerning;
+	}
+	static void TextRendererComponent_SetKerning(UUID entityID, float kerning) {
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+		RR_CORE_ASSERT(entity.HasComponent<TextRendererComponent>());
+
+		entity.GetComponent<TextRendererComponent>().Kerning = kerning;
+	}
+
+	static float TextRendererComponent_GetLineSpacing(UUID entityID) {
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+		RR_CORE_ASSERT(entity.HasComponent<TextRendererComponent>());
+
+		return entity.GetComponent<TextRendererComponent>().LineSpacing;
+	}
+	static void TextRendererComponent_SetLineSpacing(UUID entityID, float lineSpacing) {
+		Scene* scene = MonoScriptEngine::GetSceneContext();
+		RR_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		RR_CORE_ASSERT(entity);
+		RR_CORE_ASSERT(entity.HasComponent<TextRendererComponent>());
+
+		entity.GetComponent<TextRendererComponent>().LineSpacing = lineSpacing;
+	}
+#pragma endregion
+
 #pragma region  RigidBody2DComponent
 	static void RigidBody2DComponent_GetPosition(UUID entityID, glm::vec2* outPosition)
 	{
@@ -420,6 +504,7 @@ namespace Rose {
 	
 #pragma endregion
 
+
 	template<typename ... Component>
 	static void RegisterComponent()
 	{
@@ -486,6 +571,16 @@ namespace Rose {
 		RR_ADD_INTERNAL_CALL(SpriteRendererComponent_SetTexture2D);
 		RR_ADD_INTERNAL_CALL(SpriteRendererComponent_GetTexture2D);
 
+
+		RR_ADD_INTERNAL_CALL(TextRendererComponent_GetText);
+		RR_ADD_INTERNAL_CALL(TextRendererComponent_SetText);
+		RR_ADD_INTERNAL_CALL(TextRendererComponent_GetColor);
+		RR_ADD_INTERNAL_CALL(TextRendererComponent_SetColor);
+		RR_ADD_INTERNAL_CALL(TextRendererComponent_GetKerning);
+		RR_ADD_INTERNAL_CALL(TextRendererComponent_SetKerning);
+		RR_ADD_INTERNAL_CALL(TextRendererComponent_GetLineSpacing);
+		RR_ADD_INTERNAL_CALL(TextRendererComponent_SetLineSpacing);
+
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_GetPosition);
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_SetPosition);
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_GetRotation);
@@ -495,6 +590,7 @@ namespace Rose {
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_GetLinearVelocity);
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_GetType);
 		RR_ADD_INTERNAL_CALL(RigidBody2DComponent_SetType);
+
 
 		RR_ADD_INTERNAL_CALL(Input_IsKeyDown);
 	}

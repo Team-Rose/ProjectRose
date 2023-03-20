@@ -13,6 +13,9 @@ namespace Sandbox
 
         private Rigidbody2DComponent m_RigidBody2D;
 
+        private TextRendererComponent m_Text;
+        private TransformComponent m_TextTransform;
+
         private float time = 0.0f;
 
         private bool shouldReset = false;
@@ -27,12 +30,25 @@ namespace Sandbox
             if (m_Camera == null)
                 Console.WriteLine("Camera not found");
 
+            Entity text = Scene.FindEntityByTag("Text");
+            if (text == null)
+                Console.WriteLine("Text not found");
+
+            m_Text = text.GetComponent<TextRendererComponent>();
+            if (m_Text == null)
+                Console.WriteLine("Text Renderer not found");
+            m_TextTransform = text.GetComponent<TransformComponent>();
+            if (m_Text == null)
+                Console.WriteLine("Text Transform not found");
+
             Collision2DBeginEvent += OnCollision2DBegin;
         }
         protected override void OnUpdate(float ts)
         {
             m_CameraObject = m_Camera.As<Camera>();
             Tag = $"{Translation.Y}";
+            m_Text.Text = $"{Translation.Y}";
+
             if (shouldReset)
             {
 
@@ -79,6 +95,8 @@ namespace Sandbox
             float scale = Rose.Math.Lerp(1.0f, 1.1f, time);
             //Console.WriteLine(scale);
             this.Scale = new Vector3(scale);
+
+            m_TextTransform.Translation = this.Translation + new Vector3(0.0f, 1.2f, 0.0f);
         }
 
         private void OnCollision2DBegin(Entity entity)
