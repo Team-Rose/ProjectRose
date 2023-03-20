@@ -180,7 +180,7 @@ namespace Rose
 		uint32_t blackTextureData = 0x00000000;
 		s_Data.BlackTexture->SetData(&blackTextureData, sizeof(uint32_t));
 
-		s_Data.StandardShader = Shader::Create("Resources/Shaders/Standard.glsl");
+		s_Data.StandardShader = Shader::Create("Resources/DefaultShaders/Standard.glsl");
 
 		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
 		s_Data.ObjectAndSceneDataUniformBuffer = UniformBuffer::Create(sizeof(RendererData::ObjectAndSceneData), 1);
