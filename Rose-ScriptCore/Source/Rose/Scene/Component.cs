@@ -92,6 +92,29 @@ namespace Rose
 
 	}
 
+	public class TextRendererComponent : Component
+	{
+		public string Text {
+			get => InternalCalls.TextRendererComponent_GetText(entity.ID);
+			set => InternalCalls.TextRendererComponent_SetText(entity.ID, value);
+        }
+		public Vector4 Color {
+            get {
+                InternalCalls.TextRendererComponent_GetColor(entity.ID, out Vector4 color);
+                return color;
+            }
+            set => InternalCalls.TextRendererComponent_SetColor(entity.ID, ref value);
+        }
+		public float Kerning {
+			get => InternalCalls.TextRendererComponent_GetKerning(entity.ID);
+			set => InternalCalls.TextRendererComponent_SetKerning(entity.ID, value);
+		}
+        public float LineSpacing {
+            get => InternalCalls.TextRendererComponent_GetLineSpacing(entity.ID);
+            set => InternalCalls.TextRendererComponent_SetLineSpacing(entity.ID, value);
+        }
+    }
+
 	public class Rigidbody2DComponent : Component
 	{
 		public enum BodyType { Static = 0, Dynamic, Kinematic };

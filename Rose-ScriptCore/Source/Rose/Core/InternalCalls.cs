@@ -88,10 +88,32 @@ namespace Rose
 		internal extern static void SpriteRendererComponent_SetTexture2D(ulong entityID, string path);
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static string SpriteRendererComponent_GetTexture2D(ulong entityID);
-		#endregion
+        #endregion
 
-		#region RigidBody2DComponent
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+        #region TextRendererComponent
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string TextRendererComponent_GetText(ulong entityID);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void TextRendererComponent_SetText(ulong entityID, string tag);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void TextRendererComponent_GetColor(ulong entityID, out Vector4 color);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void TextRendererComponent_SetColor(ulong entityID, ref Vector4 color);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float TextRendererComponent_GetKerning(ulong entityID);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void TextRendererComponent_SetKerning(ulong entityID, float kerning);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float TextRendererComponent_GetLineSpacing(ulong entityID);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void TextRendererComponent_SetLineSpacing(ulong entityID, float lineSpacing);
+        #endregion
+
+        #region RigidBody2DComponent
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static void RigidBody2DComponent_GetPosition(ulong entityID, out Vector2 position);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
