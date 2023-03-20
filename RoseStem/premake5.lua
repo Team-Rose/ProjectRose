@@ -22,6 +22,7 @@ project "RoseStem"
 		"%{IncludeDir.filewatch}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
+		"%{IncludeDir.Vulkan}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.Lua}",
 

@@ -50,6 +50,8 @@ project "RoseRoot"
 		"%{IncludeDir.filewatch}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
+
+		"%{IncludeDir.Vulkan}",
 		"%{IncludeDir.VulkanSDK}",
 
 		"%{IncludeDir.msdfgen}",
@@ -66,6 +68,9 @@ project "RoseRoot"
 		"yaml-cpp",
 		"opengl32.lib",
 
+		"%{Library.Vulkan}",
+		"%{Library.VulkanUtils}",
+		
 		"%{Library.Lua}",
 		"%{Library.Mono}",
 	}

@@ -5,7 +5,11 @@
 #include "RoseRoot/Events/KeyEvent.h"
 #include "RoseRoot/Events/MouseEvent.h"
 
+#include "RoseRoot/Renderer/RendererAPI.h"
+
 #include "Platform/OpenGL/OpenGLContext.h"
+#include "Platform/Vulkan/VulkanContext.h"
+#include "Platform/Vulkan/VulkanInstance.h"
 #include <stb_image.h>
 
 namespace Rose
@@ -44,6 +48,7 @@ namespace Rose
 			RR_PROFILE_SCOPE("glfwInit");
 
 			int success = glfwInit();
+
 			RR_CORE_ASSERT(success, "Could not intialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
 
@@ -51,15 +56,33 @@ namespace Rose
 		}
 		{
 			RR_PROFILE_SCOPE("glfwCreateWindow");
+
+			if (RendererAPI::API::Vulkan == RendererAPI::GetAPI())
+				glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		}
 
-
-		m_Context = new OpenGLContext(m_Window);
+		switch (RendererAPI::GetAPI())
+		{
+		case(RendererAPI::API::OpenGL):
+			m_Context = CreateRef<OpenGLContext>(m_Window);
+			break;
+		case(RendererAPI::API::Vulkan):
+			m_Context = CreateRef<VulkanContext>(m_Window, props.Title);
+			break;
+		default:
+			RR_CORE_ASSERT(false);
+			break;
+		}
 		m_Context->Init();
 
+		if (RendererAPI::GetAPI() == RendererAPI::API::Vulkan)
+			VulkanInstance::GetSwapChain()->Create(&m_Data.Width, &m_Data.Height, m_Data.VSync);
+
+
 		glfwSetWindowUserPointer(m_Window, &m_Data);
-		SetVSync(true);
+		SetVSync(false);
 
 		//set GLFW callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
