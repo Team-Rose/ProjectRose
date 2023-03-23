@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma once
-
 #include "RoseRoot/Renderer/Shader.h"
 #include <glm/glm.hpp>
 

@@ -29,6 +29,8 @@ namespace Rose
 		RR_CORE_INFO("Vendor: {0}", glGetString(GL_VENDOR));
 		RR_CORE_INFO("Renderer: {0}", glGetString(GL_RENDERER));
 		RR_CORE_INFO("Version: {0}", glGetString(GL_VERSION));
+
+		RR_CORE_WARN("OpenGL support is considered legacy support may be dropped soon!");
 	}
 	void OpenGLContext::SwapBuffers()
 	{
