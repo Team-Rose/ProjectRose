@@ -2,6 +2,26 @@
 #include "AssetManager.h"
 
 namespace Rose {
+	static Ref<AssetManager> s_AssetManager = nullptr;
+
+	Ref<AssetManager> AssetManager::GetAssetManager()
+	{
+		RR_CORE_ASSERT(s_AssetManager != nullptr, "No Asset Manager set!");
+		return s_AssetManager;
+	}
+	void AssetManager::SetAssetManager(const Ref<AssetManager>& assetManager)
+	{
+		if (s_AssetManager != nullptr)
+			RR_CORE_ERROR("A asset manager has already been set! Changing asset managers is Undefined behavior!");
+		s_AssetManager = assetManager;
+	}
+
+	void AssetManager::DeleteAssetManagerRef()
+	{
+		s_AssetManager = nullptr;
+	}
+
+#if 0
 	struct AssetManagerData
 	{
 		std::string AssetPath;
@@ -69,4 +89,5 @@ namespace Rose {
 
 		return loadedtexture;
 	}
+#endif
 }

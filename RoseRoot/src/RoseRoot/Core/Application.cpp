@@ -23,13 +23,15 @@ namespace Rose {
 		RR_CORE_ASSERT(!s_Instance, "Application already exist!");
 		s_Instance = this;
 
+		if (AssetManager::GetAssetManager() == nullptr)
+			RR_CORE_ERROR("No asset manager provided!");
+
 		m_Window = Window::Create(WindowProps(name));
 		m_Window->SetEventCallback(RR_BIND_EVENT_FN(Application::OnEvent));
 
 		m_Window->SetVSync(false);
 		m_Window->SetCapturesMouse(false);
 
-		AssetManager::Init();
 		Renderer::Init();
 		MonoScriptEngine::Init();
 
@@ -43,7 +45,7 @@ namespace Rose {
 
 		MonoScriptEngine::Shutdown();
 		Renderer::Shutdown();
-		AssetManager::ShutDown();
+		AssetManager::DeleteAssetManagerRef();
 	}
 
 	void Application::PushLayer(Layer* layer)

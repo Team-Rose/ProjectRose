@@ -70,6 +70,7 @@ namespace Rose {
 	};
 
 	// To be defined in CLIENT
+	// Make sure to set a Asset Manager to use before creating/returning the app!
 	Application* CreateApplication(ApplicationCommandLineArgs args);
 
 }
