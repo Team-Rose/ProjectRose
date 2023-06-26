@@ -3,6 +3,8 @@
 #include <string>
 
 #include "RoseRoot/Core/Core.h"
+#include "RoseRoot/Asset/Asset.h"
+#include "RoseRoot/Core/Buffer.h"
 
 namespace Rose
  {
@@ -21,7 +23,7 @@ namespace Rose
 		bool GenerateMips = true;
 	};
 
-	class Texture
+	class Texture : public Asset
 	{
 	public:
 		virtual ~Texture() = default;
@@ -32,7 +34,7 @@ namespace Rose
 		virtual uint32_t GetHeight() const = 0;
 		virtual uint32_t GetRendererID() const = 0;
 
-		virtual void SetData(void* data, uint32_t size) = 0;
+		virtual void SetData(Buffer data) = 0;
 
 		virtual bool IsLoaded() const = 0;
 
@@ -44,7 +46,9 @@ namespace Rose
 	class Texture2D : public Texture
 	{
 	public:
-		static Ref<Texture2D> Create(const Texture2DSpecification& specification);
-		static Ref<Texture2D> Create(const std::string& path);
+		static Ref<Texture2D> Create(const Texture2DSpecification& specification, Buffer data = Buffer());
+
+		static AssetType GetStaticType() { return AssetType::Texture2D; }
+		virtual AssetType GetType() const override { return GetStaticType(); }
 	};
 }

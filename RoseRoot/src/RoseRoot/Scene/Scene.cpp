@@ -5,7 +5,7 @@
 #include "ScriptableEntity.h"
 #include "RoseRoot/Scripting/LUA/Lua.h"
 #include "RoseRoot/Scripting/Mono/MonoScriptEngine.h"
-#include "RoseRoot/Assets/AssetManager.h"
+#include "RoseRoot/Asset/AssetManager.h"
 
 #include "RoseRoot/Renderer/Renderer.h"
 #include "RoseRoot/Renderer/Renderer2D.h"
@@ -219,16 +219,7 @@ namespace Rose
 		RR_PROFILE_FUNCTION();
 		RR_CORE_TRACE("-----Runtime Scene Started-----");
 		m_IsRunning = true;
-		AssetManager::ReloadAssets();
 		OnPhysics2DStart();
-
-		m_Registry.view<SpriteRendererComponent>().each([=](auto entity, SpriteRendererComponent& src)
-			{
-				if (Ref<Texture2D> texture = AssetManager::GetOrLoadTexture(src.Path))
-					src.Texture = texture;
-			});
-
-		
 
 		MonoScriptEngine::OnRuntimeStart(this); 
 		m_Registry.view<MonoScriptComponent>().each([=](auto entity, MonoScriptComponent& msc)
@@ -256,12 +247,6 @@ namespace Rose
 	{
 		RR_PROFILE_FUNCTION();
 		RR_CORE_TRACE("-----Simulation Scene Started-----");
-		AssetManager::ReloadAssets();
-		m_Registry.view<SpriteRendererComponent>().each([=](auto entity, SpriteRendererComponent& src)
-			{
-				if (Ref<Texture2D> texture = AssetManager::GetOrLoadTexture(src.Path))
-					src.Texture = texture;
-			});
 
 		OnPhysics2DStart();
 	}

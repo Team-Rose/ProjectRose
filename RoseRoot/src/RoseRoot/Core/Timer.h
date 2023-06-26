@@ -19,6 +19,7 @@ namespace Rose
 
 		float Timer::Elapsed()
 		{
+			//TODO Change to Micro Second nanoseconds are slow on windows ig
 			return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - m_Start).count() * 0.001f * 0.001f * 0.001f;
 		}
 

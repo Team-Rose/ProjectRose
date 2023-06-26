@@ -9,7 +9,6 @@
 #include <glm/glm.hpp>
 #include <box2d/b2_body.h>
 #include <mono/metadata/appdomain.h>
-#include <RoseRoot/Assets/AssetManager.h>
 
 #include "RoseRoot/Physics/2D/Physics2D.h"
 namespace Rose {
@@ -43,9 +42,10 @@ namespace Rose {
 		std::string string = std::string(utf8);
 		mono_free(utf8);
 
+		RR_CORE_WARN("Asset_GetOrLoadTexture2D no longer works (WIP new asset system)");
 		//RR_CORE_INFO(AssetManager::GetAssetPath() + "\\" + string);
-		if (AssetManager::GetOrLoadTexture(AssetManager::GetAssetPath() + "\\" + string))
-			return true;
+		//if (AssetManager::GetOrLoadTexture(AssetManager::GetAssetPath() + "\\" + string))
+		//	return true;
 		return false;
 	}
 	static bool Asset_GetTexture2D(MonoString* path)
@@ -54,8 +54,7 @@ namespace Rose {
 		std::string string = std::string(utf8);
 		mono_free(utf8);
 
-		if (AssetManager::GetTexture(AssetManager::GetAssetPath() + "\\" + string))
-			return true;
+		RR_CORE_WARN("Asset_GetTexture2D no longer works (WIP new asset system)");
 		return false;
 	}
 #pragma endregion
@@ -300,8 +299,11 @@ namespace Rose {
 		char* utf8 = mono_string_to_utf8(path);
 		RR_CORE_ASSERT(utf8 != nullptr);
 		std::string string = std::string(utf8);
-		src.Path = (AssetManager::GetAssetPath() + "/" + string);
-		src.Texture = AssetManager::GetOrLoadTexture(src.Path);
+
+		RR_CORE_WARN("Asset_GetOrLoadTexture2D no longer works (WIP new asset system)");
+		
+		//src.Path = (AssetManager::GetAssetPath() + "/" + string);
+		//src.Texture = AssetManager::GetOrLoadTexture(src.Path);
 	}
 	static MonoString* SpriteRendererComponent_GetTexture2D(UUID entityID)
 	{
@@ -310,10 +312,10 @@ namespace Rose {
 		Entity entity = scene->GetEntityByUUID(entityID);
 		RR_CORE_ASSERT(entity);
 		auto& src = entity.GetComponent<SpriteRendererComponent>();
-		std::string copy = src.Path;
-		size_t pos = copy.find_last_of("\\");
-		RR_CORE_TRACE(copy.substr(pos + 1));
-		return mono_string_new(MonoScriptEngine::GetAppDomain(), copy.substr(pos + 1).c_str());
+		//std::string copy = src.Path;
+		//size_t pos = copy.find_last_of("\\");
+		//RR_CORE_TRACE(copy.substr(pos + 1));
+		return nullptr;//mono_string_new(MonoScriptEngine::GetAppDomain(), copy.substr(pos + 1).c_str());
 	}
 #pragma endregion
 

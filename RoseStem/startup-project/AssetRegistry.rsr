@@ -1,0 +1,13 @@
+AssetRegistry:
+  - Id: 4780978621816450622
+    FilePath: textures/GrassBlockTop.png
+    Type: Texture2D
+  - Id: 6951481276866408792
+    FilePath: beach_ball_00.png
+    Type: Texture2D
+  - Id: 12521786502767138921
+    FilePath: textures/Glass.png
+    Type: Texture2D
+  - Id: 14049689483243655417
+    FilePath: textures/ViewTest.png
+    Type: Texture2D

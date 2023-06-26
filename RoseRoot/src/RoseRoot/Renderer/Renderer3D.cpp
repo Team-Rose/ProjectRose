@@ -179,8 +179,10 @@ namespace Rose
 		}
 		
 		s_Data.WhiteTexture = Texture2D::Create(Texture2DSpecification());
-		uint32_t whiteTextureData = 0xffffffff;
-		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+		Buffer whiteTextureBuffer;
+		whiteTextureBuffer.Allocate(sizeof(uint32_t));
+		whiteTextureBuffer.Data = (uint8_t*)new uint32_t(0xffffffff);
+		s_Data.WhiteTexture->SetData(whiteTextureBuffer);
 
 		s_Data.StandardShader = Shader::Create("Resources/DefaultShaders/Standard.glsl");
 

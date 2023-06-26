@@ -25,7 +25,7 @@
 #include "RoseRoot/Scripting/LUA/Lua.h"
 #include "RoseRoot/Scripting/Mono/MonoScriptEngine.h"
 
-#include "RoseRoot/Assets/AssetManager.h"
+#include "RoseRoot/Asset/AssetManager.h"
 
 //Renderer
 #include "RoseRoot/Renderer/Renderer.h" 

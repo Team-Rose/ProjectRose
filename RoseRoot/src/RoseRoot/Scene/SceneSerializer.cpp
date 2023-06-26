@@ -3,7 +3,7 @@
 
 #include "Entity.h"
 #include "Components.h"
-#include "RoseRoot/Assets/AssetManager.h"
+#include "RoseRoot/Asset/AssetManager.h"
 #include "RoseRoot/Scripting/Mono/MonoScriptEngine.h"
 
 #include <fstream>
@@ -235,9 +235,9 @@ namespace Rose
 			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
 			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
-			if (spriteRendererComponent.Path != "no_texture") {
-				out << YAML::Key << "Path" << YAML::Value << spriteRendererComponent.Path;
-			}
+			//if (spriteRendererComponent.Path != "no_texture") {
+			//	out << YAML::Key << "Path" << YAML::Value << spriteRendererComponent.Path;
+			//}
 
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
@@ -533,11 +533,16 @@ namespace Rose
 					if (spriteRendererComponent["TilingFactor"]) {
 						src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
 					}
+
+					// LEGACY, attempt to import or find in asset registry
 					if (spriteRendererComponent["Path"] && spriteRendererComponent["Path"].as<std::string>() != "no_texture") {
-						src.Path = spriteRendererComponent["Path"].as<std::string>();
-						if (Ref<Texture2D> texture = AssetManager::GetOrLoadTexture(src.Path))
-							src.Texture = texture;
+						//src.Path = spriteRendererComponent["Path"].as<std::string>();
+						//if (Ref<Texture2D> texture = AssetManager::GetOrLoadTexture(src.Path))
+						//	src.Texture = texture;
 					}
+
+					if (spriteRendererComponent["TextureId"])
+						src.Texture = spriteRendererComponent["TextureId"].as<AssetId>();
 				}
 
 				auto circleRendererComponent = entity["CircleRendererComponent"];

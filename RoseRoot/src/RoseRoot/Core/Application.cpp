@@ -2,7 +2,6 @@
 #include "Application.h"
 
 #include "RoseRoot/Core/Log.h"
-#include "RoseRoot/Assets/AssetManager.h"
 
 #include "RoseRoot/Renderer/Renderer.h"
 #include "RoseRoot/Scripting/Mono/MonoScriptEngine.h"
@@ -23,9 +22,6 @@ namespace Rose {
 		RR_CORE_ASSERT(!s_Instance, "Application already exist!");
 		s_Instance = this;
 
-		if (AssetManager::GetAssetManager() == nullptr)
-			RR_CORE_ERROR("No asset manager provided!");
-
 		m_Window = Window::Create(WindowProps(name));
 		m_Window->SetEventCallback(RR_BIND_EVENT_FN(Application::OnEvent));
 
@@ -45,7 +41,6 @@ namespace Rose {
 
 		MonoScriptEngine::Shutdown();
 		Renderer::Shutdown();
-		AssetManager::DeleteAssetManagerRef();
 	}
 
 	void Application::PushLayer(Layer* layer)

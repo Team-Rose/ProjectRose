@@ -12,7 +12,7 @@
 #include <Box2D/include/box2d/b2_body.h>
 #include <RoseRoot/Scene/SceneSerializer.h>
 #include "RoseRoot/Renderer/Font.h"
-
+#include "RoseRoot/Asset/Importers/TextureImporter.h"
 namespace Rose {
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer")
@@ -23,11 +23,11 @@ namespace Rose {
 	{
 		RR_PROFILE_FUNCTION();
 		Application::Get().GetWindow().SetWindowIcon("Resources/icon.png");
-		m_IconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
-		m_IconPause = Texture2D::Create("Resources/Icons/PauseButton.png");
-		m_IconSimulate = Texture2D::Create("Resources/Icons/SimulateButton.png");
-		m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
-		m_IconStep = Texture2D::Create("Resources/Icons/StepButton.png");
+		m_IconPlay = Import::Texture2D("Resources/Icons/PlayButton.png");
+		m_IconPause = Import::Texture2D("Resources/Icons/PauseButton.png");
+		m_IconSimulate = Import::Texture2D("Resources/Icons/SimulateButton.png");
+		m_IconStop = Import::Texture2D("Resources/Icons/StopButton.png");
+		m_IconStep = Import::Texture2D("Resources/Icons/StepButton.png");
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
@@ -444,6 +444,7 @@ namespace Rose {
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<KeyPressedEvent>(RR_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
 		dispatcher.Dispatch<MouseButtonPressedEvent>(RR_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
+		dispatcher.Dispatch<WindowDropEvent>(RR_BIND_EVENT_FN(EditorLayer::OnWindowDropEvent));
 	}
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
@@ -564,6 +565,15 @@ namespace Rose {
 		{
 			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt))
 				m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
+		}
+		return false;
+	}
+
+	bool EditorLayer::OnWindowDropEvent(WindowDropEvent& event)
+	{
+		// TODO(Sam): If a project is droppped in open it
+		for (const auto& path : event.GetPaths()) {
+			RR_CORE_TRACE(path);
 		}
 		return false;
 	}
@@ -787,7 +797,6 @@ namespace Rose {
 			NewProject();
 			return;
 		}
-		AssetManager::SetAssetPath(Project::GetActiveAssetDirectory().string());
 		m_ProjectConfigBuffer = Project::GetActive()->GetConfig();
 		QuickReloadAppAssembly();
 		const std::filesystem::path assetPath = Project::GetActiveAssetDirectory();
@@ -813,7 +822,6 @@ namespace Rose {
 		if (!filepath.empty())
 		{
 			Project::SaveActive(filepath);
-			AssetManager::SetAssetPath(Project::GetActiveAssetDirectory().string());
 		}
 		return true;
 	}
@@ -856,7 +864,6 @@ namespace Rose {
 		}
 
 		Ref<Scene> newScene = CreateRef<Scene>();
-		AssetManager::UnloadAssets();
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(path.string(), Project::GetActiveAssetDirectory().string()))
 		{

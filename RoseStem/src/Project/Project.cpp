@@ -5,6 +5,7 @@ namespace Rose
 {
 	Project::Project()
 	{
+		m_AssetManager = CreateRef<EditorAssetManager>();
 	}
 	Project::~Project()
 	{
@@ -18,6 +19,8 @@ namespace Rose
 		std::string nameCopy = config.Name;
 		config.ScriptModulePath = std::filesystem::path("Binaries") / nameCopy.append(".dll");
 
+		AssetManagerHolder::SetActiveHolder(std::static_pointer_cast<AssetManagerHolder>(s_ActiveProject));
+
 		return s_ActiveProject;
 	}
 	Ref<Project> Project::Load(const std::filesystem::path& path) {
@@ -28,6 +31,9 @@ namespace Rose
 		{
 			s_ActiveProject = project;
 			s_ActiveProject->m_ProjectDirectory = path.parent_path();
+			s_ActiveProject->m_AssetManager->DeserializeAssetRegistry(GetActiveAssetRegistryPath());
+			AssetManagerHolder::SetActiveHolder(std::static_pointer_cast<AssetManagerHolder>(s_ActiveProject));
+
 			return s_ActiveProject;
 		}
 		

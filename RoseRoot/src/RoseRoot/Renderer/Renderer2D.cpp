@@ -1,5 +1,5 @@
 #include "rrpch.h"
-#include "RoseRoot/Assets/AssetManager.h"
+#include "RoseRoot/Asset/AssetManager.h"
 #include "RoseRoot/Renderer/Renderer2D.h"
 
 #include "RoseRoot/Renderer/VertexArray.h"
@@ -196,8 +196,10 @@ namespace Rose
 		s_Data.TextVertexBufferBase = new TextVertex[s_Data.MaxVertices];
 
 		s_Data.WhiteTexture = Texture2D::Create(Texture2DSpecification());
-		uint32_t whiteTextureData = 0xffffffff;
-		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+		Buffer whiteTextureBuffer;
+		whiteTextureBuffer.Allocate(sizeof(uint32_t));
+		whiteTextureBuffer.Data = (uint8_t*)new uint32_t(0xffffffff);
+		s_Data.WhiteTexture->SetData(whiteTextureBuffer);
 
 
 
@@ -383,7 +385,7 @@ namespace Rose
 	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor, int entityID)
 	{
 		RR_PROFILE_FUNCTION();
-
+		RR_CORE_VERIFY(texture);
 		constexpr size_t quadVertexCount = 4;
 		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 
@@ -628,8 +630,9 @@ namespace Rose
 
 	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID)
 	{
-		if (src.Texture)
-			DrawQuad(transform, src.Texture, src.TilingFactor, src.Color, entityID);
+		Ref<Texture2D> texture = AssetManager::GetAsset<Texture2D>(src.Texture);
+		if (texture)
+			DrawQuad(transform, texture, src.TilingFactor, src.Color, entityID);
 		else
 			DrawQuad(transform, src.Color, entityID);
 	}

@@ -68,8 +68,7 @@ namespace Rose {
 	struct SpriteRendererComponent
 	{
 		glm::vec4 Color{1.f,1.f,1.f,1.f};
-		std::string Path = "no_texture";
-		Ref<Texture2D> Texture;
+		AssetId Texture;
 		float TilingFactor = 1.0f;
 
 		SpriteRendererComponent() = default;

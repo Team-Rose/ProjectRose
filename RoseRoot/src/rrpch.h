@@ -25,6 +25,7 @@
 #include "RoseRoot/Core/Assert.h"
 #include "RoseRoot/Core/Log.h"
 #include "RoseRoot/Debug/Instrumentor.h"
+#include "RoseRoot/Core/Buffer.h"
 
 #ifdef RR_PLATFORM_WINDOWS
 #include <Windows.h>

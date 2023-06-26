@@ -17,6 +17,9 @@
 #else
 #define RR_DEBUGBREAK()
 #endif
+#ifndef RR_DIST
+#define RR_ENABLE_VERIFY
+#endif // !RR_DIST
 
 #define RR_EXPAND_MACRO(x) x
 #define RR_STRINGIFY_MACRO(x) #x

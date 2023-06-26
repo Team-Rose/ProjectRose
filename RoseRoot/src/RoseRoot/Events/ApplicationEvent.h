@@ -21,7 +21,7 @@ namespace Rose {
 		}
 
 		EVENT_CLASS_TYPE(WindowResize)
-		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+			EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	private:
 		unsigned int m_Width, m_Height;
 	};
@@ -35,13 +35,29 @@ namespace Rose {
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 
+	class WindowDropEvent : public Event
+	{
+	public:
+		WindowDropEvent(const std::vector<std::filesystem::path>& paths)
+			: m_Paths(paths) {}
+		WindowDropEvent(std::vector<std::filesystem::path>&& paths) 
+			: m_Paths(std::move(paths)) {}
+
+		const std::vector<std::filesystem::path>& GetPaths() { return m_Paths; }
+
+		EVENT_CLASS_TYPE(WindowDrop)
+		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+	private:
+		std::vector<std::filesystem::path> m_Paths;
+	};
+
 	class AppTickEvent : public Event
 	{
 	public:
 		AppTickEvent() {}
 
 		EVENT_CLASS_TYPE(AppTick)
-		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+			EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 
 	class AppUpdateEvent : public Event
@@ -50,7 +66,7 @@ namespace Rose {
 		AppUpdateEvent() {}
 
 		EVENT_CLASS_TYPE(AppUpdate)
-		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+			EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 
 	class AppRenderEvent : public Event
@@ -59,6 +75,6 @@ namespace Rose {
 		AppRenderEvent() {}
 
 		EVENT_CLASS_TYPE(AppRender)
-		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+			EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 }

@@ -13,8 +13,8 @@ namespace Rose {
 	enum class EventType
 	{
 		None = 0,
-		WindowClose, WindowResize, WindowFocus, WindowLostFocust,WindowMoved,
-		AppTick, AppUpdate, AppRender,
+		WindowClose, WindowResize, WindowFocus, WindowLostFocust,WindowMoved, WindowDrop,
+		AppTick, AppUpdate, AppRender, 
 		KeyPressed, KeyReleased, KeyTyped,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};

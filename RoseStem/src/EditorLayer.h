@@ -26,6 +26,8 @@ namespace Rose {
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+		bool OnWindowDropEvent(WindowDropEvent& event);
+
 		void ProjectSettingsWindow();
 
 		void SceneSettingsWindow();
