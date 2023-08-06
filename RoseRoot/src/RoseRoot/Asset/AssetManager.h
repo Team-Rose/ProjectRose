@@ -14,6 +14,15 @@ namespace Rose {
 			return std::static_pointer_cast<T>(asset);
 		}
 
+		static bool  IsAssetIdValid(AssetId id) {
+			return AssetManagerHolder::GetActiveHolder()->GetAssetManager()->IsAssetIdValid(id);
+		}
+		static bool  IsAssetLoaded(AssetId id) {
+			return AssetManagerHolder::GetActiveHolder()->GetAssetManager()->IsAssetLoaded(id);
+		}
+		static AssetType GetAssetType(AssetId id) {
+			return AssetManagerHolder::GetActiveHolder()->GetAssetManager()->GetAssetType(id);
+		}
 	};
 #if 0
 	class AssetManager {

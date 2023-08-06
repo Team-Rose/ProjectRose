@@ -13,8 +13,9 @@ namespace Rose {
 
 	class AssetManagerBase {
 	public:
-		virtual Ref<Asset> GetAsset(AssetId id) const = 0;
-		virtual bool  IsAssetIDValid(AssetId id) const = 0;
+		virtual Ref<Asset> GetAsset(AssetId id) = 0;
+		virtual bool  IsAssetIdValid(AssetId id) const = 0;
 		virtual bool  IsAssetLoaded(AssetId id) const = 0;
+		virtual AssetType GetAssetType(AssetId id) const = 0;
 	};
 }

@@ -8,6 +8,8 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "RoseRoot/Scene/Components.h"
+#include "RoseRoot/Asset/Asset.h"
+
 #include "../Project/Project.h"
 #include "../Core/CommandHistory.h"
 namespace Rose {
@@ -535,25 +537,54 @@ namespace Rose {
 				}
 			});
 
-		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
+		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](SpriteRendererComponent& component)
 			{
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 				//Texture
-				ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
-#if 0
+				ImGui::Text("Texture");
+				ImGui::SameLine();
+
+				std::string label = "None";
+				if (component.Texture != 0)
+				{
+					if (AssetManager::IsAssetIdValid(component.Texture) && AssetManager::GetAssetType(component.Texture) == AssetType::Texture2D)
+					{
+						const auto& metadata = Project::GetActive()->GetEditorAssetManager()->GetMetadata(component.Texture);
+						label = metadata.FilePath.filename().string();
+					}
+					else
+						label = "Invalid!";
+				}
+
+				ImVec2 buttonLabelSize = ImGui::CalcTextSize(label.c_str());
+				buttonLabelSize.x += 20.0f;
+				float buttonLavelWidth = glm::max<float>(100.0f, buttonLabelSize.x);
+				ImGui::Button(label.c_str(), ImVec2(buttonLavelWidth, 0.0f));
 				if (ImGui::BeginDragDropTarget())
 				{
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ASSET"))
 					{
-						const wchar_t* path = (const wchar_t*)payload->Data;
-						std::filesystem::path texturePath = path;
-						component.Path = (Project::GetActiveAssetDirectory().string() + "\\" + texturePath.string());
-						if (Ref<Texture2D> texture = AssetManager::GetOrLoadTexture(component.Path))
-							component.Texture = texture;
+						AssetId id = *(AssetId*)payload->Data;
+
+						//TODO Auto import if you drag in a unimported asset
+						if (AssetManager::GetAssetType(id) == AssetType::Texture2D)
+						{
+							component.Texture = id;
+						}
+						else
+						{
+							RR_WARN("Incorrect asset type for SpriteRendererComponent.Texture!");
+						}
+
 					}
 					ImGui::EndDragDropTarget();
 				}
-#endif
+				ImGui::SameLine();
+				ImVec2 xLabelSize = ImGui::CalcTextSize("X");
+				float buttonSize = xLabelSize.y + ImGui::GetStyle().FramePadding.y * 2.0f;
+				if (ImGui::Button("X", ImVec2(buttonSize, buttonSize)))
+					component.Texture = 0;
+
 				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 1000.0f);
 			});
 

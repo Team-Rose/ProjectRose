@@ -2,6 +2,7 @@
 #include "AssetImporter.h"
 
 #include "Importers/TextureImporter.h"
+#include "Importers/SceneImporter.h"
 
 namespace Rose {
 	Ref<Asset> AssetImporter::ImportAsset(AssetId id, const AssetMetadata& metadata)
@@ -9,6 +10,7 @@ namespace Rose {
 		switch (metadata.Type)
 		{
 		case AssetType::Texture2D: return Import::Texture2D(id, metadata);
+		case AssetType::Scene: return Import::Scene(id, metadata);
 		}
 
 		RR_CORE_ERROR("No importer found for asset type!: {}", AssetTypeToString(metadata.Type));

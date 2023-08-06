@@ -10,10 +10,11 @@ namespace Rose
 	public:
 		SceneSerializer(const Ref<Scene>& scene);
 
+		//TODO Switch to std::filesystem::path
 		void Serialize(const std::string& filepath);
 		void SerializeRuntime(const std::string& filepath);
 
-		bool Deserialize(const std::string& filepath, const std::string& assetPath);
+		bool Deserialize(const std::string& filepath);
 		bool DeserializeRuntime(const std::string& filepath);
 	private:
 		Ref<Scene> m_Scene;

@@ -6,9 +6,26 @@
 #include "../AssetImporter.h"
 
 namespace Rose {
-	Ref<Asset> EditorAssetManager::GetAsset(AssetId id) const
+	static std::map<std::filesystem::path, AssetType> s_AssetExtensionMap = {
+		{ ".rose", AssetType::Scene },
+		{ ".png", AssetType::Texture2D },
+		{ ".jpg", AssetType::Texture2D },
+		{ ".jpeg", AssetType::Texture2D }
+	};
+
+	static AssetType GetTypeFromFileExtension(const std::filesystem::path& extension)
 	{
-		if (!IsAssetIDValid(id))
+		if (s_AssetExtensionMap.find(extension) == s_AssetExtensionMap.end())
+		{
+			RR_CORE_WARN("Could not find AssetTYpe for {}", extension);
+			return AssetType::None;
+		}
+		return s_AssetExtensionMap.at(extension);
+	}
+
+	Ref<Asset> EditorAssetManager::GetAsset(AssetId id)
+	{
+		if (!IsAssetIdValid(id))
 			return nullptr;
 
 		if (IsAssetLoaded(id))
@@ -18,14 +35,15 @@ namespace Rose {
 
 
 		Ref<Asset> asset = AssetImporter::ImportAsset(id, metadata);
-		if (!asset) {
-			// import failed
+		if (asset) {
+			m_LoadedAssets[id] = asset;
+			
+		} else
 			RR_CORE_ERROR("EditorAssetManager::GetAsset - import failed!");
-		}
 
 		return asset;
 	}
-	bool EditorAssetManager::IsAssetIDValid(AssetId id) const
+	bool EditorAssetManager::IsAssetIdValid(AssetId id) const
 	{
 		//TODO C++20 switch to .contains
 		return m_AssetRegistry.find(id) != m_AssetRegistry.end();
@@ -34,16 +52,24 @@ namespace Rose {
 	{
 		return m_LoadedAssets.find(id) != m_LoadedAssets.end();
 	}
+	AssetType EditorAssetManager::GetAssetType(AssetId id) const
+	{
+		if (!IsAssetIdValid(id))
+			return AssetType::None;
+		return m_AssetRegistry.at(id).Type;
+	}
+
 	void EditorAssetManager::ImportAsset(const std::filesystem::path& path)
 	{
 		AssetId id;
 		AssetMetadata metadata;
 		metadata.FilePath = path;
-		metadata.Type = AssetType::Texture2D; // TODO(Sam): Grab this from extensions and try to load it
+		metadata.Type = GetTypeFromFileExtension(path.extension());
+
 		Ref<Asset> asset = AssetImporter::ImportAsset(id, metadata);
-		asset->Id = id;
 		if (asset)
 		{
+			asset->Id = id;
 			m_LoadedAssets[id] = asset;
 			m_AssetRegistry[id] = metadata;
 		}

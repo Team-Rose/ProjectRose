@@ -1,6 +1,15 @@
 AssetRegistry:
+  - Id: 1177730985605796472
+    FilePath: BalloonGame.rose
+    Type: Scene
+  - Id: 2765592479613490892
+    FilePath: scenes/PhysicsStressTest1.rose
+    Type: Scene
   - Id: 4780978621816450622
     FilePath: textures/GrassBlockTop.png
+    Type: Texture2D
+  - Id: 5943260517692828950
+    FilePath: textures/Stone.png
     Type: Texture2D
   - Id: 6951481276866408792
     FilePath: beach_ball_00.png

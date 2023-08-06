@@ -56,13 +56,13 @@ Entities:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    CircleRendererComponent:
-      Color: [0.957805932, 0.889767528, 0.189944625, 1]
-      Thickness: 1
-      Fade: 0.00499999989
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureId: 6951481276866408792
     Rigidbody2DComponent:
       BodyType: Dynamic
-      FixedRotation: true
+      FixedRotation: false
     CircleCollider2DComponent:
       Offset: [0, 0]
       Radius: 0.5
@@ -89,8 +89,9 @@ Entities:
       Rotation: [0, 0, 0]
       Scale: [50, 50, 1]
     SpriteRendererComponent:
-      Color: [0.345991552, 0.345991552, 0.345991552, 1]
+      Color: [1, 1, 1, 1]
       TilingFactor: 25
+      TextureId: 5943260517692828950
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false
@@ -115,6 +116,7 @@ Entities:
     SpriteRendererComponent:
       Color: [1, 0.227450982, 0.227450982, 1]
       TilingFactor: 1
+      TextureId: 5943260517692828950
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false
@@ -135,6 +137,7 @@ Entities:
     SpriteRendererComponent:
       Color: [0.226481065, 0.472573817, 0.213356122, 1]
       TilingFactor: 1
+      TextureId: 4780978621816450622
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false
@@ -157,6 +160,7 @@ Entities:
     SpriteRendererComponent:
       Color: [1, 0.227848113, 0.227848113, 1]
       TilingFactor: 1
+      TextureId: 5943260517692828950
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false

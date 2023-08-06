@@ -48,6 +48,8 @@ namespace Rose {
 		void NewScene();
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
+		void OpenScene(AssetId id);
+		
 		void SaveSceneAs();
 		void SaveScene();
 

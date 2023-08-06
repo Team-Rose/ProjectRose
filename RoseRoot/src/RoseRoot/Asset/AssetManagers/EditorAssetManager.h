@@ -11,10 +11,11 @@ namespace Rose {
 
 	class EditorAssetManager : public AssetManagerBase {
 	public:
-		virtual Ref<Asset> GetAsset(AssetId id) const override;
+		virtual Ref<Asset> GetAsset(AssetId id) override;
 
-		virtual bool  IsAssetIDValid(AssetId id) const override;
+		virtual bool  IsAssetIdValid(AssetId id) const override;
 		virtual bool  IsAssetLoaded(AssetId id) const override;
+		virtual AssetType GetAssetType(AssetId id) const override;
 
 		void ImportAsset(const std::filesystem::path& path);
 

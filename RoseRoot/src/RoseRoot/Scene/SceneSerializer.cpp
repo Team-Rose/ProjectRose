@@ -235,9 +235,9 @@ namespace Rose
 			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
 			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
-			//if (spriteRendererComponent.Path != "no_texture") {
-			//	out << YAML::Key << "Path" << YAML::Value << spriteRendererComponent.Path;
-			//}
+			if (spriteRendererComponent.Texture != 0) {
+				out << YAML::Key << "TextureId" << YAML::Value << (uint64_t)spriteRendererComponent.Texture;
+			}
 
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
@@ -427,7 +427,7 @@ namespace Rose
 		RR_CORE_ASSERT(false);
 	}
 
-	bool SceneSerializer::Deserialize(const std::string& filepath, const std::string& assetPath)
+	bool SceneSerializer::Deserialize(const std::string& filepath)
 	{
 		YAML::Node data;
 		try
@@ -533,7 +533,6 @@ namespace Rose
 					if (spriteRendererComponent["TilingFactor"]) {
 						src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
 					}
-
 					// LEGACY, attempt to import or find in asset registry
 					if (spriteRendererComponent["Path"] && spriteRendererComponent["Path"].as<std::string>() != "no_texture") {
 						//src.Path = spriteRendererComponent["Path"].as<std::string>();
@@ -542,7 +541,7 @@ namespace Rose
 					}
 
 					if (spriteRendererComponent["TextureId"])
-						src.Texture = spriteRendererComponent["TextureId"].as<AssetId>();
+						src.Texture = spriteRendererComponent["TextureId"].as<uint64_t>();
 				}
 
 				auto circleRendererComponent = entity["CircleRendererComponent"];

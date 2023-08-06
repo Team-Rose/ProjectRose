@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="assets\scripts\Balloon.cs" />
     <Compile Include="assets\scripts\Camera.cs" />
+    <Compile Include="assets\scripts\DestoyerOfWorlds.cs" />
     <Compile Include="assets\scripts\GetChildren.cs" />
     <Compile Include="assets\scripts\Player.cs" />
   </ItemGroup>

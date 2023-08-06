@@ -13,6 +13,8 @@
 #include <RoseRoot/Scene/SceneSerializer.h>
 #include "RoseRoot/Renderer/Font.h"
 #include "RoseRoot/Asset/Importers/TextureImporter.h"
+#include "RoseRoot/Asset/Importers/SceneImporter.h"
+
 namespace Rose {
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer")
@@ -339,6 +341,12 @@ namespace Rose {
 				const wchar_t* path = (const wchar_t*)payload->Data;
 				OpenScene(Project::GetActiveAssetDirectory() / path);
 			}
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ASSET"))
+			{
+				AssetId id = *(AssetId*)payload->Data;
+				OpenScene(id);
+			}
+
 			ImGui::EndDragDropTarget();
 		}
 
@@ -801,7 +809,7 @@ namespace Rose {
 		QuickReloadAppAssembly();
 		const std::filesystem::path assetPath = Project::GetActiveAssetDirectory();
 		auto startScenePath = assetPath / Project::GetActive()->GetConfig().StartScene;
-		OpenScene(startScenePath);
+		//OpenScene(startScenePath);
 	}
 	void EditorLayer::OpenProjectDialog()
 	{
@@ -855,6 +863,7 @@ namespace Rose {
 
 	void EditorLayer::OpenScene(const std::filesystem::path& path)
 	{
+		RR_WARN("Opening a unimported scene may lead to unexpected behavior!");
 		if (m_SceneState != SceneState::Edit)
 			OnSceneStop();
 		if (path.extension().string() != ".rose")
@@ -865,7 +874,7 @@ namespace Rose {
 
 		Ref<Scene> newScene = CreateRef<Scene>();
 		SceneSerializer serializer(newScene);
-		if (serializer.Deserialize(path.string(), Project::GetActiveAssetDirectory().string()))
+		if (serializer.Deserialize(path.string()))
 		{
 			CommandHistory::Clear();
 			m_EditorScene = newScene;
@@ -883,6 +892,25 @@ namespace Rose {
 
 	}
 
+	void EditorLayer::OpenScene(AssetId id)
+	{
+		if (m_SceneState != SceneState::Edit)
+			OnSceneStop();
+
+		Ref<Scene> scene = AssetManager::GetAsset<Scene>(id);
+		Ref<Scene> newScene = Scene::Copy(scene);
+
+		CommandHistory::Clear();
+		m_EditorScene = newScene;
+		m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		m_SceneName = m_EditorScene->GetName();
+		m_Gravity = m_EditorScene->GetGravity2D();
+		m_SceneHierarchyPanel.SetContext(m_EditorScene);
+
+		m_ActiveScene = m_EditorScene;
+		m_EditorScenePath = Project::GetActiveHolder()->GetEditorAssetManager()->GetMetadata(id).FilePath;
+	}
+
 	void EditorLayer::SaveSceneAs()
 	{
 		std::string filepath = FileDialogs::SaveFile("Rose Scene (*.rose)\0*.rose\0");
@@ -895,10 +923,7 @@ namespace Rose {
 
 	void EditorLayer::SaveScene()
 	{
-		if (!m_EditorScenePath.empty())
-			SerializeScene(m_ActiveScene, m_EditorScenePath);
-		else
-			SaveSceneAs();
+		Save::Scene(m_ActiveScene, m_EditorScenePath);
 	}
 
 	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)

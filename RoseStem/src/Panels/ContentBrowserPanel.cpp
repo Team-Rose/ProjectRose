@@ -11,7 +11,7 @@ namespace Rose {
 		m_AssetDirectory = Project::GetActiveAssetDirectory();
 		m_CurrentDirectory = Project::GetActiveAssetDirectory();
 
-		m_TreeNodes.push_back(TreeNode("."));
+		m_TreeNodes.push_back(TreeNode("." , 0));
 
 		m_DirectoryIcon = Import::Texture2D("Resources/Icons/ContentBrowser/DirectoryIcon.png");
 		m_FileIcon = Import::Texture2D("Resources/Icons/ContentBrowser/FileIcon.png");
@@ -88,15 +88,49 @@ namespace Rose {
 
 			for (const auto& [item, index] : node->Children)
 			{
-				DrawFileThumbnail(Project::GetActiveAssetDirectory() / item, std::filesystem::is_directory(Project::GetActiveAssetDirectory() / item), thumbnailSize, true);
+				DrawFileThumbnail(Project::GetActiveAssetDirectory() / item, std::filesystem::is_directory(Project::GetActiveAssetDirectory() / item), thumbnailSize, true, index);
 			}
 		}
 		else {
+
+			TreeNode* directoryNode = &m_TreeNodes[0];
+			bool directoryNodeFound = false;
+
+			auto currentDir = std::filesystem::relative(m_CurrentDirectory, Project::GetActiveAssetDirectory());
+			for (const auto& p : currentDir)
+			{
+				if (directoryNode->Path == currentDir)
+				{
+					directoryNodeFound = true;
+					break;
+				}
+				if (directoryNode->Children.find(p) != directoryNode->Children.end())
+				{
+					directoryNodeFound = true;
+					directoryNode = &m_TreeNodes[directoryNode->Children[p]];
+					continue;
+				}
+			}
+
 			for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 			{
-				const auto& path = directoryEntry.path();
+				auto path = directoryEntry.path();
 
-				DrawFileThumbnail (path, directoryEntry.is_directory(), thumbnailSize, true);
+				bool imported = false;
+				uint32_t nodeIndex = 0;
+				if (directoryNodeFound)
+				{
+					for (const auto& [item, index] : directoryNode->Children)
+					{
+						if (path == m_CurrentDirectory / item) {
+							nodeIndex = index;
+							imported = true;
+							break;
+						}
+					}
+				}
+
+				DrawFileThumbnail (path, directoryEntry.is_directory(), thumbnailSize, imported, nodeIndex);
 
 			}
 		}
@@ -108,28 +142,42 @@ namespace Rose {
 		// TODO: status bar
 		ImGui::End();
 	}
-	void ContentBrowserPanel::DrawFileThumbnail(const std::filesystem::path& path, bool isDirectory, float size, bool imported)
+	void ContentBrowserPanel::DrawFileThumbnail(const std::filesystem::path& path, bool isDirectory, float size, bool imported, uint32_t index)
 	{
+		// TODO move this somewhere more central
+
 		auto relativePath = std::filesystem::relative(path, Project::GetActiveAssetDirectory());
 		std::string filenameString = relativePath.filename().string();
+		auto extension = relativePath.extension();
+
+		bool isAsset = false;
+		if (extension == ".png" || extension == ".jpeg" || extension == ".rose") {
+			isAsset = true;
+		}
+
 
 		ImGui::PushID(filenameString.c_str());
 		Ref<Texture2D> icon;
 
 		size_t LastDot = filenameString.find_last_of(".");
+		ImVec4 color = ImVec4(1, 1, 1, 1);
+		if (isAsset && !imported)
+		{
+			color = ImVec4(1, 0.7, 0.7, 1);
+		}
 
 		if (isDirectory)
 			icon = m_DirectoryIcon;
 		else
 		{
 			if (LastDot != std::string::npos) {
-				if (filenameString.substr(LastDot) == ".lua")
+				if (extension == ".lua")
 					icon = m_LuaIcon;
-				else if (filenameString.substr(LastDot) == ".cs")
+				else if (extension == ".cs")
 					icon = m_CSIcon;
-				else if (filenameString.substr(LastDot) == ".rose")
+				else if (extension == ".rose")
 					icon = m_SceneIcon;
-				else if (filenameString.substr(LastDot) == ".png" || filenameString.substr(LastDot) == ".jpeg")
+				else if (extension == ".png" || extension == ".jpeg")
 					icon = m_PictureIcon;
 				else
 					icon = m_FileIcon;
@@ -139,25 +187,53 @@ namespace Rose {
 		}
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { size, size }, { 0, 1 }, { 1, 0 });
+
+		ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { size, size }, { 0, 1 }, { 1, 0 }, -1, ImVec4(0, 0, 0, 0), color);
 
 		if (ImGui::BeginPopupContextItem())
 		{
-			if (ImGui::MenuItem("Import"))
+			if (isAsset) {
+				if (!imported) {
+					if (ImGui::MenuItem("Import"))
+					{
+						Project::GetActive()->ImportAsset(relativePath);
+						RefreshAssetTree();
+					}
+				}
+				else {
+					if (ImGui::MenuItem("Unimport"))
+					{
+						RR_WARN("Unimporting assets is not implmented!");
+						RR_ASSERT(false);
+					}
+				}
+				
+			}
+
+			if (ImGui::MenuItem("Delete"))
 			{
-				auto relativePath = std::filesystem::relative(path, Project::GetActiveAssetDirectory());
-				Project::GetActive()->ImportAsset(relativePath);
-				RefreshAssetTree();
+				RR_WARN("Deleting assets is not implmented!");
+				RR_ASSERT(false);
 			}
 
 			ImGui::EndPopup();
 		}
 
-		if (ImGui::BeginDragDropSource())
-		{
-			const wchar_t* itemPath = relativePath.c_str();
-			ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
-			ImGui::EndDragDropSource();
+		if (!isDirectory && imported) {
+			if (ImGui::BeginDragDropSource())
+			{
+				AssetId id = m_TreeNodes.at(index).Id;
+				ImGui::SetDragDropPayload("CONTENT_BROWSER_ASSET", &id, sizeof(AssetId));
+				ImGui::EndDragDropSource();
+			}
+		}
+		else {
+			if (ImGui::BeginDragDropSource())
+			{
+				const wchar_t* itemPath = relativePath.c_str();
+				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
+				ImGui::EndDragDropSource();;
+			}
 		}
 
 		ImGui::PopStyleColor();
@@ -177,7 +253,7 @@ namespace Rose {
 	void ContentBrowserPanel::RefreshAssetTree()
 	{
 		const auto& assetRegistry = Project::GetActive()->GetEditorAssetManager()->GetAssetRegistry();
-		for (const auto& [handle, metadata] : assetRegistry)
+		for (const auto& [id, metadata] : assetRegistry)
 		{
 			uint32_t currentNodeIndex = 0;
 
@@ -191,7 +267,7 @@ namespace Rose {
 				else
 				{
 					// add node
-					TreeNode newNode(p);
+					TreeNode newNode(p, id);
 					newNode.Parent = currentNodeIndex;
 					m_TreeNodes.push_back(newNode);
 

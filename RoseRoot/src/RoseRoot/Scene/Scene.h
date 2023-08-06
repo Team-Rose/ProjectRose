@@ -7,7 +7,7 @@
 #include "RoseRoot/Core/UUID.h"
 #include "RoseRoot/Core/Timestep.h"
 #include "RoseRoot/Renderer/EditorCamera.h"
-
+#include "RoseRoot/Asset/Asset.h"
 
 class b2World;
 
@@ -26,10 +26,13 @@ namespace Rose
 		float RenderTime = 0.0f;
 	};
 
-	class Scene {
+	class Scene : public Asset {
 	public:
 		Scene();
 		~Scene();
+
+		static AssetType GetStaticType() { return AssetType::Scene; }
+		virtual AssetType GetType() const override { return GetStaticType(); }
 
 		static Ref<Scene> Copy(Ref<Scene> other);
 

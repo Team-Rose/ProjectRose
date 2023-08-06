@@ -15,7 +15,7 @@ namespace Rose {
 
 		void OnImGuiRender();
 	private:
-		void DrawFileThumbnail(const std::filesystem::path& path, bool isDirectory, float size = 100.0f, bool imported = true);
+		void DrawFileThumbnail(const std::filesystem::path& path, bool isDirectory, float size = 100.0f, bool imported = true, uint32_t index = 0);
 		void RefreshAssetTree();
 	private:
 		std::filesystem::path m_AssetDirectory;
@@ -24,12 +24,13 @@ namespace Rose {
 		struct TreeNode
 		{
 			std::filesystem::path Path;
+			AssetId Id = 0;
 
 			uint32_t Parent = (uint32_t) - 1;
 			std::map<std::filesystem::path, uint32_t> Children;
 
-			TreeNode(const std::filesystem::path& path)
-				: Path(path) {}
+			TreeNode(const std::filesystem::path& path, AssetId id)
+				: Path(path), Id(id) {}
 		};
 		std::vector<TreeNode> m_TreeNodes;
 
@@ -37,7 +38,7 @@ namespace Rose {
 		{
 			FileSystem = 0, Asset = 1
 		};
-		Mode m_Mode = Mode::Asset;
+		Mode m_Mode = Mode::FileSystem;
 
 		Ref<Texture2D> m_DirectoryIcon;
 		Ref<Texture2D> m_FileIcon;
