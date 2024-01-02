@@ -15,7 +15,6 @@ namespace Rose
 		s_ActiveProject = CreateRef<Project>();
 		auto config = s_ActiveProject->GetConfig();
 		config.Name = "NewProject";
-		config.AssetDirectory = "assets";
 		std::string nameCopy = config.Name;
 		config.ScriptModulePath = std::filesystem::path("Binaries") / nameCopy.append(".dll");
 

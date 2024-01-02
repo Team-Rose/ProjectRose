@@ -14,7 +14,8 @@ namespace Rose
 
 		std::filesystem::path StartScene;
 
-		std::filesystem::path AssetDirectory;
+		std::filesystem::path AssetDirectory = "assets";
+		std::filesystem::path CacheDirectory = "cache";
 		std::filesystem::path AssetRegistryPath = "AssetRegistry.rsr";
 		std::filesystem::path ScriptModulePath;
 	};
@@ -27,6 +28,9 @@ namespace Rose
 		ProjectConfig& GetConfig() { return m_Config; }
 		virtual const std::filesystem::path GetAssetDirectory() override {
 			return  m_ProjectDirectory / m_Config.AssetDirectory;
+		}
+		const std::filesystem::path GetCacheDirectory() {
+			return  m_ProjectDirectory / m_Config.CacheDirectory;
 		}
 		const std::filesystem::path GetAssetRegistryPath() {
 			return  m_ProjectDirectory / m_Config.AssetRegistryPath;
@@ -51,6 +55,11 @@ namespace Rose
 		{
 			RR_CORE_ASSERT(s_ActiveProject);
 			return s_ActiveProject->GetAssetDirectory();
+		}
+		static const std::filesystem::path GetActiveCacheDirectory()
+		{
+			RR_CORE_ASSERT(s_ActiveProject);
+			return s_ActiveProject->GetCacheDirectory();
 		}
 		static const std::filesystem::path GetActiveAssetRegistryPath()
 		{

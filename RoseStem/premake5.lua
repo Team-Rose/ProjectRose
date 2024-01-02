@@ -15,6 +15,7 @@ project "RoseStem"
 
 	includedirs
 	{
+		"src",
 		"%{wks.location}/RoseRoot/vendor/spdlog/include",
 		"%{wks.location}/RoseRoot/vendor/lua/sol",
 		"%{wks.location}/RoseRoot/src",

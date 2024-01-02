@@ -215,7 +215,7 @@ namespace Rose
 		shaderc::Compiler compiler;
 		shaderc::CompileOptions options;
 		options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2);
-		const bool optimize = true;
+		const bool optimize = false;
 		if (optimize)
 			options.SetOptimizationLevel(shaderc_optimization_level_performance);
 
@@ -272,10 +272,8 @@ namespace Rose
 		shaderc::Compiler compiler;
 		shaderc::CompileOptions options;
 		options.SetTargetEnvironment(shaderc_target_env_opengl, shaderc_env_version_opengl_4_5);
-		
-#ifdef RR_DIST
 		options.SetOptimizationLevel(shaderc_optimization_level_performance);
-#endif
+
 		std::filesystem::path cacheDirectory = Utils::GetCacheDirectory();
 
 		shaderData.clear();

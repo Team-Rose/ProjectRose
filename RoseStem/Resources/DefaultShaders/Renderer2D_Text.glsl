@@ -1,3 +1,4 @@
+// MSDF text shader
 #type vertex
 #version 450 core
 
@@ -70,5 +71,6 @@ void main()
     o_Color = mix(bgColor, Input.Color, opacity);
 	if (o_Color.a == 0.0)
 		discard;
+	
 	o_EntityID = v_EntityID;
 }

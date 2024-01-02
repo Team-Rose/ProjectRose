@@ -3,6 +3,8 @@
 #include <filesystem>
 
 #include "RoseRoot/Renderer/Texture.h"
+#include "Core/ThumbnailCache.h"
+
 #include <set>
 #include <map>
 
@@ -20,6 +22,7 @@ namespace Rose {
 	private:
 		std::filesystem::path m_AssetDirectory;
 		std::filesystem::path m_CurrentDirectory;
+		Ref<ThumbnailCache> m_ThumbnailCache;
 
 		struct TreeNode
 		{

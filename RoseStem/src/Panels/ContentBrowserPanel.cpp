@@ -212,7 +212,7 @@ namespace Rose {
 
 			if (ImGui::MenuItem("Delete"))
 			{
-				RR_WARN("Deleting assets is not implmented!");
+				RR_WARN("Deleting files is not implmented!");
 				RR_ASSERT(false);
 			}
 

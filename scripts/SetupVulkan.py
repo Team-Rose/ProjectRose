@@ -9,7 +9,7 @@ from io import BytesIO
 from urllib.request import urlopen
 
 class VulkanConfiguration:
-    requiredVulkanVersion = "1.3.216.0"
+    requiredVulkanVersion = "1.3.268.0"
     vulkanDirectory = "./RoseRoot/vendor/VulkanSDK"
 
     @classmethod

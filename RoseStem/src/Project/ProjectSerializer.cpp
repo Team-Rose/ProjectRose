@@ -24,6 +24,7 @@ namespace Rose {
 			out << YAML::Key << "Name" << YAML::Value << config.Name;
 			out << YAML::Key << "StartScene" << YAML::Value << config.StartScene.string();
 			out << YAML::Key << "AssetDirectory" << YAML::Value << config.AssetDirectory.string();
+			out << YAML::Key << "CacheDirectory" << YAML::Value << config.CacheDirectory.string();
 			out << YAML::Key << "AssetRegistryPath" << YAML::Value << config.AssetRegistryPath.string();
 			out << YAML::Key << "ScriptModulePath" << YAML::Value << config.ScriptModulePath.string();
 
@@ -62,8 +63,11 @@ namespace Rose {
 		config.Name = projectNode["Name"].as<std::string>();
 		config.StartScene = projectNode["StartScene"].as<std::string>();
 		config.AssetDirectory = projectNode["AssetDirectory"].as<std::string>();
+		if (projectNode["CacheDirectory"])
+			config.CacheDirectory = projectNode["CacheDirectory"].as<std::string>();
 		if(projectNode["AssetRegistryPath"])
 			config.AssetDirectory = projectNode["AssetRegistryPath"].as<std::string>();
+
 		config.ScriptModulePath = projectNode["ScriptModulePath"].as<std::string>();
 
 		return true;
@@ -71,7 +75,7 @@ namespace Rose {
 	bool ProjectSerializer::DeserializeV1(const std::filesystem::path& filepath)
 	{
 		RR_WARN("Attempting to import V1 project");
-		RR_WARN("V1 projects are deprecated you may experiance bugs while trying to update");
+		RR_WARN("V1 projects are deprecated you may experience bugs while trying to update");
 
 		auto& config = m_Project->GetConfig();
 		YAML::Node data;
@@ -92,6 +96,7 @@ namespace Rose {
 		config.Name = projectName;
 
 		config.AssetDirectory = std::filesystem::path("assets");
+		config.CacheDirectory = std::filesystem::path("cache");
 		std::string nameCopy = projectName;
 		config.ScriptModulePath = std::filesystem::path("Binaries") / nameCopy.append(".dll");
 
